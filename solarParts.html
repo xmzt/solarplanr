@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <title id="titl">Solar</title>
+  <link type="text/css" rel="stylesheet" href="solar.css">
+  <script type="text/javascript" src="solarBase.js"></script>
+  <script type="text/javascript" src="solarParts.js"></script>
+</head>
+
+<body onload="partsTable(Parts); panelTable(PanelParts)">
+  <template id="noteA_tem"><a class="doc _root" target="_blank"></a></template>
+
+  <h3>Parts</h3>
+  <table class="colorTable">
+    <thead>
+      <tr>
+	<td>Price</td>
+	<td>Desc</td>
+      </tr>
+    </thead>
+    <tbody id="partsTbody">
+      <template id="partsTr_tem">
+	<tr class="_root">
+	  <td class="_price"></td>
+	  <td class="_desc"></td>
+	</tr>
+      </template>
+    </tbody>
+  </table>
+
+  <h3>Panels</h3>
+  <table class="colorTable panelTable">
+    <thead>
+      <tr>
+	<td>Description</td>
+	<td>Price</td>
+	<td>Watts</td>
+	<td>Dim (cm)</td>
+	<td>Watts/$</td>
+	<td>Watts/cm2</td>
+      </tr>
+    </thead>
+    <tbody id="panelTbody">
+      <template id="panelTr_tem">
+	<tr class="_root">
+	  <td class="_desc"></td>
+	  <td class="_price"></td>
+	  <td class="_watts"></td>
+	  <td class="_dim"></td>
+	  <td class="_wattsDollar"></td>
+	  <td class="_wattsCm2"></td>
+	</tr>
+      </template>
+    </tbody>
+  </table>
+</body>

@@ -1,0 +1,60 @@
+BODY { margin:0; padding:0; } 
+CANVAS { display:block flow; }
+
+.row { display:block flex; flex-direction:row; margin-top:2em; border-top:5px solid black; }
+.row0 { flex:0 0 auto; }
+.row1 { flex:1 1 auto; padding-left:2px; }
+
+.topbar { border-top:5px solid black; }
+.canrow { display:block flex; flex-direction:row; }
+.canrow CANVAS:nth-child(1) { flex:0 0 auto; }
+.canrow CANVAS:nth-child(2) { flex:0 0 auto; }
+
+.doc, .note {
+    margin-left:0.5ch;
+    padding:1px;
+    background-color: #dd03;
+    font-weight:bold;
+    font-variant:small-caps;
+    text-decoration:none;
+    box-shadow: 1px 1px 2px 1px #0998; 
+}
+
+.wsnl {
+    margin-top:1em;
+    white-space:pre;
+    font-family:monospace;
+}
+
+.colorTable THEAD TD { font-weight:bold; }
+.colorTable TD:nth-child(odd) { background-color:#eef; }
+.colorTable TD:nth-child(even) { background-color:#ddf; }
+
+.pend TD:nth-child(odd) { background-color:#ff0; }
+.pend TD:nth-child(even) { background-color:#ee0; }
+
+
+.acqTable TD:nth-child(1) { text-align:right; }
+.acqTable TD:nth-child(2) { text-align:right; }
+.acqTable TD:nth-child(3) { text-align:right; }
+.acqTable TD:nth-child(4) { text-align:right; }
+
+.leftoversTable TD:nth-child(1) { text-align:right; }
+.leftoversTable TD:nth-child(2) { text-align:right; }
+.leftoversTable TD:nth-child(3) { text-align:right; }
+.leftoversTable TD:nth-child(4) { text-align:right; }
+
+.panelTable TD:nth-child(3) { text-align:right; }
+.panelTable TD:nth-child(4) { text-align:right; }
+.panelTable TD:nth-child(5) { text-align:right; }
+.panelTable TD:nth-child(6) { text-align:right; }
+
+.partsTable TD:nth-child(4) { text-align:right; }
+.partsTable TD:nth-child(5) { text-align:right; }
+.partsTable TD:nth-child(6) { text-align:right; }
+.partsTable TD:nth-child(7) { text-align:right; }
+.partsTable TD:nth-child(8) { text-align:right; }
+.partsTable TD:nth-child(9) { text-align:right; }
+.partsTable TD:nth-child(10) { text-align:right; }
+
+.para { margin-top:1em; }

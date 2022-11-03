@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <title id="titl">SiteA Solar Bill</title>
+  <link type="text/css" rel="stylesheet" href="solar.css">
+  <script type="text/javascript" src="solarBase.js"></script>
+  <script type="text/javascript" src="solarParts.js"></script>
+  <script type="text/javascript" src="solarSiteABill.js"></script>
+</head>
+
+<body onload="bodyOnload()">
+  <template id="noteA_tem"><a class="doc _root" target="_blank"></a></template>
+
+  <div class="_note topbar"></div>
+  <h3>Bill of materials</h3>
+  <table class="colorTable acqTable">
+    <thead>
+      <tr>
+	<td>Cost</td>
+	<td>Qty</td>
+	<td>QtyUsed</td>
+	<td>Cost/Qty</td>
+	<td>Keywords</td>
+	<td>Buyer</td>
+	<td>From</td>
+	<td>Part</td>
+	<td>Receipt</td>
+      </tr>
+    </thead>
+    <tbody id="acqTbody">
+      <template id="acqTr_tem">
+	<tr class="_root">
+	  <td class="_cost"></td>
+	  <td class="_qty"></td>
+	  <td class="_qtyUsed"></td>
+	  <td class="_costQty"></td>
+	  <td class="_kws"></td>
+	  <td class="_buyr"></td>
+	  <td class="_fro"></td>
+	  <td class="_part"></td>
+	  <td class="_rec"></td>
+	</tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div class="_note topbar"></div>
+  <h3>Leftovers</h3>
+  <p>What m buys back from s. Calculated from entries in above table where:</p>
+  <ul>
+    <li>s is Buyer</li>
+    <li>AND QtyUsed &lt; Qty</li>
+    <li>AND elec in Keywords</li>
+  </ul>
+  
+  <table class="colorTable leftoversTable">
+    <thead>
+      <tr>
+	<td>Cost</td>
+	<td>Qty</td>
+	<td>leftQty</td>
+	<td>leftCost</td>
+	<td>Part</td>
+      </tr>
+    </thead>
+    <tbody id="leftoversTbody">
+      <template id="leftoversTr_tem">
+	<tr class="_root">
+	  <td class="_cost"></td>
+	  <td class="_qty"></td>
+	  <td class="_leftQty"></td>
+	  <td class="_leftCost"></td>
+	  <td class="_part"></td>
+	</tr>
+      </template>
+    </tbody>
+  </table>
+
+</body>
