@@ -1,3 +1,4 @@
+// self is the WorkerGlobalScope
 const Perf = self.performance;
 
 //dump(pre) {
