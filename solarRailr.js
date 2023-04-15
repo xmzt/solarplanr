@@ -221,4 +221,4 @@ function go(reqId, railV, partV) {
     self.postMessage([ reqId, 'railrRsp', bestComV ]);
 }
 
-    self.onmessage = (ev) => go(...ev.data); 
+self.onmessage = (ev) => go(...ev.data); 
