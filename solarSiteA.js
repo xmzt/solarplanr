@@ -1,255 +1,164 @@
-//include solarDraw.js
-//include solarParts.js
-//include solarBase.js
+//include solarSys.js
 
-//-----------------------------------------------------------------------------------------------------------------------
-// roofs
-//-----------------------------------------------------------------------------------------------------------------------
-
-class RoofTop extends Roof {
-    constructor() {
-	super();
-	this.le = new P2(10,10);
+class A_RoofA extends Roof {
+    static IdHtml = 'SiteA_RoofA';
+    
+    constructor(sys, id, descHtml) {
+	super(sys, id, descHtml);
+	this.le = new P2(0,0);
 	this.lr = this.le.addY(637);
 	this.rr = this.lr.addX(1168);
 	this.re = this.rr.addY(-639);
-	this.vle = this.le.addX(503);
 	this.vre = this.re.addX(-132);
 	this.vt = new P2(this.rr.x - 393, this.rr.y - 425);
+	this.vle = this.le.addX(503);
+
+	this.bpVSet([ this.vt, this.vle, this.le, this.lr, this.rr, this.re, this.vre, this.vt ]);
+	this.edgeV = l2VFromP2V(this.bpV.slice(1,-1));
+	this.edgePathV = edgePathVCwOpen(this.edgeV);
+
+	for(let x = this.le.x + 64; x <= this.vt.x; x += 2.54 * 24)
+	    this.rafterV.push(new L2(x, this.le.y, x, this.lr.y));
+	this.rafterL = this.rafterV[0];
+	const i = this.rafterV.length;
+	for(let x = this.re.x - 65; x > this.vt.x; x -= 2.54 * 24)
+	    this.rafterV.push(new L2(x, this.re.y, x, this.rr.y));
+	this.rafterR = this.rafterV[i];
 	
-	this.edges = [
-	    new L2(this.le.x, this.le.y, this.vle.x, this.vle.y),
-	    new L2(this.vre.x, this.vre.y, this.re.x, this.re.y),
-	    new L2(this.lr.x, this.lr.y, this.rr.x, this.rr.y),
-	    new L2(this.le.x, this.le.y, this.lr.x, this.lr.y),
-	    new L2(this.re.x, this.re.y, this.rr.x, this.rr.y),
+	this.chimneyV = [
+	    new R2(this.rr.x - 116, this.rr.y - 160, this.rr.x - 72 , this.rr.y - 110),
+	];
+
+	this.pipeV = [
+	    new C2(this.le.x + 416, this.le.y + 82, 5/2.0),
+	    new C2(this.le.x + 466, this.le.y + 82, 6/2.0),
+	    this.pipe4 = new C2(this.re.x - 577, this.rr.y - 428, 11/2.0),
+	    this.pipeChim = new C2(this.rr.x - 74, this.re.y + 455, 5/2.0),
 	];
 	
-	this.ventUps = [
+	this.ventV = [
 	    new R2(this.lr.x + 147, this.le.y + 579, this.lr.x + 175, this.le.y + 606),
 	    new R2(this.lr.x + 332, this.le.y + 577, this.lr.x + 360, this.le.y + 604),
 	    new R2(this.rr.x - 667, this.rr.y - 61, this.rr.x - 639 , this.rr.y - 33),
 	    new R2(this.rr.x - 501, this.rr.y - 62, this.rr.x - 474 , this.rr.y - 34),
-	    new R2(this.rr.x - 346, this.rr.y - 63, this.rr.x - 318 , this.rr.y - 36),
+	    this.ventUp = new R2(this.rr.x - 346, this.rr.y - 63, this.rr.x - 318 , this.rr.y - 36),
 	    new R2(this.rr.x - 176, this.rr.y - 66, this.rr.x - 149 , this.rr.y - 38),
-	];
-	
-	this.ventLos = [
-	    new R2(this.le.x + 297, this.le.y + 213, this.le.x + 325, this.le.y + 240),
-	    new R2(this.rr.x - 333, this.rr.y - 426, this.rr.x - 305, this.rr.y - 398),
+	    this.ventLo0 = new R2(this.le.x + 297, this.le.y + 213, this.le.x + 325, this.le.y + 240),
+	    this.ventLo1 = new R2(this.rr.x - 333, this.rr.y - 426, this.rr.x - 305, this.rr.y - 398),
 	    new R2(this.le.x + 535, this.rr.y - 551, this.le.x + 549, this.rr.y - 529),
 	];
-	
-	this.pipes = [
-	    new C2(this.le.x + 416, this.le.y + 82, 5/2.0),
-	    new C2(this.le.x + 466, this.le.y + 82, 6/2.0),
-	    new C2(this.re.x - 577, this.rr.y - 428, 11/2.0),
-	    new C2(this.rr.x - 74, this.re.y + 455, 5/2.0),
-	];
-	
-	this.chimney = new R2(this.rr.x - 116, this.rr.y - 160, this.rr.x - 72 , this.rr.y - 110);
+    }
 
-	this.rafters = [];
-	this.rafterL = new L2(this.le.x + 64, this.le.y, this.le.x + 64, this.lr.y);
-	this.rafterR = new L2(this.re.x - 65, this.re.y, this.re.x - 65, this.rr.y);
-	for(let rafter = this.rafterL; ; rafter = rafter.addX(2.54*24)) {
-	    if(rafter.x0 > this.vt.x) break;
-	    this.rafters.push(rafter);
-	    
-	}
-	for(let rafter = this.rafterR; ; rafter = rafter.addX(-2.54*24)) {
-	    if(rafter.x0 <= this.vt.x) break;
-	    this.rafters.push(rafter);
-	}
-    }
-    
-    draw(ctx) {
-	drawPath(ctx, this.le, this.lr, this.rr, this.re, this.vre, this.vt, this.vle, this.le);
-	for(const x of this.ventUps) x.drawVent(ctx);
-	for(const x of this.ventLos) x.drawVent(ctx);
-	for(const x of this.pipes) x.drawPipe(ctx);
-	this.chimney.drawChimney(ctx);
-	for(const x of this.rafters) x.drawRafter(ctx);
-	return this;
-    }
+    static LayoutV = [
+ 	new Layout('LayoutA (Sil360 portrait)', function(rack, roof) {
+	    const orient = PanelSil360.portrait();
+	    const b0 = rack.panelBlockRightDn(orient, roof.ventLo1.x0, roof.ventUp.y0, 8, 1);
+	    let b = rack.panelBlockLeftDn(orient, b0.x0, b0.y0 - rack.panelGapY, 8, 1);
+	    b = rack.panelBlockLeftDn(orient, roof.le.x + 5, b.y0 - rack.panelGapY, 5, 1);
+	    b = rack.panelBlockRightDn(orient, roof.re.x - 5, roof.pipeChim.y - 10, 2, 2);
+	}),
+	new Layout('LayoutB (Sil360 portrait)', function(rack, roof) {
+	    const orient = PanelSil360.portrait();
+	    const b0 = rack.panelBlockLeftDn(orient, roof.le.x + 5, roof.ventUp.y0, 8, 1);
+	    let b = rack.panelBlockLeftDn(orient, b0.x0, b0.y0 - rack.panelGapY, 2, 1);
+	    b = rack.panelBlockLeftDn(orient, b.x1 + 1.5*orient.sizeX + rack.panelGapX, b.y1, 2, 1);
+	    b = rack.panelBlockRightDn(orient, b0.x1, b.y1, 2, 1);
+	    b = rack.panelBlockLeftDn(orient, b0.x0, b.y0 - rack.panelGapY, 4, 1);
+	    b = rack.panelBlockRightDn(orient, roof.re.x - 5, roof.pipeChim.y - 10, 2, 2);
+	}),
+	new Layout('LayoutC (Sil360 landscape)', function(rack, roof) {
+	    const orient = PanelSil360.landscape();
+	    let b = rack.panelBlockLeftUp(orient, roof.rafterL.x0 - 2.54*20, roof.le.y + 10, 2, 2);
+	    b = rack.panelBlockLeftUp(orient, b.x0, roof.ventLo0.y1 + 20, 4, 3);
+	    b = rack.panelBlockRightDn(orient, roof.rafterR.x0 + 2.54*20, roof.pipeChim.y - 10, 1, 3);
+	}),
+	new Layout('LayoutD (Sil490 landscape)', function(rack, roof) {
+	    const orient = PanelSil490.landscape();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 5, roof.le.y + 10, 2, 2);
+	    b = rack.panelBlockLeftDn(orient, b.x0, roof.ventUp.y0, 2, 3);
+	    b = rack.panelBlockLeftDn(orient, b.x1 + 2.54*36, b.y1, 2, 3);
+	    b = rack.panelBlockLeftDn(orient, b.x1 - 0.5*orient.sizeX, b.y0 - rack.panelGapY, 1, 1);
+	}),
+	new Layout('LayoutE (Q395 portrait)', function(rack, roof) {
+	    const orient = PanelQ395.portrait();
+	    const b0 = rack.panelBlockLeftUp(orient, roof.le.x + 5, roof.le.y + 10, 4, 1);
+	    let b = rack.panelBlockLeftUp(orient, b0.x0, b0.y1 + rack.panelGapY, 2, 1);
+	    b = rack.panelBlockLeftUp(orient, roof.ventLo0.x1 + 5, b.y0, 2, 1);
+	    b = rack.panelBlockLeftUp(orient, roof.pipe4.x + 10, b.y0, 1, 1);
+	    b = rack.panelBlockLeftUp(orient, b0.x0, b.y1 + rack.panelGapY, 7, 1);
+
+	    b = rack.panelBlockLeftDn(orient, b.x1 + 2.54*36, b.y1, 1, 1);
+	    b = rack.panelBlockLeftDn(orient, b.x0, b.y0 - rack.panelGapY, 3, 1);
+	    b = rack.panelBlockRightDn(orient, roof.re.x - 30, b.y0 - rack.panelGapY, 1, 1);
+	}),
+	new Layout('LayoutF (Ja535 portrait/landscape)', function(rack, roof) {
+	    const orientP = PanelJa535.portrait();
+	    const orientL = PanelJa535.landscape();
+	    let b = rack.panelBlockLeftUp(orientP, roof.le.x + 10, roof.le.y + 10, 4, 1);
+	    b = rack.panelBlockLeftUp(orientP, b.x0, b.y1 + rack.panelGapY, 8, 1);
+	    b = rack.panelBlockLeftUp(orientL, b.x0, b.y1 + rack.panelGapY, 4, 1);
+	    b = rack.panelBlockRightDn(orientP, roof.rr.x - 10, roof.pipeChim.y, 1, 2);
+	}),
+    ];
 }
 
-class RoofBot extends Roof {
-    constructor() {
-	super();
-	this.le = new P2(10,10);
+class A_RoofB extends Roof {
+    static IdHtml = 'SiteA_RoofB';
+    
+    constructor(sys, id, descHtml) {
+	super(sys, id, descHtml);
+	this.le = new P2(0,0);
 	this.lr = this.le.addY(339);
 	this.re = this.le.addX(1276);
-	const r1 = this.le.addXY(1022,282);
-	this.rr = new P2(interpX(this.re, r1, this.re.y + 337), this.re.y + 337); // todo intersect
+	this.rr = new P2(interpX(this.re, this.le.addXY(1022,282), this.re.y + 337), this.re.y + 337);
+	this.bpVSet([ this.re, this.le, this.lr, this.rr, this.re ]);
+	this.edgeV = l2VFromP2V(this.bpV.slice(0,-1));
+	this.edgePathV = edgePathVCwOpen(this.edgeV);
 	
-	this.edges = [
-	    new L2(this.le.x, this.le.y, this.re.x, this.re.y),
-	    new L2(this.lr.x, this.lr.y, this.rr.x, this.rr.y),
-	    new L2(this.le.x, this.le.y, this.lr.x, this.lr.y),
-	];
-	
-	this.ventUps = [
+	for(let x = this.le.x + 35; x <= this.re.x; x += 2.54 * 24)
+	    this.rafterV.push(new L2(x, this.le.y, x, this.lr.y));
+
+	this.ventV = [
 	    new R2(this.le.x + 114, this.le.y + 282, this.le.x + 142, this.le.y + 309),
 	    new R2(this.le.x + 219, this.le.y + 282, this.le.x + 247, this.le.y + 309),
 	    new R2(this.le.x + 331, this.le.y + 282, this.le.x + 359, this.le.y + 309),
 	    new R2(this.le.x + 439, this.le.y + 282, this.le.x + 466, this.le.y + 309),
 	    new R2(this.le.x + 549, this.le.y + 282, this.le.x + 577, this.le.y + 309),
-	    new R2(this.le.x + 652, this.le.y + 281, this.le.x + 679, this.le.y + 308),
+	    this.ventUp = new R2(this.le.x + 652, this.le.y + 281, this.le.x + 679, this.le.y + 308),
 	    new R2(this.le.x + 765, this.le.y + 282, this.le.x + 792, this.le.y + 309),
 	];
-
-	this.rafterL = new L2(this.le.x + 35, this.le.y, this.le.x + 35, this.lr.y);
-	this.rafters = [];
-	for(let rafter = this.rafterL; ; rafter = rafter.addX(2.54*24)) {
-	    if(rafter.x0 >= this.re.x) break;
-	    this.rafters.push(rafter);
-	}
     }
 
-    draw(ctx) {
-	drawPath(ctx, this.le, this.lr, this.rr, this.re, this.le);
-	for(const x of this.ventUps) x.drawVent(ctx);
-	for(const x of this.rafters) x.drawRafter(ctx);
-	return this;
-    }
+    static LayoutV = [
+	new Layout('LayoutA high (Sil360 portrait)', function(rack, roof) {
+	    const orient = PanelSil360.portrait();
+	    let b = rack.panelBlockLeftDn(orient, roof.le.x + 10, roof.ventUp.y0, 10, 1);
+	}),
+	new Layout('LayoutB low (Sil360 portrait)', function(rack, roof) {
+	    const orient = PanelSil360.portrait();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 10, roof.le.y + 10, 10, 1);
+	}),
+	new Layout('LayoutC (Sil360 landscape)', function(rack, roof) {
+	    const orient = PanelSil360.landscape();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 10, roof.le.y + 10, 6, 1);
+	    b = rack.panelBlockLeftUp(orient, b.x0, b.y1 + rack.panelGapY, 5, 1);
+	    //b = rack.panelBlockLeftUp(orient, roof.le.x + 5, roof.le.y + 10, 5, 2);
+	}),
+	new Layout('LayoutD (Sil490 landscape)', function(rack, roof) {
+	    const orient = PanelSil490.landscape();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 10, roof.le.y + 10, 5, 1);
+	    b = rack.panelBlockLeftUp(orient, b.x0, b.y1 + rack.panelGapY, 4, 1);
+	}),
+	new Layout('LayoutE (Q395 portrait)', function(rack, roof) {
+	    const orient = PanelQ395.portrait();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 10, roof.le.y + 10, 10, 1);
+	}),
+	new Layout('LayoutF (Ja535 portrait)', function(rack, roof) {
+	    const orient = PanelJa535.portrait();
+	    let b = rack.panelBlockLeftUp(orient, roof.le.x + 10, roof.le.y + 10, 9, 1);
+	}),
+    ];
 }
 
-//-----------------------------------------------------------------------------------------------------------------------
-// rack layouts
-//-----------------------------------------------------------------------------------------------------------------------
-	
-function silfab360PortraitTop(rack, roof) {
-    const pP = new PanelShape(PanelSil360, 0, PanelFillStyle);
-    const b0 = rack.panelBlockLeftDown(roof, pP, roof.le.x + 5, roof.ventUps[4].y0, 8, 1);
-    let b = rack.panelBlockLeftDown(roof, pP, b0.x0, b0.y0 - rack.panelGapY, 2, 1);
-    b = rack.panelBlockLeftDown(roof, pP, b.x1 + 1.5*pP.sizeX + rack.panelGapX, b.y1, 2, 1);
-    b = rack.panelBlockRightDown(roof, pP, b0.x1, b.y1, 2, 1);
-    b = rack.panelBlockLeftDown(roof, pP, b0.x0, b.y0 - rack.panelGapY, 4, 1);
-    b = rack.panelBlockRightDown(roof, pP, roof.re.x - 5, roof.pipes[3].y - 10, 2, 2);
-}
-
-function silfab360PortraitTopTight(rack, roof) {
-    const pP = new PanelShape(PanelSil360, 0, PanelFillStyle);
-    const b0 = rack.panelBlockRightDown(roof, pP, roof.ventLos[1].x0, roof.ventUps[4].y0, 8, 1);
-    let b = rack.panelBlockRightDown(roof, pP, b0.x1, b0.y0 - rack.panelGapY, 5, 1);
-    b = rack.panelBlockLeftDown(roof, pP, b0.x0, b.y1, 2, 1);
-    b = rack.panelBlockLeftDown(roof, pP, roof.le.x + 5, b.y0 - rack.panelGapY, 5, 1);
-    b = rack.panelBlockRightDown(roof, pP, roof.re.x - 5, roof.pipes[3].y - 10, 2, 2);
-}
-
-function silfab360PortraitBotLo(rack, roof) {
-    const pP = new PanelShape(PanelSil360, 0, PanelFillStyle);
-    //const pL = new PanelShape(pP.part, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pP, roof.le.x + 10, roof.le.y + 10, 10, 1);
-    // b = rack.panelBlockLeftUp(roof, pL, b.x0, b.y1 + rack.panelGapY, 5, 1);
-}
-
-function silfab360PortraitBotUp(rack, roof) {
-    const pP = new PanelShape(PanelSil360, 0, PanelFillStyle);
-    let b = rack.panelBlockLeftDown(roof, pP, roof.le.x + 10, roof.ventUps[5].y0 - 10, 10, 1);
-}
-
-function silfab360LandscapeTop(rack, roof) { 
-    //const rack = new RackUniracSfm();
-    const pL = new PanelShape(PanelSil360, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pL, roof.rafterL.x0 - 2.54*20, roof.le.y + 10, 2, 2);
-    b = rack.panelBlockLeftUp(roof, pL, b.x0, roof.ventLos[0].y1 + 20, 4, 3);
-    b = rack.panelBlockRightDown(roof, pL, roof.rafterR.x0 + 2.54*20, roof.pipes[3].y - 10, 1, 3);
-}
-
-function silfab360LandscapeBot(rack, roof) { 
-    //const rack = new RackUniracSfm();
-    const pL = new PanelShape(PanelSil360, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pL, roof.le.x + 10, roof.le.y + 10, 6, 1);
-    b = rack.panelBlockLeftUp(roof, pL, b.x0, b.y1 + rack.panelGapY, 5, 1);
-    //b = rack.panelBlockLeftUp(roof, pL, roof.le.x + 5, roof.le.y + 10, 5, 2);
-}
-
-function silfab490PortraitTop(rack, roof) { 
-    //const rack = new RackUniracSfm();
-    const pL = new PanelShape(PanelSil490, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pL, roof.le.x + 5, roof.le.y + 10, 2, 2);
-    b = rack.panelBlockLeftDown(roof, pL, b.x0, roof.ventUps[0].y0 - 10, 2, 3);
-    b = rack.panelBlockLeftDown(roof, pL, b.x1 + 2.54*36, b.y1, 2, 3);
-    b = rack.panelBlockLeftDown(roof, pL, b.x1 - 0.5*pL.part.dimL, b.y0 - rack.panelGapY, 1, 1);
-}
-    
-function silfab490PortraitBot(rack, roof) { 
-    //const rack = new RackUniracSfm();
-    const pL = new PanelShape(PanelSil490, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pL, roof.le.x + 10, roof.le.y + 10, 5, 1);
-    b = rack.panelBlockLeftUp(roof, pL, b.x0, b.y1 + rack.panelGapY, 4, 1);
-}
-
-function q395PortraitTop(rack, roof) { 
-    //const rack = new RackIronRidgeXR10Camo(); 
-    const pP = new PanelShape(PanelQ395, 0, PanelFillStyle);
-    const b0 = rack.panelBlockLeftUp(roof, pP, roof.le.x + 5, roof.le.y + 10, 4, 1);
-    let b = rack.panelBlockLeftUp(roof, pP, b0.x0, b0.y1 + rack.panelGapY, 2, 1);
-    b = rack.panelBlockLeftUp(roof, pP, roof.ventLos[0].x1 + 5, b.y0, 2, 1);
-    b = rack.panelBlockLeftUp(roof, pP, roof.pipes[2].x + 10, b.y0, 1, 1);
-    b = rack.panelBlockLeftUp(roof, pP, b0.x0, b.y1 + rack.panelGapY, 7, 1);
-
-    b = rack.panelBlockLeftDown(roof, pP, b.x1 + 2.54*36, b.y1, 1, 1);
-    b = rack.panelBlockLeftDown(roof, pP, b.x0, b.y0 - rack.panelGapY, 3, 1);
-    b = rack.panelBlockRightDown(roof, pP, roof.re.x - 30, b.y0 - rack.panelGapY, 1, 1);
-}    
-
-function q395PortraitBot(rack, roof) { 
-    //const rack = new RackIronRidgeXR10Camo(); 
-    const pP = new PanelShape(PanelQ395, 0, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pP, roof.le.x + 10, roof.le.y + 10, 10, 1);
-}
-
-function ja535MixedTop(rack, roof) { 
-    //const rack = new RackIronRidgeXR10Camo(); 
-    const pP = new PanelShape(PanelJa535, 0, PanelFillStyle);
-    const pL = new PanelShape(pP.part, 1, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pP, roof.le.x + 10, roof.le.y + 10, 4, 1);
-    b = rack.panelBlockLeftUp(roof, pP, b.x0, b.y1 + rack.panelGapY, 8, 1);
-    b = rack.panelBlockLeftUp(roof, pL, b.x0, b.y1 + rack.panelGapY, 4, 1);
-    b = rack.panelBlockLeftDown(roof, pP, b.x1 + 2.54*36, roof.pipes[3].y - 10, 1, 1);
-}
-
-function ja535MixedBot(rack, roof) { 
-    //const rack = new RackIronRidgeXR10Camo();
-    const pP = new PanelShape(rack.part0(PanelJa535), 0, PanelFillStyle);
-    let b = rack.panelBlockLeftUp(roof, pP, roof.le.x + 10, roof.le.y + 10, 9, 1);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// syssAll
-//-----------------------------------------------------------------------------------------------------------------------
-
-function syssAll(container) {
-    const roofTop = new RoofTop();
-    const roofBot = new RoofBot();
-
-    // todo start here postMessage class
-    function wrapXR10(note, popuTop, popuBot) {
-	const railGroup = new RailGroupIronRidgeXR10();
-	const layg = new LayGroup(note);
-	layg.layAdd(new Lay('top', roofTop, new RackIronRidgeXRCamo(), railGroup, popuTop));
-	layg.layAdd(new Lay('bot', roofBot, new RackIronRidgeXRCamo(), railGroup, popuBot));
-	layg.go();
-    }
-    
-    wrapXR10('Silfab 360 Portrait 2-rail A', silfab360PortraitTopTight, silfab360PortraitBotUp);
-    wrapXR10('Silfab 360 Portrait 2-rail B', silfab360PortraitTop, silfab360PortraitBotUp);
-    //topbotWrap('Silfab 360 Portrait 2-rail C', silfab360PortraitTop, silfab360PortraitBotLo);
-    //topbotWrap('Silfab 360 Landcsape 0-rail', silfab360LandscapeTop, silfab360LandscapeBot);
-    //topbotWrap('Silfab 490 Landscape 0-rail', silfab490PortraitTop, silfab490PortraitBot);
-    //topbotWrap('Q 395 Portrait', q395PortraitTop, q395PortraitBot);
-    //topbotWrap('JA 535 Mixed', ja535MixedTop, ja535MixedBot);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// bodyOnload
-//-----------------------------------------------------------------------------------------------------------------------
-
-function bodyOnload() {
-    railrHandlerInit();
-    document.getElementById('titl').textContent = 'SiteA Solar V.2.0';
-    syssAll();
-}
+RoofClasV.push(A_RoofA);
+RoofClasV.push(A_RoofB);

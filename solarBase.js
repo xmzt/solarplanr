@@ -1,3 +1,54 @@
+//-----------------------------------------------------------------------------------------------------------------------
+// constants
+//-----------------------------------------------------------------------------------------------------------------------
+
+const EdgeFootDist = 2.54*36;
+const EdgeFootDist2 = EdgeFootDist*EdgeFootDist;
+const CantiMax = 2.54*24;
+const FootSpan = 2.54*48.0 + 1.0;
+const FootSpanEdge = 2.54*24.0 + 1.0;
+
+const ChimneyFillStyle = '#4408';
+const ClampFillStyle = '#0888';
+const ClampLineWidth = 4;
+const ClampRadius = 6;
+const EdgeFillStyle = '#eca9';
+const EdgeWidth = 2.54 * 36;
+const FireWalkWidth = 2.54 * 36;
+const FireWalkFillStyle = '#fcf8';
+const FootFillStyle = '#f008';
+const FootRadius = 6;
+const LinkFillStyle = '#0c08';
+const LinkLineWidth = 4;
+const LinkRadius = 6;
+const PathStrokeStyle = '#000';
+const PathLineWidth = 3;
+const PipeFillStyle = '#4408';
+const PanelFillStyle = '#ccc8';
+const RafterLineDash = [4,8];
+const RafterStrokeStyle = '#6668';
+const RailRegFillStyle = '#ace6';
+const RailStrokeStyle = '#00f8';
+const RoofCanvasMargin = 10;
+const RoofCanvasScale = 0.75;
+const SkirtFillStyle = '#84c8';
+const SkirtDimS = 6;
+const SpliceFillStyle = '#0c08';
+const SpliceRadiusX = 2;
+const SpliceRadiusY = 10;
+const VentFillStyle = '#4408';
+
+//-----------------------------------------------------------------------------------------------------------------------
+// globals
+//-----------------------------------------------------------------------------------------------------------------------
+
+var Parts = [];
+var menuOpen;
+
+//-----------------------------------------------------------------------------------------------------------------------
+// real basic helpers
+//-----------------------------------------------------------------------------------------------------------------------
+
 function temRoot(id) { return document.getElementById(id).content.querySelector('._root'); }
 function temRootClone(id) { return temRoot(id).cloneNode(/*deep=*/true); }
 
@@ -6,6 +57,15 @@ function toFixedMax(x, prec) {
     const b = x.toFixed(prec);
     return a.length <= b.length ? a : b;
 }    
+
+function toFixedMinMax(x, precMin, precMax) {
+    const a = x.toString();
+    const b = x.toFixed(precMin);
+    const c = x.toFixed(precMax);
+    return c.length < a.length ? c
+	: b.length > a.length ? b
+	: a;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Note, Price*
@@ -18,34 +78,67 @@ function noteIdFromUrl(url) {
 }
 
 class Note {
-    constructor(id, url) {
-	this.id = id;
-	this.url = url;
-    }
-
     price() { return null; }
 }
 
-class Price1 extends Note {
-    constructor(unitCost, id, url) {
-	super(id, url);
+class NoteUrl extends Note {
+    constructor(url) {
+	super();
+	this.url = url;
+    }
+    
+    descFun() { return noteIdFromUrl(this.url); }
+    
+    menuFill(dst) {
+	const a = document.createElement('a');
+	a.href = this.url;
+	a.target = '_blank';
+	a.classList.add('menuItem');
+	a.appendChild(document.createTextNode(this.descFun()));
+	dst.appendChild(a);
+    }
+}
+
+class NoteCat extends NoteUrl { descFun() { return 'Catalog'; } }
+class NoteDs extends NoteUrl { descFun() { return 'Datasheet'; } }
+class NoteI extends NoteUrl { descFun() { return 'Install'; } }
+class NoteTb extends NoteUrl { descFun() { return 'Tech brief'; } }
+class NoteU extends NoteUrl { descFun() { return 'User'; } }
+
+class Price1 extends NoteUrl {
+    constructor(unitCost, url) {
+	super(url);
 	this.unitCost = unitCost;
     }
 
-    static nu(unitCost, url) { return new Price1(unitCost, noteIdFromUrl(url), url); }
-
+    descFun() { return `${toFixedMinMax(this.unitCost, 2, 4)} [${super.descFun()}]`; }
+    
     price() { return this.unitCost; }
 }
 
-class PriceN extends Note {
-    constructor(unitCost, unitQty, id, url) {
-	super(id, url);
+class Price1Id extends Note {
+    constructor(unitCost, id) {
+	super();
+	this.unitCost = unitCost;
+	this.id = id;
+    }
+    
+    descFun() { return `${toFixedMinMax(this.unitCost, 2, 4)} [${this.id}]`; }
+    
+    menuFill(dst) {
+	dst.appendChild(document.createTextNode(this.descFun()));
+    }
+}
+
+class PriceN extends NoteUrl {
+    constructor(unitCost, unitQty, url) {
+	super(url);
 	this.unitCost = unitCost;
 	this.unitQty = unitQty;
     }
 
-    static nu(unitCost, unitQty, url) { return new PriceN(unitCost, unitQty, noteIdFromUrl(url), url); }
-
+    descFun() { return `${toFixedMinMax(this.price(), 2, 4)} = ${this.unitCost}/${this.unitQty} [${super.descFun()}]`; }
+    
     price() { return this.unitCost / this.unitQty; }
 }
 
@@ -53,7 +146,9 @@ class PriceN extends Note {
 // Part
 //-----------------------------------------------------------------------------------------------------------------------
 
-var Parts = [];
+function menuClose(menu) {
+    document.body.removeChild(menu);
+}
 
 class Part {
     constructor(desc, notes) { // additional arguments: notes
@@ -66,20 +161,33 @@ class Part {
 
     static nu(desc, ...notes) { return new Part(desc, notes); }
 
-    descFill(dst) {
-	dst.appendChild(document.createTextNode(this.desc));
+    descClick(anchor) {
+	const menu = temRootClone('partMenu_tem');
+	const desc = menu.querySelector('._desc');
+	desc.innerHTML = this.desc;
+	desc.addEventListener('click', (ev) => menuClose(menu));
 	for(const note of this.notes) {
-	    if(null !== note.url) {
-		const a = temRootClone('noteA_tem');
-		a.href = note.url;
-		a.textContent = note.id.toUpperCase();
-		dst.appendChild(a);
-	    }
+	    let div = document.createElement('div');
+	    note.menuFill(div);
+	    menu.appendChild(div);
 	}
+	document.body.appendChild(menu);
+
+	const descR = desc.getBoundingClientRect();
+	const anchorR = anchor.getBoundingClientRect();
+	menu.style.left = `${anchorR.left-descR.left}px`;
+	menu.style.top = `${anchorR.top-descR.top}px`;
+	menu.style.visibility = 'visible';
     }
 
-    panelWatts() { return null; }
-    
+    descFill(dst) {
+	const a = document.createElement('a');
+	a.appendChild(document.createTextNode(this.desc));
+	a.href = 'javascript:void(0)';
+	a.addEventListener('click', (ev) => this.descClick(a));
+	dst.appendChild(a);
+    }
+
     price() {
 	for(const note of this.notes) {
 	    const p = note.price();
@@ -87,8 +195,19 @@ class Part {
 	}
 	return null;
     }
-    
+
     priceFill(dst) {
+	for(const note of this.notes) {
+	    const p = note.price();
+	    if(null !== p) {
+		dst.appendChild(document.createTextNode(toFixedMinMax(p, 2, 4)));
+		return p;
+	    }
+	}
+	return null;
+    }
+    
+    todopriceFill(dst) {
 	let sel = null;
 	const prices = [];
 	for(const note of this.notes) {
@@ -108,7 +227,7 @@ function partsTable(parts) {
     for(const part of parts) {
 	const tr = temRootClone('partsTr_tem');
 	part.descFill(tr.querySelector('._desc'));
-	part.priceFill(tr.querySelector('._price'));
+	part.todopriceFill(tr.querySelector('._price'));
 	tbody.appendChild(tr);
     }
 }

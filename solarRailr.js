@@ -142,7 +142,7 @@ function go(reqId, railV, partV) {
 	status.iterN *= rail.comV.length;
     }
     //railV.sort((a,b) => b.comV[0].need - a.comV[0].need);
-    self.postMessage([ reqId, 'railrLog', log]);
+    self.postMessage([ reqId, 'railrRspLog', log]);
     
     //-------------------------------------------------------------------------------------------------------------------
     // pass 4
@@ -188,7 +188,7 @@ function go(reqId, railV, partV) {
 	}
 	if(0 == (status.iterI % 50000)) {
 	    status.tsB = Perf.now();
-	    self.postMessage([ reqId, 'railrStatus', status]);
+	    self.postMessage([ reqId, 'railrRspStatus', status]);
 	}
 	    
 	// next iteration
@@ -213,13 +213,13 @@ function go(reqId, railV, partV) {
     // finish
     // post final status and response
 
-    self.postMessage([ reqId, 'railrStatus', status]);
+    self.postMessage([ reqId, 'railrRspStatus', status]);
     for(const com of bestComV) {
 	com.railId = com.rail.id;
 	com.segN = com.rail.segN;
 	delete com.rail;
     }
-    self.postMessage([ reqId, 'railrRsp', bestComV ]);
+    self.postMessage([ reqId, 'railrRspFin', bestComV ]);
 }
 
 self.onmessage = (ev) => go(...ev.data); 
