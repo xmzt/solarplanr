@@ -1,4 +1,8 @@
-BODY { margin:0; padding:0; } 
+A { color:#04c; text-decoration:none; }
+A:hover { color: #60a; }
+
+BODY { margin:0; padding:0; }
+
 
 .acqTable TD:nth-child(1) { text-align:right; }
 .acqTable TD:nth-child(2) { text-align:right; }
@@ -37,6 +41,8 @@ BODY { margin:0; padding:0; }
     left:0px;
     top:0px;
 }
+
+.menu > :nth-child(1) { color:#606; border-bottom:1px solid black; margin-bottom:4px; }
 
 .panelTable TD:nth-child(3) { text-align:right; }
 .panelTable TD:nth-child(4) { text-align:right; }

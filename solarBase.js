@@ -167,9 +167,9 @@ class Part {
 	desc.innerHTML = this.desc;
 	desc.addEventListener('click', (ev) => menuClose(menu));
 	for(const note of this.notes) {
-	    let div = document.createElement('div');
-	    note.menuFill(div);
-	    menu.appendChild(div);
+	    const item = document.createElement('div');
+	    note.menuFill(item);
+	    menu.appendChild(item);
 	}
 	document.body.appendChild(menu);
 
