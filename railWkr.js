@@ -1,3 +1,4 @@
+// worker thread used by rail.js
 // self is the WorkerGlobalScope
 const Perf = self.performance;
 

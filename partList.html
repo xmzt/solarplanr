@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <title>Part List - Solarplanr</title>
+  <link type="text/css" rel="stylesheet" href="base.css">
+  <script type="text/javascript" src="base.js"></script>
+  <script type="text/javascript" src="part.js"></script>
+  <script type="text/javascript" src="partCat.js"></script>
+  <script type="text/javascript" src="partList.js"></script>
+</head>
+
+<body onload="bodyOnload()">
+  <h3>Parts</h3>
+  <table id="partTab" class="colorTab">
+    <thead>
+      <tr>
+	<td>Description</td>
+	<td>Price</td>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Panels</h3>
+  <table id="panelTab" class="colorTab panelTab">
+    <thead>
+      <tr>
+	<td>Description</td>
+	<td>Price</td>
+	<td>Watts</td>
+	<td>Dim (cm)</td>
+	<td>Watts/$</td>
+	<td>Watts/cm2</td>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <template id="partTabTr_tem">
+    <tr class="_root">
+      <td class="_desc"></td>
+      <td class="_price"></td>
+    </tr>
+  </template>
+
+  <template id="panelTabTr_tem">
+    <tr class="_root">
+      <td class="_desc"></td>
+      <td class="_price"></td>
+      <td class="_watts"></td>
+      <td class="_dim"></td>
+      <td class="_wattsDollar"></td>
+      <td class="_wattsCm2"></td>
+    </tr>
+  </template>
+</body>

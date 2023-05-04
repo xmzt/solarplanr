@@ -1,11 +1,73 @@
-//include solarBase.js
-//include solarParts.js
+//include base.js
+//include part.js
+//include partCat.js
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Acqs bill of materials
+// Acq (acquisition - parts actually bought and maybe even used)
 //-----------------------------------------------------------------------------------------------------------------------
 
-var Acqs = [
+class Acq {
+    constructor(cost, qty, qtyUsed, kws, buyr, fro, part, rec) {
+	this.cost = cost;
+	this.qty = qty;
+	this.qtyUsed = qtyUsed;
+	this.kws = kws;
+	this.buyr = buyr;
+	this.fro = fro;
+	this.part = part;
+	this.rec = rec;
+    }
+}
+
+function acqTabTr(acq) {
+    const tr = temRootClone('acqTabTr_tem');
+    tr.querySelector('._cost').textContent = acq.cost.toFixed(2);
+    tr.querySelector('._qty').textContent = acq.qty;
+    tr.querySelector('._qtyUsed').textContent = acq.qtyUsed;
+    tr.querySelector('._costQty').textContent = (acq.cost / acq.qty).toFixed(2);
+    tr.querySelector('._kws').textContent = acq.kws.join(' ');
+    tr.querySelector('._buyr').textContent = acq.buyr;
+    tr.querySelector('._fro').textContent = acq.fro;
+    acq.part.descFill(tr.querySelector('._part'));
+    tr.querySelector('._rec').textContent = acq.rec;
+    return tr;
+}
+function acqTabTrSum(cost, k, v) {
+    const tr = temRootClone('acqTabTr_tem');
+    tr.querySelector('._cost').textContent = cost.toFixed(2);
+    tr.querySelector(k).textContent = v;
+    return tr;
+}
+
+function acqTabFill(acqV) {
+    const tbody = document.getElementById('acqTab').querySelector('TBODY');
+    let cost = 0.0;
+    const costByKw = {};
+    const costByBuyr = {};
+    const costByFro = {};
+    for(const acq of acqV) {
+	tbody.appendChild(acqTabTr(acq));
+	cost += acq.cost;
+	for(const kw of acq.kws) {
+	    costByKw[kw] = (costByKw[kw] ?? 0.0) + acq.cost;
+	}
+	costByBuyr[acq.buyr] = (costByBuyr[acq.buyr] ?? 0.0) + acq.cost;
+	costByFro[acq.fro] = (costByFro[acq.fro] ?? 0.0) + acq.cost;
+    }
+    for(const [kw,cost] of Object.entries(costByKw))
+	tbody.appendChild(acqTabTrSum(cost, '._kws', kw));
+    for(const [buyr,cost] of Object.entries(costByBuyr))
+	tbody.appendChild(acqTabTrSum(cost, '._buyr', buyr));
+    for(const [fro,cost] of Object.entries(costByFro))
+	tbody.appendChild(acqTabTrSum(cost, '._fro', fro));
+    tbody.appendChild(acqTabTrSum(cost, '._part', 'total'));
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// AcqV bill of materials
+//-----------------------------------------------------------------------------------------------------------------------
+
+var AcqV = [
     new Acq(7833.8848,  32,  32, ['panel'], 's', 'platt', PanelSil360, null),
 
     new Acq( 182.094,   31,  24, ['rack'], 's', 'platt', IronRidgeCamo, null),
@@ -80,11 +142,11 @@ var Acqs = [
 // leftover
 //-----------------------------------------------------------------------------------------------------------------------
 
-function leftoversTr(acq) {
+function leftoverTabTr(acq) {
     acq.leftQty = acq.qty - acq.qtyUsed;
     acq.leftCost = acq.cost * acq.leftQty / acq.qty;
 
-    const tr = temRootClone('leftoversTr_tem');
+    const tr = temRootClone('leftoverTabTr_tem');
     tr.querySelector('._cost').textContent = acq.cost.toFixed(2);
     tr.querySelector('._qty').textContent = acq.qty;
     tr.querySelector('._leftQty').textContent = acq.leftQty;
@@ -92,25 +154,26 @@ function leftoversTr(acq) {
     acq.part.descFill(tr.querySelector('._part'));
     return tr;
 }
-function leftoversTrSum(leftCost, k, v) {
-    const tr = temRootClone('leftoversTr_tem');
+
+function leftoverTabTrSum(leftCost, k, v) {
+    const tr = temRootClone('leftoverTabTr_tem');
     tr.querySelector('._leftCost').textContent = leftCost.toFixed(2);
     tr.querySelector(k).textContent = v;
     return tr;
 }
 
-function leftoversTable(acqs) {
-    const tbody = document.getElementById('leftoversTbody');
+function leftoverTabFill(acqV) {
+    const tbody = document.getElementById('leftoverTab').querySelector('TBODY');
     let leftCost = 0.0;
-    for(const acq of acqs) {
+    for(const acq of acqV) {
 	if(acq.qtyUsed < acq.qty
 	   && 's' == acq.buyr
 	   && acq.kws.includes('elec')) {
-	    tbody.appendChild(leftoversTr(acq));
+	    tbody.appendChild(leftoverTabTr(acq));
 	    leftCost += acq.leftCost;
 	}
     }
-    tbody.appendChild(leftoversTrSum(leftCost, '._part', 'total'));
+    tbody.appendChild(leftoverTabTrSum(leftCost, '._part', 'total'));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -118,6 +181,6 @@ function leftoversTable(acqs) {
 //-----------------------------------------------------------------------------------------------------------------------
 
 function bodyOnload() {
-    acqTable(Acqs);
-    leftoversTable(Acqs);
+    acqTabFill(AcqV);
+    leftoverTabFill(AcqV);
 }

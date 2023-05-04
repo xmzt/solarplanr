@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <title>Drawings - Solarplanr</title>
+  <link type="text/css" rel="stylesheet" href="base.css">
+  <script type="text/javascript" src="base.js"></script>
+  <script type="text/javascript" src="geom.js"></script>
+  <script type="text/javascript" src="part.js"></script>
+  <script type="text/javascript" src="partCat.js"></script>
+  <script type="text/javascript" src="rail.js"></script>
+  <script type="text/javascript" src="rack.js"></script>
+  <script type="text/javascript" src="roof.js"></script>
+  <script type="text/javascript" src="partTab.js"></script>
+  <script type="text/javascript" src="sys.js"></script>
+  <script type="text/javascript" src="ui.js"></script>
+  <script type="text/javascript" src="siteB.js"></script>
+  <script type="text/javascript" src="siteA.js"></script>
+</head>
+
+<body onload="bodyOnload()">
+  <div id="uiSysDiv"></div>
+  
+  <div class="para">
+    <b>Locality info</b>
+    <br>Building code ASCE 7-10.
+    <br>Wind Exposure B - In Town
+    <br>Basic wind speed 110 MPH, panel rating = 1600 Pa
+    <br>Ground snow load 20 PSF
+    <br>Seismic Factor 0.98 SS
+    <br>Elevation 209 Ft
+    <br>Topographical Factor 1 KZT
+  </div>
+
+  <template id="partTabTr_tem">
+    <tr class="_root">
+      <td class="_desc"></td>
+      <td class="_price"></td>
+      <td class="_totN"></td>
+      <td class="_totCost"></td>
+    </tr>
+  </template>
+
+  <template id="railGroupLog_tem">
+    <div class="_root log displaynone"></div>
+  </template>
+
+  <template id="railGroupStatus_tem">
+    <div class="_root">
+      <span class="_status status"></span>
+      <button class="_logShow">Log Show/Hide</button>
+    </div>
+  </template>
+  
+  <template id="roof_tem">
+    <div class="_root">
+      <div class="_desc"></div>
+      <!-- canvas -->
+    </div>
+  </template>
+  
+  <template id="sys_tem">
+    <div class="_root">
+      <div class="_roofDiv roofRow"></div>
+      <table class="colorTab partTab">
+	<thead>
+	  <tr class="_partTabHeadTr">
+	    <td>Description</td>
+	    <td>Price</td>
+	    <td class="_totN">Total N</td>
+	    <td class="_totCost">Total Cost</td>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr class="_partTabTotTr">
+	    <td class="_desc">
+	      <b>Total</b><br>
+	      Watts: <span class="_totWatts"></span><br>
+	      $/Watt: <span class="_totDpw"></span><br>
+	      <div class="_railGroupStatusDiv"></div>
+	    </td>
+	    <td class="_price"></td>
+	    <td class="_totN"></td>
+	    <td class="_totCost"></td>
+	  </tr>
+	</tbody>
+      </table>
+      <div class="_railGroupLogDiv"></div>
+    </div>
+  </template>
+  
+  <template id="uiSys_tem">
+    <div class="_root uiSys">
+      <div>
+	<button class="_formAdd">Add roof</button>
+	<button class="_go">Go</button>
+	<button class="_configClear">Config clear</button>
+      </div>
+      <div class="_status"></div>
+      <div class="_sys"></div>
+    </div>
+  </template>
+
+  <template id="uiSysForm_tem">
+    <span class="_root">
+      <br class="_br">
+      <select class="_roof"><option value="">--Select roof plan--</option></select>
+      <select class="_layout"><option value="">--Select panel layout--</option></select>
+      <select class="_rack"><option value="">--Select racking--</option></select>
+      <button class="_remove">Remove roof</button>
+    </span>
+  </template>
+
+</body>

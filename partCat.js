@@ -1,10 +1,10 @@
-//include solarBase.js
+//include part.js
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Part derived
 //-----------------------------------------------------------------------------------------------------------------------
 
-var PanelParts = [];
+var PanelPartV = [];
 
 class PanelPart extends Part {
     constructor(watts, dimL, dimS, dimH, war, clampL0, clampL1, clampS0, clampS1, desc, notes) {
@@ -18,7 +18,7 @@ class PanelPart extends Part {
 	this.clampL1 = clampL1;
 	this.clampS0 = clampS0;
 	this.clampS1 = clampS1;
-	PanelParts.push(this);
+	PanelPartV.push(this);
     }
 
     landscape() { return new PanelOrient(this, this.dimL, this.dimS, this.clampS0, this.clampS1); }
@@ -527,6 +527,6 @@ var PenetrationFlashing = new Part('Nichols F121 Roof Flashing 1/2" - 1", 9" x 1
     new Price1(11.63, 'https://www.platt.com/p/0093946/nichols/roof-flashing-featuring-a-26-gauge-galvanized-bass-size-9x12/78632326972%20/nicf121'),
 ]);
 
-var OtherParts = new Part('Other', [
+var OtherPart = new Part('Other', [
     new Price1Id(5136.49, 'other'),
 ]);

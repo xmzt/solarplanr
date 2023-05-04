@@ -1,15 +1,13 @@
-//include solarSys.js
+//include sys.js
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // globals
-//=======================================================================================================================
 
 var UiSysV = [];
 var UiSysDiv;
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // helpers
-//=======================================================================================================================
 
 function uiOptionElem(idHtml) {
     const option = document.createElement('option');
@@ -22,22 +20,21 @@ function uiSelectValue(elem) {
     return elem.item(elem.selectedIndex).value;
 }
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // UiSysForm
-//=======================================================================================================================
 
 class UiSysForm {
     static Config0 = { roof:null, layout:null, rack:null };
 
-    constructor(ui, config) {
-	this.ui = ui;
-	this.root = temRootClone('sysForm_tem');
-	this.brElem = this.root.querySelector('._br');
-	this.roofElem = this.root.querySelector('._roof');
-	this.layoutElem = this.root.querySelector('._layout');
-	this.rackElem = this.root.querySelector('._rack');
-	this.removeElem = this.root.querySelector('._remove');
-	this.removeElem.addEventListener('click', (ev) => this.ui.formRemove(this));
+    constructor(sys, config) {
+	this.sys = sys;
+	const root = this.root = temRootClone('uiSysForm_tem');
+	this.brElem = root.querySelector('._br');
+	this.roofElem = root.querySelector('._roof');
+	this.layoutElem = root.querySelector('._layout');
+	this.rackElem = root.querySelector('._rack');
+	this.removeElem = root.querySelector('._remove');
+	this.removeElem.addEventListener('click', (ev) => this.sys.formRemove(this));
 	
 	let option, roofClasSelected;
         for(const roofClas of RoofClasV) {
@@ -92,36 +89,35 @@ class UiSysForm {
 		v = uiSelectValue(this.rackElem);
 		if(undefined !== (rackClas = RackClasV.find((x) => v == x.IdHtml))) {
 		    const desc = `${roofId}: ${roofClas.IdHtml}, ${layout.idHtml}, ${rackClas.IdHtml}`;
-		    sys.roofAdd(roof = new roofClas(sys, roofId, desc));
+		    const roof = new roofClas(sys, roofId, desc);
+		    sys.roofAdd(roof);
 		    roof.rackAdd(rack = new rackClas(roof));
 		    layout.rackPopu(rack, roof);
-		    this.ui.statusElem.textContent = null;
+		    this.sys.statusElem.textContent = null;
 		    return 0;
 		    
-		} else this.ui.statusElem.textContent = 'rack not selected';
-	    } else this.ui.statusElem.textContent = 'layout not selected';
-	} else this.ui.statusElem.textContent = 'roof plan not selected';
+		} else this.sys.statusElem.textContent = 'rack not selected';
+	    } else this.sys.statusElem.textContent = 'layout not selected';
+	} else this.sys.statusElem.textContent = 'roof plan not selected';
 	return -1;
     }
 }
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // UiSys
-//=======================================================================================================================
 
 class UiSys {
     static Config0 = [ UiSysForm.Config0 ];
 
     constructor(config) {
+	const root = this.root = temRootClone('uiSys_tem');
 	this.formV = [];
-
-	this.root = temRootClone('uiSys_tem');
-	this.formAddElem = this.root.querySelector('._formAdd');
+	this.formAddElem = root.querySelector('._formAdd');
 	this.formAddElem.addEventListener('click', (ev) => this.formAdd(new UiSysForm(this, UiSysForm.Config0)));
-	this.root.querySelector('._go').addEventListener('click', (ev) => this.goStore());
-	this.root.querySelector('._configClear').addEventListener('click', (ev) => configClear());
-	this.statusElem = this.root.querySelector('._status');
-	this.sysElem = this.root.querySelector('._sys');
+	root.querySelector('._go').addEventListener('click', (ev) => this.goStore());
+	root.querySelector('._configClear').addEventListener('click', (ev) => configClear());
+	this.statusElem = root.querySelector('._status');
+	this.sysElem = root.querySelector('._sys');
 
 	for(const x of config)
 	    this.formAdd(new UiSysForm(this, x));
@@ -156,8 +152,8 @@ class UiSys {
 	    if(this.formV[i].sysPopu(sys, `roof${i}`))
 		return;
 	}
-
-	this.sysElem.parentNode.replaceChild(sys.root, this.sysElem);
+	// add sys to document before sysFin so that canvas ctx is valid
+	this.root.replaceChild(sys.root, this.sysElem);
 	this.sysElem = sys.root;
 	sys.sysFin();
     }
@@ -169,9 +165,8 @@ class UiSys {
     
 }
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // ui
-//=======================================================================================================================
 
 function uiSysAdd(uiSys) {
     UiSysV.push(uiSys);
@@ -199,9 +194,8 @@ function uiConfigStore() {
     window.localStorage.setItem('uiConfig', dst);
 }
 
-//=======================================================================================================================
+//-----------------------------------------------------------------------------------------------------------------------
 // bodyOnload
-//=======================================================================================================================
 
 function bodyOnload() {
     railrHandlerInit(); // worker thread

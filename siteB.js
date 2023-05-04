@@ -1,4 +1,4 @@
-//include solarSys.js
+//include sys.js
 
 class B_Roof extends Roof {
     static IdHtml = 'SiteB_Roof';
