@@ -22,11 +22,11 @@ class Rack {
     constructor(roof) {
 	this.roof = roof;
 	this.railGroup = roof.sys.railGroupGetOrNew(this.constructor.RailGroupClas);
-	this.panelRV = [];
+	this.panelV = [];
     }
 
     draw(ctx) {
-	for(const panelR of this.panelRV)
+	for(const panelR of this.panelV)
 	    panelR.drawPanel(ctx);
     }
 
@@ -36,7 +36,7 @@ class Rack {
 	for(let iY = nY; iY--; ) {
 	    let x = x0;
 	    for(let iX = 0; iX < nX; iX++) {
-		this.panelRV.push(r = new PanelOrientR2(x, y - orient.sizeY, x + orient.sizeX, y, orient));
+		this.panelV.push(r = new PanelOrientR2(x, y - orient.sizeY, x + orient.sizeX, y, orient));
 		x = r.x1 + this.panelGapX;
 	    }
 	    y = r.y0 - this.panelGapY;
@@ -50,7 +50,7 @@ class Rack {
 	for(let iY = 0; iY < nY; iY++) {
 	    let x = x0;
 	    for(let iX = 0; iX < nX; iX++) {
-		this.panelRV.push(r = new PanelOrientR2(x, y, x + orient.sizeX, y + orient.sizeY, orient));
+		this.panelV.push(r = new PanelOrientR2(x, y, x + orient.sizeX, y + orient.sizeY, orient));
 		x = r.x1 + this.panelGapX;
 	    }
 	    y = r.y1 + this.panelGapY;
@@ -64,7 +64,7 @@ class Rack {
 	for(let iY = nY; iY--; ) {
 	    let x = x1;
 	    for(let iX = nX; iX--; ) {
-		this.panelRV.push(r = new PanelOrientR2(x - orient.sizeX, y - orient.sizeY, x, y, orient));
+		this.panelV.push(r = new PanelOrientR2(x - orient.sizeX, y - orient.sizeY, x, y, orient));
 		x = r.x0 - this.panelGapX;
 	    }
 	    y = r.y0 - this.panelGapY;
@@ -78,7 +78,7 @@ class Rack {
 	for(let iY = 0; iY < nY; iY++) {
 	    let x = x1;
 	    for(let iX = nX; iX--; ) {
-		this.panelRV.push(r = new PanelOrientR2(x - orient.sizeX, y, x, y + orient.sizeY, orient));
+		this.panelV.push(r = new PanelOrientR2(x - orient.sizeX, y, x, y + orient.sizeY, orient));
 		x = r.x0 - this.panelGapX;
 	    }
 	    y = r.y1 + this.panelGapY;
@@ -87,7 +87,7 @@ class Rack {
     }
 
     partAddNrail() {
-	for(const panelR of this.panelRV) {
+	for(const panelR of this.panelV) {
 	    this.roof.partAdd(panelR.orient.part, 1);
 	    this.roof.sys.totWatts += panelR.orient.part.watts;
 	}
@@ -150,7 +150,7 @@ class RackTworail extends Rack {
     roofFin() {
 	// compute rail regions
 	let bondI = 0;
-	for(const panelR of this.panelRV) {
+	for(const panelR of this.panelV) {
 	    const orient = panelR.orient;
 	    const reg0 = this.railRegAdd(panelR.x0, panelR.y0 + orient.clamp0, panelR.x1, panelR.y0 + orient.clamp1);
 	    const reg1 = this.railRegAdd(panelR.x0, panelR.y1 - orient.clamp1, panelR.x1, panelR.y1 - orient.clamp0);
@@ -196,7 +196,7 @@ class RackIronRidgeXR extends RackTworail {
 	this.roof.partAdd(IronRidgeBolt, this.footV.length);
 	this.roof.partAdd(IronRidgeUfo, this.midV.length);
 	this.roof.partAdd(IronRidgeGroundLug, this.groundLugN);
-	this.roof.partAdd(IronRidgeMlpe, this.panelRV.length);
+	this.roof.partAdd(IronRidgeMlpe, this.panelV.length);
 	// rest (i.e. endV) handled by subclass
     }
 }
@@ -260,7 +260,7 @@ class RackUniracSm extends RackTworail {
 	this.roof.partAdd(UniracSmEnd, this.endV.length);
 	this.roof.partAdd(UniracSmMid, this.midV.length);
 	this.roof.partAdd(UniracSmGroundLug, this.groundLugN);
-	this.roof.partAdd(UniracSmMlpe, this.panelRV.length);
+	this.roof.partAdd(UniracSmMlpe, this.panelV.length);
     }
 }
 

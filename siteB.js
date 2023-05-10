@@ -51,6 +51,32 @@ class B_Roof extends Roof {
 	    let b = rack.panelBlockLeftDn(orient, b0.x0, b0.y0 - rack.panelGapY, 11, 1);
 	    b = rack.panelBlockLeftDn(orient, b.x0, b.y0 - rack.panelGapY, 6, 1);
 	}),
+	new Layout('Rec405AA Portrait 2', function(rack, roof) {
+	    const orient = PanelRec405AA.portrait();
+	    const b0 = rack.panelBlockLeftDn(orient, roof.ac.x + 0, roof.ac.y - 32, 12, 1);
+	    let b = rack.panelBlockLeftDn(orient, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 11, 1);
+	    b = rack.panelBlockLeftDn(orient, b0.x0, b.y0 - rack.panelGapY, 7, 1);
+	}),
+	new Layout('Silfab360 portrait', function(rack, roof) {
+	    const orient = PanelSil360.portrait();
+	    const b0 = rack.panelBlockLeftDn(orient, roof.ac.x + 10, roof.ac.y - 32, 7, 1);
+	    let b = rack.panelBlockLeftDn(orient, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 6, 1);
+	    b = rack.panelBlockLeftDn(orient, b0.x0, b.y0 - rack.panelGapY, 7, 1);
+	    b = rack.panelBlockLeftDn(orient, b.x1 + rack.panelGapX, roof.bd.y - 50, 5, 1);
+	    b = rack.panelBlockLeftDn(orient, b.x0, b.y0 - rack.panelGapY, 5, 1);
+	}),
+	new Layout('Silfab360 pack-em-in', function(rack, roof) {
+	    const port = PanelSil360.portrait();
+	    const land = PanelSil360.landscape();
+	    let b0 = rack.panelBlockLeftDn(port, roof.ac.x + 5, roof.ac.y - 32, 7, 1);
+	    let b = rack.panelBlockLeftDn(port, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 6, 1);
+	    b = rack.panelBlockLeftDn(port, b0.x0, b.y0 - rack.panelGapY, 7, 1);
+	    
+	    b = rack.panelBlockLeftDn(port, b.x1 + rack.panelGapX, roof.bd.y - 32, 5, 1);
+	    b0 = rack.panelBlockLeftDn(port, b.x0, b.y0 - rack.panelGapY, 5, 1);
+	    b = rack.panelBlockLeftDn(land, b0.x0, b0.y0 - rack.panelGapY, 1, 1);
+	    b = rack.panelBlockRightDn(land, b0.x1, b0.y0 - rack.panelGapY, 1, 1);
+	}),
     ];
 }
 

@@ -25,6 +25,7 @@ const PathStrokeStyle = '#000';
 const PathLineWidth = 3;
 const PipeFillStyle = '#4408';
 const PanelFillStyle = '#ccc8';
+const PanelStrokeStyle = '#000';
 const RafterLineDash = [4,8];
 const RafterStrokeStyle = '#6668';
 const RailRegFillStyle = '#ace6';

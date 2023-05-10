@@ -141,6 +141,14 @@ class R2 {
 	ctx.restore();
 	return this;
     }
+    drawStrokeStyle(ctx, strokeStyle) {
+	ctx.save();
+	ctx.strokeStyle = strokeStyle;
+	ctx.beginPath();
+	ctx.strokeRect(this.x0, this.y0, this.x1 - this.x0, this.y1 - this.y0);
+	ctx.restore();
+	return this;
+    }
     drawChimney(ctx) { return this.drawFillStyle(ctx, ChimneyFillStyle); }
     drawFireWalk(ctx) { return this.drawFillStyle(ctx, FireWalkFillStyle); }
     drawSkirt(ctx) { return this.drawFillStyle(ctx, SkirtFillStyle); }
@@ -154,6 +162,7 @@ class PanelOrientR2 extends R2 {
     }
 
     drawPanel(ctx) {
+	this.drawStrokeStyle(ctx, PanelStrokeStyle);
 	this.drawFillStyle(ctx, PanelFillStyle);
 	new R2(this.x0, this.y0 + this.orient.clamp0, this.x1, this.y0 + this.orient.clamp1)
 	    .drawFillStyle(ctx, RailRegFillStyle);
