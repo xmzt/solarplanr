@@ -87,10 +87,8 @@ class Rack {
     }
 
     partAddNrail() {
-	for(const panelR of this.panelV) {
-	    this.roof.partAdd(panelR.orient.part, 1);
-	    this.roof.sys.totWatts += panelR.orient.part.watts;
-	}
+	for(const panelR of this.panelV)
+	    this.roof.partAddWatts(panelR.orient.part, 1, panelR.orient.part.watts);
     }
 }
 

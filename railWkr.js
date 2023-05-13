@@ -24,9 +24,7 @@ function segAEDimLV(seg) {
     return dst;
 }
 
-function go(reqId, railV, partV) {
-    railV = railV.map((x,i) => { return { id:i, len:x }; });
-    partV = partV.map((x,i) => { return { id:i, dimL:x[0], cost:x[1] }; });
+function go(reqId, railV, partV, spliceCost) {
     let dimLMax = partV.reduce((p,x) => x.dimL > p ? x.dimL : p, 0);
 
     //-------------------------------------------------------------------------------------------------------------------
@@ -35,6 +33,20 @@ function go(reqId, railV, partV) {
     // only include combinations with minimum number of splices (minimum segN). may result in suboptimal solution.
     // combinations with a positive need need a cutoff from another combination
     // combinations with a negative need has excess cutoff
+    //
+    // railV:
+    //   rail:
+    //     id, len: from caller
+    //     segN: number of segments
+    //     comV: potential combinations
+    //       com:
+    //         railId: id of parent rail
+    //         segN: number of segments in parent rail 
+    //         cost: cost of this combination in full parts used
+    //         need: how much more is needed (negative means this com has surplus to be used elsewhere)
+    //         partIdV: part.id of each full part used 
+    //
+    // needMap: set of all possible values of com.need  
     
     const needMap = new Map();
     for(const rail of railV) {
@@ -51,10 +63,10 @@ function go(reqId, railV, partV) {
 	    //console.log(`pass1 ${rail.id}:${rail.len} segI=${segI} part=${partV[partI].dimL} cost=${cost} need=${need} partIdV=[${partIdV.slice(segI).join(' ')}]`);
 	    if(! segI) {
 		if(0 >= need)
-		    comAdd({ rail:rail, cost:cost, need:need, partIdV:partIdV.slice(segI) });
+		    comAdd({ railId:rail.id, segN:rail.segN, cost:cost, need:need, partIdV:partIdV.slice(segI) });
 	    } else {
 		if(dimLMax > need)
-		    comAdd({ rail:rail, cost:cost, need:need, partIdV:partIdV.slice(segI) });
+		    comAdd({ railId:rail.id, segN:rail.segN, cost:cost, need:need, partIdV:partIdV.slice(segI) });
 		segI--;
 		do {
 		    partIdV[segI] = partI;
@@ -76,6 +88,9 @@ function go(reqId, railV, partV) {
     // bin  +-4: +4 -4 -5
     // bin  +-2: +2 +1 -2 -3
     // bin    0: 0
+    //
+    // result: needMap changed so that values are the binned need. i.e. multiple need keys may
+    // point to same need value.
     
     const needV = Array.from(needMap.keys()).sort((a,b) => a - b);
     let needB = null;
@@ -106,7 +121,7 @@ function go(reqId, railV, partV) {
     //     reduce items in comV with same needB to one item with minimal cost.
     //     sort comV by decreasing needB
     // sort all rails decreasing by max com.needB
-
+    
     const status = {
 	iterN:1,
 	iterI:0,
@@ -150,6 +165,8 @@ function go(reqId, railV, partV) {
     // find best combination for each rail, matching positive and negative needs
 
     status.tsB = status.tsA = Perf.now();
+    let iterINext = 50000;
+    let bestNPrev = 0;
     let bestCost = Infinity;
     let bestComV = null;
     const comV = [];
@@ -163,7 +180,6 @@ function go(reqId, railV, partV) {
     }
     
     for(;;) {
-	status.iterI++;
 	if(0 >= needAcc) {
 	    status.accOkN++;
 	    // try to match up needs
@@ -187,9 +203,14 @@ function go(reqId, railV, partV) {
 		    break;
 	    }
 	}
-	if(0 == (status.iterI % 50000)) {
+	if(++status.iterI == iterINext) {
 	    status.tsB = Perf.now();
 	    self.postMessage([ reqId, 'railrRspStatus', status]);
+	    iterINext += 50000;
+	    if(status.bestN != bestNPrev) {
+		self.postMessage([ reqId, 'railrRspBest', bestComV ]);
+		bestNPrev = status.bestN;
+	    }
 	}
 	    
 	// next iteration
@@ -215,12 +236,9 @@ function go(reqId, railV, partV) {
     // post final status and response
 
     self.postMessage([ reqId, 'railrRspStatus', status]);
-    for(const com of bestComV) {
-	com.railId = com.rail.id;
-	com.segN = com.rail.segN;
-	delete com.rail;
-    }
-    self.postMessage([ reqId, 'railrRspFin', bestComV ]);
+    if(status.bestN != bestNPrev)
+	self.postMessage([ reqId, 'railrRspBest', bestComV ]);
+    self.postMessage([ reqId, 'railrRspFin' ]);
 }
 
 self.onmessage = (ev) => go(...ev.data); 

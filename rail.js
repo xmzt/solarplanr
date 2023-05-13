@@ -7,9 +7,6 @@
 // globals
 
 var RailGroupClasId = 0;
-var RailrHandlerIdAlloc;
-var RailrHandlerById;
-var RailrWorker;
 
 //-----------------------------------------------------------------------------------------------------------------------
 // RailRegR2
@@ -23,23 +20,29 @@ class RailRegR2 extends R2 {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// railr, interface to worker thread
+// RailWkrCtrl
 
-function railrHandlerInit() {
-    RailrHandlerIdAlloc = 0;
-    RailrHandlerById = {};
-    RailrWorker = new Worker('railWkr.js');
-    RailrWorker.onmessage = (ev) => {
-	const handler = RailrHandlerById[ev.data[0]];
-	handler[ev.data[1]].apply(handler, ev.data.slice(2));
-    };
-}
+class RailWkrCtrl {
+    constructor() {
+	this.reqI = 0;
+	this.reqHandByI = {};
+	this.wkr = new Worker('railWkr.js');
+	this.wkr.onmessage = (ev) => {
+	    const hand = this.reqHandByI[ev.data[0]];
+	    hand[ev.data[1]].apply(hand, ev.data.slice(2)); // todo remove slice?
+	};
+    }
 
-function railrReq(...argV) {
-    const id = RailrHandlerIdAlloc++;
-    RailrHandlerById[id] = argV[0];
-    argV[0] = id;
-    RailrWorker.postMessage(argV);
+    req(...argV) {
+	const i = this.reqI++;
+	this.reqHandByI[i] = argV[0];
+	argV[0] = i;
+	this.wkr.postMessage(argV);
+    }
+
+    terminate() {
+	this.wkr.terminate();
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -57,6 +60,7 @@ class RailGroup {
 	this.statusSpan = this.statusDiv.querySelector('._status');
 	this.statusDiv.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
 	this.logDiv = temRootClone('railGroupLog_tem');
+	this.bestComV = null;
     }
 
     logShowClick() {
@@ -67,14 +71,51 @@ class RailGroup {
 	this.railV.push(rail);
     }
     
-    railrReq() {
-	railrReq(this,
-		  this.railV.map(rail => rail.x1 - rail.x0), // todo horizontal-only
-		  this.constructor.RailPartV.map(x => [ x.dimL, x.price() ]));
+    railWkrReq() {
+	// todo rails are currently horizontal-only
+	this.sys.railWkrCtrl.req(
+	    this,
+	    this.railV.map((r,i) => { return { id:i, len:(r.x1 - r.x0) }; }),
+	    this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.price() }; }),
+	    this.constructor.SplicePart.price(),
+	);
     }
 
     // railRsp* are rpc from worker thread (railWkr.js)
     
+    railrRspBest(comV) {
+	// undo previous best
+	if(null !== this.bestComV) {
+	    this.sys.ctxRailClear();
+	    for(const com of this.bestComV) {
+		this.sys.partTab.partAddTot(this.constructor.SplicePart, -(com.segN - 1));
+		for(const partId of com.partIdV) {
+		    const part = this.constructor.RailPartV[partId];
+		    this.sys.partTab.partAddTot(part, -1);
+		}
+	    }
+	}
+	
+	this.bestComV = comV;
+	this.logDiv.innerHTML += `best\n`;
+	for(const com of comV) {
+	    const rail = this.railV[com.railId];
+	    this.logDiv.innerHTML +=
+		`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`;
+	    this.sys.partTab.partAddTot(this.constructor.SplicePart, com.segN - 1);
+	    let x = 0;
+	    for(const partId of com.partIdV) {
+		const part = this.constructor.RailPartV[partId];
+		this.sys.partTab.partAddTot(part, 1);
+		if(x)
+		    new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctxRail);
+		x += part.dimL;
+	    }
+	    if(x && 0 < com.need)
+		new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctxRail);
+	}
+    }
+
     railrRspLog(msg) {
 	this.logDiv.innerHTML += `${msg}\n`;
     }
@@ -84,24 +125,8 @@ class RailGroup {
 	    `${s.iterI}/${s.iterN} -> ${s.accOkN} -> ${s.okN} -> ${s.bestN}, ${s.tsB - s.tsA} ms`;
     }
 
-    railrRspFin(comV) {
+    railrRspFin() {
 	this.logDiv.innerHTML += `railrRspFin\n`;
-	for(const com of comV) {
-	    const rail = this.railV[com.railId];
-	    this.logDiv.innerHTML +=
-		`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`;
-	    if(1 < com.segN) this.sys.partTab.partAddTot(this.constructor.SplicePart, com.segN - 1);
-	    let x = 0;
-	    for(const partId of com.partIdV) {
-		const part = this.constructor.RailPartV[partId];
-		this.sys.partTab.partAddTot(part, 1);
-		if(x)
-		    new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctx);
-		x += part.dimL;
-	    }
-	    if(x && 0 < com.need)
-		new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctx);
-	}
 	this.sys.pendDec();
     }
 }

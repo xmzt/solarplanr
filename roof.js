@@ -115,6 +115,10 @@ class Roof {
 	this.sys.partTab.partAddCol(part, n, this.partTabColI);
     }
     
+    partAddWatts(part, n, watts) {
+	this.sys.partTab.partAddColWatts(part, n, this.partTabColI, watts);
+    }
+    
     rackAdd(rack) {
 	this.rackV.push(rack);
     }
@@ -131,19 +135,29 @@ class Roof {
 	bRail.footV = this.footVFromHoriz(bRail);
 	return (bRail.footV.length <= aRail.footV.length) ? bRail : aRail;
     }
+    
+    canSizeCtx(can) {
+	// todo allow for negative coords
+	can.width = (RoofCanvasMargin*2 + this.boundR.x1 - this.boundR.x0) * RoofCanvasScale;
+	can.height = (RoofCanvasMargin*2 + this.boundR.y1 - this.boundR.y0) * RoofCanvasScale;
+	const xfrmY = can.height - (RoofCanvasMargin * RoofCanvasScale);
+	const ctx = can.getContext('2d');
+	ctx.setTransform(RoofCanvasScale, 0, 0, -RoofCanvasScale, RoofCanvasMargin, xfrmY);
+	return ctx;
+    }
 
+    ctxRailClear() {
+	const r = this.boundR;
+	//this.ctxRail.beginPath();
+	this.ctxRail.clearRect(r.x0, r.y0, r.x1-r.x0, r.y1-r.y0);
+    }
+    
     roofFin() {
 	const roofElem = temRootClone('roof_tem');
 	roofElem.querySelector('._desc').innerHTML = this.descHtml;
-	const canvas = document.createElement('canvas');
-	canvas.width = (RoofCanvasMargin*2 + this.boundR.x1 - this.boundR.x0) * RoofCanvasScale;
-	canvas.height = (RoofCanvasMargin*2 + this.boundR.y1 - this.boundR.y0) * RoofCanvasScale;
-	const xfrmY = canvas.height - (RoofCanvasMargin * RoofCanvasScale);
-	roofElem.appendChild(canvas);
 	this.sys.root.querySelector('._roofDiv').appendChild(roofElem);
-	
-	this.ctx = canvas.getContext('2d');
-	this.ctx.setTransform(RoofCanvasScale, 0, 0, -RoofCanvasScale, RoofCanvasMargin, xfrmY);
+	this.ctx = this.canSizeCtx(roofElem.querySelector('._can'));
+	this.ctxRail = this.canSizeCtx(roofElem.querySelector('._canRail'));
 	this.draw(this.ctx);
 	for(const rack of this.rackV) rack.roofFin();
     }

@@ -8,6 +8,8 @@ BODY { margin:0; padding:0; }
 .acqTab TD:nth-child(3) { text-align:right; }
 .acqTab TD:nth-child(4) { text-align:right; }
 
+.canZ1 { position:absolute; top:0; left:0; z-index:1; }
+
 .colorTab THEAD TD { font-weight:bold; }
 .colorTab TD:nth-child(odd) { background-color:#eef; }
 .colorTab TD:nth-child(even) { background-color:#ddf; }
@@ -46,6 +48,8 @@ BODY { margin:0; padding:0; }
 
 .pend TD:nth-child(odd) { background-color:#ff0; }
 .pend TD:nth-child(even) { background-color:#ee0; }
+
+.rel0 { position:relative; top:0; left:0; }
 
 .roofRow { display:block flex; flex-flow: row wrap; }
 .roofRow > * { flex:0 0 auto; }

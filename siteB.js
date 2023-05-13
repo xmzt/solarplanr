@@ -1,4 +1,15 @@
 //include sys.js
+//
+// PVWatts.nrel.gov
+//
+// Enphase IQ8PLUS-72-M-US  290W $189.00 1.39 11.205
+// Enphase IQ8M-72-M-US     325W $209.50 1.24 11.189
+// Enphase IQ8A-72-M-US     349W $223.00 1.16 11.177
+// Enphase IQ8H-240-72-M-US 380W $242.00
+
+// 01 0.97284
+// 07 0.992556
+
 
 class B_Roof extends Roof {
     static IdHtml = 'SiteB_Roof';
@@ -45,37 +56,47 @@ class B_Roof extends Roof {
     //-------------------------------------------------------------------------------------------------------------------
 
     static LayoutV = [
+	new Layout('Seg400/Ureco400 landscape,stagger', function(rack, roof) {
+	    const port = PanelSeg400.portrait();
+	    const land = PanelSeg400.landscape();
+
+	    let b = rack.panelBlockLeftDn(land, roof.ac.x + 5, roof.ac.y - 32, 4, 2);
+	    b = rack.panelBlockRightDn(land, b.x1, b.y0 - rack.panelGapY, 3, 1);
+	    b = rack.panelBlockRightDn(land, b.x1, b.y0 - rack.panelGapY, 4, 2);
+	    
+	    b = rack.panelBlockLeftDn(land, b.x1 + rack.panelGapX, roof.bd.y - 32, 1, 4);
+	    b = rack.panelBlockLeftDn(land, b.x1 + rack.panelGapX, b.y1, 1, 3);
+	    b = rack.panelBlockLeftDn(land, b.x1 + rack.panelGapX, b.y1, 1, 4);
+	}),
+	new Layout('Seg400/Ureco400', function(rack, roof) {
+	    const port = PanelSeg400.portrait();
+	    let b = rack.panelBlockRightDn(port, roof.dd.x - 36*2.54, roof.ac.y - 31, 10, 1);
+	    b = rack.panelBlockRightDn(port, b.x1, b.y0 - rack.panelGapY, 10, 1);
+	    b = rack.panelBlockLeftDn(port, roof.aa.x + 20, b.y0 - rack.panelGapY, 6, 1);
+	}),
+	new Layout('Rec370', function(rack, roof) {
+	    const port = PanelRec370.portrait();
+	    let b = rack.panelBlockRightDn(port, roof.dd.x - 36*2.54, roof.ac.y - 31, 11, 1);
+	    b = rack.panelBlockRightDn(port, b.x1, b.y0 - rack.panelGapY, 11, 1);
+	    b = rack.panelBlockLeftDn(port, b.x0, b.y0 - rack.panelGapY, 6, 1);
+	}),
+	new Layout('Boviet370', function(rack, roof) {
+	    const port = PanelBoviet370.portrait();
+	    let b = rack.panelBlockRightDn(port, roof.dd.x - 36*2.54, roof.ac.y - 36, 11, 1);
+	    b = rack.panelBlockRightDn(port, b.x1, b.y0 - rack.panelGapY, 11, 1);
+	    b = rack.panelBlockLeftDn(port, b.x0, b.y0 - rack.panelGapY, 6, 1);
+	}),
 	new Layout('Rec405AA Portrait', function(rack, roof) {
-	    const orient = PanelRec405AA.portrait();
-	    const b0 = rack.panelBlockLeftDn(orient, roof.vent0.x1 + 5, roof.ac.y - 32, 11, 1);
-	    let b = rack.panelBlockLeftDn(orient, b0.x0, b0.y0 - rack.panelGapY, 11, 1);
-	    b = rack.panelBlockLeftDn(orient, b.x0, b.y0 - rack.panelGapY, 6, 1);
+	    const port = PanelRec405AA.portrait();
+	    const b0 = rack.panelBlockLeftDn(port, roof.vent0.x1 + 5, roof.ac.y - 32, 11, 1);
+	    let b = rack.panelBlockLeftDn(port, b0.x0, b0.y0 - rack.panelGapY, 11, 1);
+	    b = rack.panelBlockLeftDn(port, b.x0, b.y0 - rack.panelGapY, 6, 1);
 	}),
 	new Layout('Rec405AA Portrait 2', function(rack, roof) {
-	    const orient = PanelRec405AA.portrait();
-	    const b0 = rack.panelBlockLeftDn(orient, roof.ac.x + 0, roof.ac.y - 32, 12, 1);
-	    let b = rack.panelBlockLeftDn(orient, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 11, 1);
-	    b = rack.panelBlockLeftDn(orient, b0.x0, b.y0 - rack.panelGapY, 7, 1);
-	}),
-	new Layout('Silfab360 portrait', function(rack, roof) {
-	    const orient = PanelSil360.portrait();
-	    const b0 = rack.panelBlockLeftDn(orient, roof.ac.x + 10, roof.ac.y - 32, 7, 1);
-	    let b = rack.panelBlockLeftDn(orient, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 6, 1);
-	    b = rack.panelBlockLeftDn(orient, b0.x0, b.y0 - rack.panelGapY, 7, 1);
-	    b = rack.panelBlockLeftDn(orient, b.x1 + rack.panelGapX, roof.bd.y - 50, 5, 1);
-	    b = rack.panelBlockLeftDn(orient, b.x0, b.y0 - rack.panelGapY, 5, 1);
-	}),
-	new Layout('Silfab360 pack-em-in', function(rack, roof) {
-	    const port = PanelSil360.portrait();
-	    const land = PanelSil360.landscape();
-	    let b0 = rack.panelBlockLeftDn(port, roof.ac.x + 5, roof.ac.y - 32, 7, 1);
-	    let b = rack.panelBlockLeftDn(port, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 6, 1);
+	    const port = PanelRec405AA.portrait();
+	    const b0 = rack.panelBlockLeftDn(port, roof.ac.x + 0, roof.ac.y - 32, 12, 1);
+	    let b = rack.panelBlockLeftDn(port, rack.panelV[1].x0, b0.y0 - rack.panelGapY, 11, 1);
 	    b = rack.panelBlockLeftDn(port, b0.x0, b.y0 - rack.panelGapY, 7, 1);
-	    
-	    b = rack.panelBlockLeftDn(port, b.x1 + rack.panelGapX, roof.bd.y - 32, 5, 1);
-	    b0 = rack.panelBlockLeftDn(port, b.x0, b.y0 - rack.panelGapY, 5, 1);
-	    b = rack.panelBlockLeftDn(land, b0.x0, b0.y0 - rack.panelGapY, 1, 1);
-	    b = rack.panelBlockRightDn(land, b0.x1, b0.y0 - rack.panelGapY, 1, 1);
 	}),
     ];
 }

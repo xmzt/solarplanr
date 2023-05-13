@@ -80,6 +80,11 @@ class InverterPart extends Part {
 // Panel
 //-----------------------------------------------------------------------------------------------------------------------
 
+var PanelBoviet370 = new PanelPart(370, 179.4,104.6,3.5, '25/25', 27.0,55.5, 20,30, 'Boviet BVM6610M-370S-H-HC-BF', [
+    new NoteDs('https://bovietsolar.com/wp-content/uploads/Boviet-Solar_4.-Vega-Series_Mono_Bifacial_CI_PV-Module_Transparent-Back_360-370W_April2023.pdf'),
+    new NoteI('https://bovietsolar.com/wp-content/uploads/Boviet_Solar_Installation_Manual.pdf'),
+    new Price1(242.81, 'https://cedgreentech.com/'),
+]);
 var PanelHia360 = new PanelPart(360, 200.0,99.2,4.0, '10/25', 45,55, 20,30, 'Hyundai HIA-S360HI', [
     new NoteDs('https://es-media-prod.s3.amazonaws.com/media/components/panels/spec-sheets/HyundaiEnergySolutions_HiA-SXXXHI_M2_360_385W_9HICtQB.pdf'),
     new NoteI('https://api.renewablenavi.com/products/006653492e5d412ebd629d7d373ddeb3/resources/attachments/901b76b62e134b9ebf75bcd109aca7aa'),
@@ -107,10 +112,18 @@ var PanelQ350 = new PanelPart(350, 174.0,103.0,3.2, '25/25', 39.5,49.5, 20,30, '
     new NoteDs('https://media.qcells.com/service/download/09448eebeeb646dda880bc9742eaaa83'),
     new Price1(274.00, 'https://voltaico.com/product/q-cells-q-peak-duo-g6350-350w-solar-panel/'),
 ]);
+var PanelRec370 = new PanelPart(370, 175.5,104.0,3.0, '20/25', 25.5,61.0, 20.0,30.0, 'REC370NP2 Black', [
+    new NoteDs('https://usa.recgroup.com/sites/default/files/documents/ds_rec_n-peak_2_black_series_en_us.pdf'),
+    new Price1(333.00, 'https://cedgreentech.com/'),
+]);
 var PanelRec405AA = new PanelPart(405, 182.1,101.6,3.0, '25/25', 25.5,61.0, 20.0,30.0, 'REC 405AA Alpha Pure', [
     new NoteDs('https://www.recgroup.com/sites/default/files/documents/ds_rec_alpha_pure_series_en_us.pdf'),
     new NoteI('https://www.recgroup.com/sites/default/files/documents/im_rec_alpha_panels_en.pdf'),
     new Price1(379.00, 'https://cedgreentech.com/'),
+]);
+var PanelSeg400 = new PanelPart(400, 172.2,113.4,3.5, '25/25', 25.5,61.0, 20.0,30.0, 'SEG-400-BMD-HV', [
+    new NoteDs('https://es-media-prod.s3.amazonaws.com/media/components/panels/spec-sheets/SEG_400w_Triple_Black.pdf'),
+    new Price1(295.00, 'https://cedgreentech.com/'),
 ]);
 var PanelSil360 = new PanelPart(360, 183.2,100.0,3.8, '25/30', 41.1,43.6, 17.5,22.5, 'SIL 360 NX Mono PERC 66 Black', [
     new NoteDs('https://silfabsolar.com/wp-content/uploads/2021/09/Silfab-SIL-360-NX-20210722-Final.pdf'),
@@ -125,6 +138,10 @@ var PanelSil490 = new PanelPart(490, 226.3,103.7,3.5, '25/30', 51,61, 20,30, 'Si
 var PanelTrina330 = new PanelPart(330, 169.0,99.6,3.5, '25/25', 37,47, 20,30, 'Trina TSM-330-DD06M.05(II) Mono 120/2', [
     new NoteDs('https://admin.sunhub.com/storage/documents/item/62419467eecc3onpmdadvewg4yrcg5vzl90ka7bz.pdf'),
     new Price1(241.00, 'https://www.sunhub.com/product/MR4PPUVX/trina-330w-dd06m-series-mono-perc-solar-panels'),
+]);
+var PanelUreco400 = new PanelPart(400, 172.3,113.3,3.5, '25/25', 16.1,36.6, 20,30, 'Ureco FBM400MFG-BB', [
+    new NoteDs('https://www.urecorp.com/upload/product/20211207145032_module_0.pdf'),
+    new Price1(289.74, 'https://cedgreentech.com/'),
 ]);
 
 //-----------------------------------------------------------------------------------------------------------------------

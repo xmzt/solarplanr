@@ -117,8 +117,8 @@ class UiSys {
 	root.querySelector('._go').addEventListener('click', (ev) => this.goStore());
 	root.querySelector('._configClear').addEventListener('click', (ev) => configClear());
 	this.statusElem = root.querySelector('._status');
-	this.sysElem = root.querySelector('._sys');
-
+	this.sys = new SysPlaceholder(root.querySelector('._sys'));
+	
 	for(const x of config)
 	    this.formAdd(new UiSysForm(this, x));
     }
@@ -152,9 +152,10 @@ class UiSys {
 	    if(this.formV[i].sysPopu(sys, `roof${i}`))
 		return;
 	}
-	// add sys to document before sysFin so that canvas ctx is valid
-	this.root.replaceChild(sys.root, this.sysElem);
-	this.sysElem = sys.root;
+	// stop old sys. add sys to document before sysFin so that canvas ctx is valid
+	this.sys.terminate();
+	this.root.replaceChild(sys.root, this.sys.root);
+	this.sys = sys;
 	sys.sysFin();
     }
 
@@ -198,7 +199,6 @@ function uiConfigStore() {
 // bodyOnload
 
 function bodyOnload() {
-    railrHandlerInit(); // worker thread
     UiSysDiv = document.getElementById('uiSysDiv');
     uiConfigLoadOrNew();
 }
