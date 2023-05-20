@@ -54,8 +54,8 @@ function panelTable(parts) {
 }
 
 class RailPart extends Part {
-    constructor(dimL, footL, cantiL, desc, notes) {
-	super(desc, notes);
+    constructor(dimL, footL, cantiL, descHtml, notes) {
+	super(descHtml, notes);
 	this.dimL = dimL;
 	this.footL = footL;
 	this.cantiL = cantiL;
@@ -63,15 +63,15 @@ class RailPart extends Part {
 }
 
 class TrimPart extends Part {
-    constructor(dimL, desc, notes) {
-	super(desc, notes);
+    constructor(dimL, descHtml, notes) {
+	super(descHtml, notes);
 	this.dimL = dimL;
     }
 }
 
 class InverterPart extends Part {
-    constructor(watts, desc, notes) {
-	super(desc, notes);
+    constructor(watts, descHtml, notes) {
+	super(descHtml, notes);
 	this.watts = watts;
     }
 }
@@ -80,11 +80,17 @@ class InverterPart extends Part {
 // Panel
 //-----------------------------------------------------------------------------------------------------------------------
 
-var PanelBoviet370 = new PanelPart(370, 179.4,104.6,3.5, '25/25', 27.0,55.5, 20,30, 'Boviet BVM6610M-370S-H-HC-BF', [
+var PanelBoviet370 = new PanelPart(370, 179.4,104.6,3.5, '25/25', 27.0,35.5, 20,30, 'Boviet BVM6610M-370S-H-HC-BF', [
     new NoteDs('https://bovietsolar.com/wp-content/uploads/Boviet-Solar_4.-Vega-Series_Mono_Bifacial_CI_PV-Module_Transparent-Back_360-370W_April2023.pdf'),
     new NoteI('https://bovietsolar.com/wp-content/uploads/Boviet_Solar_Installation_Manual.pdf'),
     new Price1(242.81, 'https://cedgreentech.com/'),
 ]);
+var PanelBoviet370_libclamp = new PanelPart(370, 179.4,104.6,3.5, '25/25', 27.0,55.0, 20,30, 'Boviet BVM6610M-370S-H-HC-BF', [
+    new NoteDs('https://bovietsolar.com/wp-content/uploads/Boviet-Solar_4.-Vega-Series_Mono_Bifacial_CI_PV-Module_Transparent-Back_360-370W_April2023.pdf'),
+    new NoteI('https://bovietsolar.com/wp-content/uploads/Boviet_Solar_Installation_Manual.pdf'),
+    new Price1(242.81, 'https://cedgreentech.com/'),
+]);
+
 var PanelHia360 = new PanelPart(360, 200.0,99.2,4.0, '10/25', 45,55, 20,30, 'Hyundai HIA-S360HI', [
     new NoteDs('https://es-media-prod.s3.amazonaws.com/media/components/panels/spec-sheets/HyundaiEnergySolutions_HiA-SXXXHI_M2_360_385W_9HICtQB.pdf'),
     new NoteI('https://api.renewablenavi.com/products/006653492e5d412ebd629d7d373ddeb3/resources/attachments/901b76b62e134b9ebf75bcd109aca7aa'),
@@ -95,11 +101,29 @@ var PanelJa535 = new PanelPart(535, 228.5,113.4,3.5, '25/25', 52,62, 25,35, 'JA 
     new NoteI('https://www.jasolar.com/uploadfile/2022/0218/20220218094918677.pdf'),
     new Price1(361.00, 'https://www.solaris-shop.com/ja-solar-jam72d30-535-mb-535w-mono-bifacial-solar-panel/'),
 ]);
+var PanelMse380 = new PanelPart(380, 190.7,104.4,4.0, '25/25', 39,49, 20,30, 'Misson Solar 380W', [
+    new NoteDs('https://rexel-cdn.com/products/6.pdf?i=30E98CA0-6C44-4CBD-80F5-86889ABD2C48'),
+    new Price1(249.99, 'https://www.platt.com/p/2049931/mission-solar-energy/380w-solar-module-66-cell-black-on-black/msemse380sx5r'),
+]);
+var PanelMse420 = new PanelPart(420, 208.6,105.4,4.0, '25/25', 39,49, 20,30, 'Mission Solar 420W MSE420SX6W', [
+    new NoteDs('https://rexel-cdn.com/products/mse420sx6w.pdf?i=BC55BE43-0035-44AB-98B3-1489834CD83F'),
+    new Price1(235.00, 'https://www.platt.com/p/1965922/mission-solar-energy/420w-solar-module-72-cell-silver-on-white/msemse420sx6w'),
+]);
 var PanelPhono365 = new PanelPart(365, 176.4,104.0,3.5, '12/25', 39,49, 20,30, 'Phono Solar PS365M4H-20/UHB Mono 120/2', [
     new NoteDs('https://admin.sunhub.com/storage/documents/item/626171b64b2beyi1pene2udku8ffk8ffg0gnan5g.pdf'),
     new Price1(274.00, 'https://www.sunhub.com/product/1AK88/phono-solar-365w-mono-120-half-cell-solar-panel'),
 ]);
-var PanelQ395 = new PanelPart(395, 187.9,104.5,3.2, '25/25', 42,52, 20,30, 'Q Cells Q.PEAK DUO BLK ML-G10+ 395', [
+var PanelQ475 = new PanelPart(475, 221.6,104.5,3.5, '25/25', 30,/*55*/65, 20,30, 'Q.PEAK DUO XL-G10.c 475W', [
+    new NoteDs('https://rexel-cdn.com/products/6.pdf?i=F7962CDC-0877-46BD-BF50-391892EB180C'),
+    new NoteI('https://www.q-cells.us/dam/jcr:b22b5dce-17da-432c-a58d-c63d959e75df/Q_CELLS_Installation_Manual_Q.PEAK_DUO_XL-G10.2_G10.c_modules_series_2021-07_Rev01_NA%20(2).pdf'),
+    new Price1(275.50, 'https://www.platt.com/p/2047104/q-cells/475w-solar-module-156-half-cell-black-aluminum/qclqpeakduoxlg1047'),
+]);
+var PanelQ400 = new PanelPart(400, 187.9,104.5,3.2, '25/25', 20,65, 20,30, 'Q Cells Q.PEAK DUO BLK ML-G10+ 400', [
+    new NoteDs('https://rexel-cdn.com/products/6.pdf?i=6E8DE030-1C26-4F37-8226-E744C491CCCE'),
+    new NoteI('https://media.q-cells.com/v/eyEEJh2F/'),
+    new Price1(270.00, 'https://www.platt.com/p/2007167/q-cells/400w-solar-module-132-half-cell-black-aluminum/qclduoblkmlg10400w'),
+]);
+var PanelQ395 = new PanelPart(395, 187.9,104.5,3.2, '25/25', 20,65, 20,30, 'Q Cells Q.PEAK DUO BLK ML-G10+ 395', [
     new NoteDs('https://media.qcells.com/service/download/d33159afd6624daba346f36c3e31ee96'),
     new NoteI('https://media.qcells.com/service/download/9acee6f13ed248cab3bb69aaeebee955'),
     new Price1(315.00, 'https://www.solaris-shop.com/hanwha-q-cells-q-peak-duo-blk-ml-g10-395-395w-mono-solar-panel/'),
@@ -128,7 +152,7 @@ var PanelSeg400 = new PanelPart(400, 172.2,113.4,3.5, '25/25', 25.5,61.0, 20.0,3
 var PanelSil360 = new PanelPart(360, 183.2,100.0,3.8, '25/30', 41.1,43.6, 17.5,22.5, 'SIL 360 NX Mono PERC 66 Black', [
     new NoteDs('https://silfabsolar.com/wp-content/uploads/2021/09/Silfab-SIL-360-NX-20210722-Final.pdf'),
     new NoteI('https://silfabsolar.com/wp-content/uploads/2021/11/SILFAB-MAN-SFO-15-20211027-FINAL.pdf'),
-    new Price1(244.8089, 'https://www.platt.com/p/1895650/silfab-solar/360w-module-sil-nx-series-66-cell-black-on-black/silsil360nx'),
+    new Price1(220.00, 'https://www.platt.com/p/1895650/silfab-solar/360w-module-sil-nx-series-66-cell-black-on-black/silsil360nx'),
 ]);
 var PanelSil490 = new PanelPart(490, 226.3,103.7,3.5, '25/30', 51,61, 20,30, 'Silfab SIL-490 HN Mono PERC 156/2', [
     new NoteDs('https://silfabsolar.com/wp-content/uploads/2022/03/Silfab-SIL-490-HN-Data-Generic-20220218.pdf'),
@@ -167,7 +191,7 @@ var IronRidgeUfoNotes = [
 
 var IronRidgeUfo = new Part('IronRidge UFO-CL-01-A1 Universal Module Clamp Mill', [
     ...IronRidgeUfoNotes,
-    new Price1(2.920, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Module-Clamps/IronRidge/UFO-CL-01-A1/product.aspx?zpid=1172501'),
+    new Price1(3.41, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Module-Clamps/IronRidge/UFO-CL-01-A1/product.aspx?zpid=1172501'),
     new Price1(4.86, 'https://www.ironridge.com/design-tools/'),
 ]);
 var IronRidgeStopper38 = new Part('IronRidge UFO-STP-38MM-M1 Stopper Sleeve 38MM Mill', [
@@ -178,33 +202,38 @@ var IronRidgeStopper38 = new Part('IronRidge UFO-STP-38MM-M1 Stopper Sleeve 38MM
 var IronRidgeCamo = new Part('IronRidge CAMO-01-M1 Hidden End Clamp', [
     new NoteTb('https://files.ironridge.com/camo/IronRidge_CAMO_Tech_Brief.pdf'),
     new NoteI('https://files.ironridge.com/camo/IronRidge_CAMO_Installation_Manual.pdf'),
-    new Price1(7.3425, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Module-Clamps/IronRidge/CAMO-01-M1/product.aspx?zpid=1221813'),
+    new Price1(6.86, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Module-Clamps/IronRidge/CAMO-01-M1/product.aspx?zpid=1221813'),
     // todo new Price1(, 'https://www.ironridge.com/design-tools/'),
 ]);
 var IronRidgeGroundLug = new Part( 'IronRidge XR-LUG-03-A1 Grounding Lug, Low Profile', [
     ...IronRidgeNotes,
-    new Price1(7.14, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Grounding-Bonding-Hardware/IronRidge/XR-LUG-03-A1/product.aspx?zpid=1172499'),
+    new Price1(6.67, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Grounding-Bonding-Hardware/IronRidge/XR-LUG-03-A1/product.aspx?zpid=1172499'),
     new Price1(9.52, 'https://www.ironridge.com/design-tools/'),
 ]);
 var IronRidgeFoot = new Part('IronRidge FF2-01-M2 FlashFoot2 Mill', [
     new NoteTb('https://files.ironridge.com/pitched-roof-mounting/resources/brochures/IronRidge_FlashFoot2_Tech_Brief.pdf'),
     new NoteI('https://files.ironridge.com/pitched-roof-mounting/resources/brochures/IronRidge_FlashFoot2_Installation_Manual.pdf'),
-    new Price1(12.41, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Flashings-Comp-Roof/IronRidge/FF2-01-M2/product.aspx?zpid=1796624'),
+    new Price1(9.39, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Flashings-Comp-Roof/IronRidge/FF2-01-M2/product.aspx?zpid=1796624'),
     new Price1(20.68, 'https://www.ironridge.com/design-tools/'),
 ]);
 var IronRidgeBolt = new Part('IronRidge BHW-SQ-02-A1 Square-Bolt Bonding Hardware', [
     ...IronRidgeNotes,
-    new Price1(1.69, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Hardware/IronRidge/BHW-SQ-02-A1/product.aspx?zpid=1172496'),
+    new Price1(2.09, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Hardware/IronRidge/BHW-SQ-02-A1/product.aspx?zpid=1172496'),
     new Price1(2.81, 'https://www.ironridge.com/design-tools/'),
 ]);
 var IronRidgeMlpe = new Part('IronRidge BHW-MI-01-A1 Microinverter/MLPE Bonding Hardware, T-Bolt', [
     ...IronRidgeNotes,
-    new Price1(1.605, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Hardware/IronRidge/BHW-MI-01-A1/product.aspx?zpid=1172500'),
+    new Price1(1.50, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Hardware/IronRidge/BHW-MI-01-A1/product.aspx?zpid=1172500'),
     new Price1(2.14, 'https://www.ironridge.com/design-tools/'),
 ]);
 
 var IronRidgeConduitFoot = new Part('IronRidge FM-CM-001-B Conduit Flashing 4-pack', [
-    new Price1(79.05, 'https://www.platt.com/p/0557412/ironridge/conduit-flashing-4-pack/irnfmcm001b'),
+    new Price1(15.00, 'matt'),
+    new PriceN(73.78, 4, 'https://www.platt.com/p/0557412/ironridge/conduit-flashing-4-pack/irnfmcm001b'),
+]);
+
+var IronRidgeConduitPenetrationFlashing = new Part('IronRidge QMCPC-A-12 Conduit Penetration Flashing 1/2" - 1"', [
+    new Price1(15.33, 'https://www.platt.com/p/0102980/ironridge/conduit-penetration-flashing/qmpqmcpca12'),
 ]);
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -212,22 +241,22 @@ var IronRidgeConduitFoot = new Part('IronRidge FM-CM-001-B Conduit Flashing 4-pa
 
 var IronRidgeXR10Rail132 = new RailPart(2.54*132, 2.54*72, 2.54*24, 'IronRidge XR-10-132A 11ft Mill', [
     ...IronRidgeRailNotes,
-    new Price1(38.1225, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-132A/product.aspx?zpid=123362'),
+    new Price1(34.34, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-132A/product.aspx?zpid=123362'),
 ]);
 var IronRidgeXR10Rail168 = new RailPart(2.54*168, 2.54*72, 2.54*24, 'IronRidge XR-10-168A 14ft Mill', [
     ...IronRidgeRailNotes,
-    new Price1(44.2125, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-168A/product.aspx?zpid=123366'),
+    new Price1(43.75, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-168A/product.aspx?zpid=123366'),
 ]);
 var IronRidgeXR10Rail204 = new RailPart(2.54*204, 2.54*72, 2.54*24, 'IronRidge XR-10-204A 17ft Mill', [
     ...IronRidgeRailNotes,
-    new Price1(53.6175, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-204A/product.aspx?zpid=123375'),
+    new Price1(53.05, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rails/IronRidge/XR-10-204A/product.aspx?zpid=123375'),
 ]);
 
 var IronRidgeXR10RailV = [ IronRidgeXR10Rail132, IronRidgeXR10Rail168, IronRidgeXR10Rail204 ];
 
 var IronRidgeXR10Splice = new Part('IronRidge XR10-BOSS-01-M1 Bonded Splice', [
     ...IronRidgeSpliceNotes,
-    new Price1(7.4175, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rail-Splice-Kits/IronRidge/XR10-BOSS-01-M1/product.aspx?zpid=1876583'),
+    new Price1(7.03, 'https://www.platt.com/platt-electric-supply/Racking-Mounting-Hardware-Rail-Splice-Kits/IronRidge/XR10-BOSS-01-M1/product.aspx?zpid=1876583'),
     new Price1(9.89, 'https://www.ironridge.com/design-tools/'),
 ]);
 
@@ -445,104 +474,231 @@ var SnapnrackRluMlpe = new Part('SnapNrack 242-02151 MLPE FRAME ATTACHMENT KIT',
 // Inverter
 //-----------------------------------------------------------------------------------------------------------------------
 
-var InverterSe11400h_ussnbbl14 = new InverterPart(11400, 'SolarEdge SE11400H-USSNBBL14 INVERTER 11.4kW', [
+var SolarEdgeSe11400h_ussnbbl14 = new InverterPart(11400, 'SolarEdge SE11400H-USSNBBL14 INVERTER 11.4kW', [
     new NoteDs('https://www.solaredge.com/sites/default/files/se-hd-wave-single-phase-inverter-with-setapp-datasheet-na.pdf'),
     new NoteU('https://www.solaredge.com/sites/default/files/se-single-and-three-phase-inverter-user-manual-na.pdf'),
     new Price1(3589.1900, 'https://www.platt.com/p/1973303/solaredge/11400w-single-hd-wave-phase-inverter/sedse11400hussnbbl'),
 ]);
 
-var SolarEdgeCt225 = new Part('SolarEdge SECT-SPL-225A-T-20 Current Transformer', [
-    new Price1(41.6162, 'https://www.platt.com/p/1950422/solaredge/slim-current-transformer-split-core/sedsectspl225at20'),
+var SolarEdgeSe11400h_us000bni4 = new InverterPart(11400, 'SolarEdge SE11400H-US000BNI4 INVERTER 11.4kW RGM+Export/Import', [
+    new NoteI('https://knowledge-center.solaredge.com/sites/kc/files/se_hd_wave_inverter_with_SetApp_installation_guide_na.pdf'),
+    new Price1(2316.00, 'https://www.platt.com/p/1821855/solaredge/sed-se11400h-us000bni4/sedse11400hus000bi'),
 ]);
 
-var SolarEdgeP400 = new Part('400W DC Power Optimizer', [
+var SolarEdgeCt225 = new Part('SolarEdge SECT-SPL-225A-T-20 Current Transformer', [
+    new Price1(41.62, 'https://www.platt.com/p/1950422/solaredge/slim-current-transformer-split-core/sedsectspl225at20'),
+]);
+
+var SolarEdgeP400 = new Part('SolarEdge 400W DC Power Optimizer', [
     new Price1(97.46, 'https://www.platt.com/p/0178020/solaredge/400w-dc-power-optimizer-discontinued-/sedp400'),
+]);
+
+var SolarEdgeP485 = new Part('SolarEdge 485W DC Power Optimizer', [
+    new Price1(82.99, 'https://www.platt.com/p/1821841/solaredge/dc-power-optimizer-485w-125vdc/sedp485'),
 ]);
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Electrical other
 //-----------------------------------------------------------------------------------------------------------------------
 
-var DisconnectGnf222ra = new Part('Siemens GNF222RA Disconnect 2P 240V 60A', [
-    new NoteDs('https://assets.new.siemens.com/siemens/assets/api/uuid:5c71c5ec-7826-4b33-bad2-c861d7d9534e/sie-ss-switch-60a-240a-nf3r.pdf'),
-    new Price1(81.60, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6BXLR/'),
-]);
-
-var BreakerQ22020CTU = new Part('Siemens Q22020CTU Breaker 20 + 2x20 + 20', [
+var Breaker_Q22020CTU = new Part('Breaker Siemens 20,2x20,20 Q22020CTU', [
     new Price1(29.85, 'https://www.homedepot.com/p/Siemens-Triplex-Two-Outer-20-Amp-Single-Pole-and-One-Inner-20-Amp-Double-Pole-Circuit-Breaker-Q22020CTU/202276298'),
 ]);
 
-var BreakerQ260 = new Part('Siemens Q260 Breaker 2x60', [
+var Breaker_Q260 = new Part('Breaker Siemens 2x60 Q260', [
     new Price1(15.52, 'https://www.amazon.com/Q260-60-Amp-Double-Circuit-Breaker/dp/B00002N7KY/'),
 ]);
 
-var Emt1_10 = new Part('EMT 1" x 10ft', [
-    new Price1(20.62, 'https://www.homedepot.com/p/1-in-x-10-ft-Electric-Metallic-Tube-EMT-Conduit-101568/100400409'),
+var Breaker_HOM260CP = new Part('Breaker Square D 2x60 HOM260CP', [
+    new Price1(17.83, 'https://www.homedepot.com/p/Square-D-Homeline-60-Amp-2-Pole-Circuit-Breaker-HOM260CP-HOM260CP/202353322'),
+]);
+var BreakerUndetermined = new Part('Breaker <b>[UNDETERMINED]</b>', [
+    new Price1(30.00, 'somewhere'),
 ]);
 
-var Emt34_10 = new Part('EMT Conduit, 3/4", Steel, 10', [
-    new Price1(10.37, 'https://www.platt.com/p/0065970/emt-conduit-3-4-steel-10/091111020025/34e'),
+var ConduitBody_34_C = new Part('Conduit Body C 34" <b>[APPROXIMATE]</b>', [
+    new Price1(8.00, 'somewhere'),
+]);
+var ConduitBody_34_LB = new Part('Conduit Body LB 34" <b>[APPROXIMATE]</b>', [
+    new Price1(8.00, 'somewhere'),
+]);
+var ConduitBody_34_LL = new Part('Conduit Body LL 34" <b>[APPROXIMATE]</b>', [
+    new Price1(8.00, 'somewhere matt.qty=1'),
+]);
+var ConduitBody_34_LR = new Part('Conduit Body LR 34" <b>[APPROXIMATE]</b>', [
+    new Price1(8.00, 'somewhere'),
+]);
+var ConduitBody_34_T = new Part('Conduit Body Tee 34" <b>[APPROXIMATE]</b>', [
+    new Price1(8.00, 'somewhere'),
+]);
+var ConduitBody_1_C = new Part('Conduit Body C 1" <b>[APPROXIMATE]</b>', [
+    new Price1(12.00, 'somewhere'),
+]);
+var ConduitBody_1_LB = new Part('Conduit Body LB 1" <b>[APPROXIMATE]</b>', [
+    new Price1(12.00, 'somewhere'),
+]);
+var ConduitBody_1_LL = new Part('Conduit Body LL 1" <b>[APPROXIMATE]</b>', [
+    new Price1(12.00, 'somewhere matt.qty=1'),
+]);
+var ConduitBody_1_LR = new Part('Conduit Body LR 1" <b>[APPROXIMATE]</b>', [
+    new Price1(12.00, 'somewhere matt.qty=1'),
+]);
+var ConduitBody_1_T = new Part('Conduit Body Tee 1" <b>[APPROXIMATE]</b>', [
+    new Price1(12.00, 'somewhere matt.qty=1'),
 ]);
 
-var EmtConnector1 = new Part('EMT Compression Connector, 1 inch, Insulated, Raintight, Steel', [
-    new Price1(4.77, 'https://www.platt.com/p/0641063/arlington/emt-compression-connector-1-inch-insulated-raintight-steel/018997820471/arl822art'),
+var ConduitNipple_34_2 = new Part('Conduit Nipple Threaded, 3/4" x 2", Steel', [
+    new Price1(6.69, 'https://www.platt.com/p/0016400/threaded-conduit-nipple-3-4-x-2-steel/786692004327/342rnp'),
+]);
+var ConduitNipple_34_6 = new Part('Conduit Nipple Threaded, 3/4" x 6"', [
+    new Price1(2.97, 'https://www.homedepot.com/p/Halex-3-4-in-x-6-in-Rigid-Conduit-Nipple-64362/100149814'),
+]);
+var ConduitNipple_1_2p5 = new Part('Conduit Nipple Threaded, 1" x 2-1/2", Steel', [
+    new Price1(10.14, 'https://www.platt.com/p/0016262/threaded-conduit-nipple-1-x-2-1-2-steel/786692004631/1212rnp1x21-2'),
+]);
+var ConduitNipple_1_6 = new Part('Conduit Nipple Threaded, 1" x 6"', [
+    new Price1(4.15, 'https://www.homedepot.com/p/1-in-Rigid-Conduit-Nipple-64363/100194604'),
 ]);
 
-var EmtConnector34 = new Part('EMT 3/4 in. Insulated Raintight Compression Connector', [
-    new PriceN(23.62, 25, 'https://www.homedepot.com/p/RACO-EMT-3-4-in-Insulated-Raintight-Compression-Connector-25-Pack-2913RT/203637944'),
-]);
-
-var EmtCoupling34 = new Part('3/4 in. Electrical Metallic Tube Raintight Compression Coupling', [
-    new PriceN(21.84, 20, 'https://www.homedepot.com/p/Halex-3-4-in-Electrical-Metallic-Tube-Raintight-Compression-Couplings-20-Pack-62602B/300183408'),
-]);
-
-var GroundLugCuSn = new Part('Lay-In Lug, Copper, 14 -4 AWG', [
-    new Price1(12.16, 'https://www.platt.com/p/0606231/ilsco/lay-in-lug-copper-14-4-awg/783669960181/ilsgbl4dbt'),
-]);
-
-var RigidCoupling34 = new Part('3/4 in. Rigid Conduit Coupling', [
+var ConduitCouplingRigid_34 = new Part('Conduit Coupling Rigid 3/4"', [
     new Price1(2.42, 'https://www.homedepot.com/p/Halex-3-4-in-Rigid-Conduit-Coupling-64007/100164200'),
 ]);
 
-var RigidNipple34_6 = new Part('3/4 in. x 6 in. Rigid Conduit Nipple', [
-    new Price1(2.97, 'https://www.homedepot.com/p/Halex-3-4-in-x-6-in-Rigid-Conduit-Nipple-64362/100149814'),
+var Ctap_Blue = new Part('C-Tap Crimp Blue <b>[APPROXIMATE]</b>', [
+    new Price1(1.50, 'matt.qty=3'),
+]);
+var Ctap_Gray = new Part('C-Tap Crimp Gray <b>[APPROXIMATE]</b>', [
+    new Price1(4.00, 'matt.qty=1'),
 ]);
 
-var RigidReducingBushing1_34 = new Part('1 in. x 3/4 in. Rigid Reducing Bushing', [
-    new Price1(1.62, 'https://www.homedepot.com/p/Halex-1-in-x-3-4-in-Rigid-Reducing-Bushing-91332/100186383'),
+var DisconnectGnf222ra = new Part('Siemens GNF222RA Disconnect 2P 240V 60A (w/ hub provision)', [
+    new NoteDs('https://assets.new.siemens.com/siemens/assets/api/uuid:5c71c5ec-7826-4b33-bad2-c861d7d9534e/sie-ss-switch-60a-240a-nf3r.pdf'),
+    new Price1(88.31, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6BXLR/'),
 ]);
 
-var ReducingWasher1_34 = new Part('Reducing Washer, 1" x 3/4", Steel', [
+var DisconnectLnf222ra = new Part('Siemens LNF222RA Disconnect 2P 240V 60A (no hub provision)', [
+    new Price1(67.49, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6F5PV/'),
+]);
+
+var Emt_34 = new Part('EMT Conduit, 3/4", Steel, 10ft', [
+    new Price1(10.00, 'matt.qty=5'),
+    new Price1(11.70, 'https://www.platt.com/p/0065970/emt-conduit-3-4-steel-10/091111020025/34e'),
+]);
+var Emt_1 = new Part('EMT Conduit, 1", Steel, 10ft', [
+    new Price1(22.20, 'https://www.platt.com/p/0065797/emt-conduit-1-steel-10/091111020032/1e'),
+    new Price1(18.56, 'https://www.homedepot.com/p/1-in-x-10-ft-Electric-Metallic-Tube-EMT-Conduit-101568/100400409'),
+]);
+
+var EmtConnector_34 = new Part('EMT Compression Connector, 3/4 inch, Insulated, Raintight, Steel', [
+    new Price1(2.00, 'matt.qty=10+'),
+    new Price1(2.55, 'https://www.platt.com/p/0641064/arlington/emt-compression-connector-3-4-insulated-raintight-steel/018997820464/arl821art'),
+]);
+var EmtConnector_1 = new Part('EMT Compression Connector, 1 inch, Insulated, Raintight, Steel', [
+    new Price1(4.77, 'https://www.platt.com/p/0641063/arlington/emt-compression-connector-1-inch-insulated-raintight-steel/018997820471/arl822art'), 
+]);
+var EmtCoupling_34 = new Part('EMT Compression Coupling, 3/4 inch, Raintight, Steel', [
+    new Price1(2.00, 'matt.qty=10+'),
+    new Price1(2.55, 'https://www.platt.com/p/0641068/arlington/emt-compression-coupling-3-4-inch-raintight-concrete-tight-steel/018997820310/arl831rt'),
+]);
+var EmtCoupling_1 = new Part('EMT Compression Coupling, 1 inch, Raintight, Steel', [
+    new Price1(3.00, 'matt.qty=10+'),
+    new Price1(4.67, 'https://www.platt.com/p/0641070/arlington/emt-compression-coupling-1-inch-raintight-concrete-tight-steel/018997820327/arl832rt'),
+]);
+
+var GroundBushing_34 = new Part('Grounding Bushing, 3/4", Threaded, Insulated, Malleable Iron', [
+    new Price1(10.00, 'matt.qty=4'),
+    new Price1(13.14, 'https://www.platt.com/p/0078681/appleton/grounding-bushing-3-4-threaded-insulated-malleable-iron/781381091084/appgib75l4ac'),
+]);
+var GroundBushing_1 = new Part('Grounding Bushing, 1", Threaded, Insulated, Malleable Iron', [
+    new Price1(13.14, 'https://www.platt.com/p/0002870/appleton/grounding-bushing-1-threaded-insulated-malleable-iron/781381091107/appgib100l4ac'),
+    new Price1(10.00, 'matt.qty=1'),
+]);
+
+var GroundLug_Al = new Part('Ground Lug Lay-In Al 14-1/0 AWG (interior)', [
+    new Price1(1.00, 'matt.qty=10+'),
+    new Price1(5.00, 'https://www.platt.com/p/0708312/ilsco/14-1-0-awg-aluminum-lay-in-lug/783669960105/ilsgbl10'),
+]);
+
+var GroundLug_CuSn = new Part('Ground Lug Lay-In Cu 14 -4 AWG (exterior)', [
+    new Price1(12.16, 'https://www.platt.com/p/0606231/ilsco/lay-in-lug-copper-14-4-awg/783669960181/ilsgbl4dbt'),
+]);
+
+var Locknut_34 = new Part('Locknut 3/4"', [
+    new Price1(0.10, 'matt.qty=10+'),
+]);
+var Locknut_1 = new Part('Locknut 1"', [
+    new Price1(0.10, 'matt.qty=10+'),
+]);
+
+var Mc4_M = new Part('MC-4 Connector Male', [
+    new Price1(1.00, 'matt.qty=10+'),
+    new Price1(1.82, 'https://www.platt.com/p/0798739/stubli-electrical-connectors/cable-connector-mc-type-4-male/muc320015p0001ur'),
+]);    
+var Mc4_F = new Part('MC-4 Connector Female', [
+    new Price1(1.00, 'matt.qty=10+'),
+    new Price1(2.08, 'https://www.platt.com/p/0798740/stubli-electrical-connectors/cable-connector-mc-type-4-female/muc320014p0001ur'),
+]);
+
+var PaintSprayMatteBlack = new Part('Paint, Spray, Matte Black', [
+    new Price1(8.48, 'https://www.lowes.com'),
+]);
+var PaintSprayGalvanizing = new Part('Paint, Spray, Galvanizing', [
+    new Price1(10.50, 'https://www.beaumonthardware.com/'),
+]);
+
+var ReducingBushing_1_34 = new Part('Reducing Bushing, 1" x 3/4"', [
+    new Price1(1.67, 'https://www.homedepot.com/p/Halex-1-in-x-3-4-in-Rigid-Reducing-Bushing-91332/100186383'),
+]);
+
+var ReducingWasher_1_34 = new Part('Reducing Washer, 1" x 3/4", Steel', [
+    new Price1(0.20, 'matt.qty=10+'),
     new Price1(0.34, 'https://www.platt.com/p/0676009/dottie/reducing-washer-1-x-3-4-steel/781002301097/dotrw32'),
 ]);
 
-var Wire10StrGrn = new Part('10 AWG THHN/THWN Stranded Copper, Green, 500FT', [
-    new Price1(180.00, 'https://www.platt.com/p/0062575/10-awg-thhn-thwn-stranded-copper-green-500/048243230402/10thhncstrgrex500'),
+var Wire_10_thhn_grn = new Part('Wire 10 AWG THHN Stranded Cu, Green', [
+    new Price1(0.30, 1, 'matt qty=438'),
+    new PriceN(160.00, 500, 'https://www.platt.com/p/0062575/10-awg-thhn-thwn-stranded-copper-green-500/048243230402/10thhncstrgrex500'),
+]);
+var Wire_10_pv = new Part('Wire 10 AWG PV 1000V, Black', [
+    new Price1(0.50, 1, 'matt qty=180'),
+    new PriceN(255.00, 500, 'https://www.platt.com/p/0043334/10-awg-1000v-solar-pv-wire-500-black/10pv1000vblax500'),
+]);
+var Wire_8_thhn_grn = new Part('Wire 8 AWG THHN Stranded Cu, Green', [
+    new Price1(0.50, 1, 'matt qty=400+'),
+    new PriceN(0.54, 1, 'https://www.platt.com/p/0099636/8-awg-thhn-thwn-2-stranded-copper-green-2500/048243231423/8thhncstrgrex2500'),
+]);
+var Wire_6_bare = new Part('Wire 6 AWG Bare Solid Cu', [
+    new Price1(0.50, 1, 'matt qty=290'),
+    new PriceN(199.00, 315, 'https://www.ebay.com/'),
+]);
+var Wire_6_thhn_blk = new Part('Wire 6 AWG THHN Stranded Cu, Black', [
+    new Price1(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Black-Stranded-CU-SIMpull-THHN-Wire-20493399/204632784'),
+]);
+var Wire_6_thhn_red = new Part('Wire 6 AWG THHN Stranded Cu, Red', [
+    new Price1(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Red-Stranded-CU-SIMpull-THHN-Wire-20495899/204632880'),
+]);
+var Wire_6_thhn_wht = new Part('Wire 6 AWG THHN Stranded Cu, White', [
+    new Price1(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-White-Stranded-CU-SIMpull-THHN-Wire-20494199/204632877'),
 ]);
 
-var Wire10Pv = new Part('10 AWG 1000V Solar PV Wire 500FT, Black', [
-    new Price1(295.00, 'https://www.platt.com/p/0043334/10-awg-1000v-solar-pv-wire-500-black/10pv1000vblax500'),
-]);
-
-var Wire6StrBlk = new Part('(By-the-Foot) 6 Black Stranded CU SIMpull THHN Wire', [
-    new Price1(1.48, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Black-Stranded-CU-SIMpull-THHN-Wire-20493399/204632784'),
-]);
-
-var Wire6StrRed = new Part('(By-the-Foot) 6 Red Stranded CU SIMpull THHN Wire', [
-    new Price1(1.48, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Red-Stranded-CU-SIMpull-THHN-Wire-20495899/204632880'),
-]);
-
-var Wire6StrWht = new Part('(By-the-Foot) 6 White Stranded CU SIMpull THHN Wire', [
-    new Price1(1.48, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-White-Stranded-CU-SIMpull-THHN-Wire-20494199/204632877'),
+var WireClip = new Part('WireClip <b>[PLACEHOLDER]</b>', [
+    new PriceN(25.00, 100, 'https://www.amazon.com/Heyco-S6405-SunRunner-Stainless-Package/dp/B00HK2990I/'),
 ]);
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Other
 //-----------------------------------------------------------------------------------------------------------------------
 
-var PenetrationFlashing = new Part('Nichols F121 Roof Flashing 1/2" - 1", 9" x 12"</a>', [
+var Geocel2300 = new Part('Geocel 2300 Construction Tripolymer Sealant', [
+    new Price1(8.00, 'https://www.abcsupply.com/locations/location/?id=074'),
+]);
+
+var PenetrationFlashing = new Part('Nichols F121 Roof Flashing 1/2" - 1", 9" x 12"', [
     new Price1(11.63, 'https://www.platt.com/p/0093946/nichols/roof-flashing-featuring-a-26-gauge-galvanized-bass-size-9x12/78632326972%20/nicf121'),
 ]);
+
+var ScrewSs = new Part('Screw SS <b>[SIZE UNDETERMINED]</b>', [ new Price1(1.00, 'somewhere') ]);
+var WasherSs = new Part('Washer SS <b>[SIZE UNDETERMINED]</b>', [ new Price1(0.50, 'somewhere') ]);
 
 var OtherPart = new Part('Other', [
     new Price1Id(5136.49, 'other'),

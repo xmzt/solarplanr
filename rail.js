@@ -56,15 +56,15 @@ class RailGroup {
     constructor(sys) {
 	this.sys = sys
 	this.railV = [];
-	this.statusDiv = temRootClone('railGroupStatus_tem');
-	this.statusSpan = this.statusDiv.querySelector('._status');
-	this.statusDiv.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
-	this.logDiv = temRootClone('railGroupLog_tem');
+	this.diagElem = temRootClone('railGroupDiag_tem');
+	this.statusElem = this.diagElem.querySelector('._status');
+	this.logElem = this.diagElem.querySelector('._log');
+	this.diagElem.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
 	this.bestComV = null;
     }
 
     logShowClick() {
-	this.logDiv.classList.toggle('displaynone');
+	this.logElem.classList.toggle('displayNone');
     }	
     
     railAdd(rail) {
@@ -97,10 +97,10 @@ class RailGroup {
 	}
 	
 	this.bestComV = comV;
-	this.logDiv.innerHTML += `best\n`;
+	this.logElem.innerHTML += `best\n`;
 	for(const com of comV) {
 	    const rail = this.railV[com.railId];
-	    this.logDiv.innerHTML +=
+	    this.logElem.innerHTML +=
 		`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`;
 	    this.sys.partTab.partAddTot(this.constructor.SplicePart, com.segN - 1);
 	    let x = 0;
@@ -117,16 +117,16 @@ class RailGroup {
     }
 
     railrRspLog(msg) {
-	this.logDiv.innerHTML += `${msg}\n`;
+	this.logElem.innerHTML += `${msg}\n`;
     }
 
     railrRspStatus(s) {
-	this.statusSpan.textContent =
+	this.statusElem.textContent =
 	    `${s.iterI}/${s.iterN} -> ${s.accOkN} -> ${s.okN} -> ${s.bestN}, ${s.tsB - s.tsA} ms`;
     }
 
     railrRspFin() {
-	this.logDiv.innerHTML += `railrRspFin\n`;
+	this.logElem.innerHTML += `railrRspFin\n`;
 	this.sys.pendDec();
     }
 }

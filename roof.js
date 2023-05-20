@@ -5,11 +5,6 @@
 //include rack.js
 
 //-----------------------------------------------------------------------------------------------------------------------
-// globals
-
-var RoofClasV = []; // each Roof.LayoutV has roof-specific layouts
-
-//-----------------------------------------------------------------------------------------------------------------------
 // Layout
 
 class Layout {
@@ -19,16 +14,24 @@ class Layout {
     }
 }
 
+var LayoutNone = new Layout('--Select panel layout--', null);
+
 //-----------------------------------------------------------------------------------------------------------------------
 // Roof: roof geometry (border, obstructions), with racks (racks have panels)
 //
 // - subclassed for a specific roof geometry. 
 
 class Roof {
-    constructor(sys, id, descHtml) {
+    //static IdHtml
+    //static LayoutByIdHtml
+    
+    static layoutAdd(idHtml, rackPopu) { this.LayoutByIdHtml[idHtml] = new Layout(idHtml, rackPopu); }
+
+    constructor(sys, id, canElem, canRailElem) {
 	this.sys = sys;
 	this.id = id;
-	this.descHtml = descHtml;
+	this.canElem = canElem;
+	this.canRailElem = canRailElem;
 	this.rackV = [];
 	
 	//plan
@@ -146,19 +149,24 @@ class Roof {
 	return ctx;
     }
 
-    ctxRailClear() {
+    ctxClear(ctx) {
 	const r = this.boundR;
-	//this.ctxRail.beginPath();
-	this.ctxRail.clearRect(r.x0, r.y0, r.x1-r.x0, r.y1-r.y0);
+	ctx.clearRect(r.x0, r.y0, r.x1-r.x0, r.y1-r.y0);
+	return ctx;
     }
     
-    roofFin() {
-	const roofElem = temRootClone('roof_tem');
-	roofElem.querySelector('._desc').innerHTML = this.descHtml;
-	this.sys.root.querySelector('._roofDiv').appendChild(roofElem);
-	this.ctx = this.canSizeCtx(roofElem.querySelector('._can'));
-	this.ctxRail = this.canSizeCtx(roofElem.querySelector('._canRail'));
+    sysFin() {
+	this.ctx = this.ctxClear(this.canSizeCtx(this.canElem));
+	this.ctxRail = this.ctxClear(this.canSizeCtx(this.canRailElem));
 	this.draw(this.ctx);
-	for(const rack of this.rackV) rack.roofFin();
+	for(const rack of this.rackV) rack.sysFin();
     }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// RoofNone
+
+class RoofNone extends Roof {
+    static IdHtml = '--Select roof plan--';
+    static LayoutByIdHtml = { [LayoutNone.idHtml]: LayoutNone };
 }

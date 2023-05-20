@@ -58,12 +58,13 @@ class PartTabRow {
 // PartTab
 
 class PartTab {
-    constructor(headTr, totTr) {
-	this.headTr = headTr;
-	this.totTr = totTr;
-	this.headColInsertTd = headTr.querySelector('._totN');
-	const totTotCell = new PartTabCell(totTr.querySelector('._totN'), totTr.querySelector('._totCost'));
-	this.totRow = new PartTabRow(totTr, totTotCell, /*price*/ null);
+    constructor(root) {
+	this.root = root;
+	this.headTr = root.querySelector('._headTr');
+	this.totTr = root.querySelector('._totTr');
+	this.headColInsertTd = this.headTr.querySelector('._totN');
+	const totTotCell = new PartTabCell(this.totTr.querySelector('._totN'), this.totTr.querySelector('._totCost'));
+	this.totRow = new PartTabRow(this.totTr, totTotCell, /*price*/ null);
 
 	this.colCellI = 0;
 	this.rowByPartId = {}

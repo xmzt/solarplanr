@@ -89,7 +89,7 @@ var AcqV = [
     new Acq(  23.2600,   2,   2, ['rack'], 's', 'platt', PenetrationFlashing, null),
     new Acq(  48.00,     6,   5, ['rack'], 'm', 'abc', Part.nu('Geocel 2300 Construction Tripolymer Sealant'), null),
     
-    new Acq(3589.1900,   1,   1, ['inverter'], 's', 'platt', InverterSe11400h_ussnbbl14, null),
+    new Acq(3589.1900,   1,   1, ['inverter'], 's', 'platt', SolarEdgeSe11400h_ussnbbl14, null),
     new Acq(  83.2324,   2,   2, ['inverter'], 's', 'platt', SolarEdgeCt225, null),
     new Acq(   0.00,    32,  32, ['inverter'], 'm', 'm', SolarEdgeP400, null),
     new Acq(   3.96,     6,   6, ['inverter'], 'm', 'beaumont', Part.nu('Screw #12 x 2" SS'), null),

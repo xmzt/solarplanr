@@ -31,12 +31,6 @@ function toFixedMinMax(x, precMin, precMax) {
 // Note, Price*
 //-----------------------------------------------------------------------------------------------------------------------
 
-function noteIdFromUrl(url) {
-    const u = new URL(url);
-    const m = /([^.]+)\.[^.]+$/.exec(u.hostname)
-    return m[1];
-}
-
 class Note {
     price() { return null; }
 }
@@ -44,26 +38,42 @@ class Note {
 class NoteUrl extends Note {
     constructor(url) {
 	super();
-	this.url = url;
+	try {
+	    const u = new URL(url);
+	    const m = /([^.]+)\.[^.]+$/.exec(u.hostname)
+	    this.href = url;
+	    this.descHtml = m[1];
+	}
+	catch(e) {
+	    this.href = null;
+	    this.descHtml = url;
+	}
     }
     
-    descFun() { return noteIdFromUrl(this.url); }
-    
-    menuFill(dst) {
-	const a = document.createElement('a');
-	a.href = this.url;
-	a.target = '_blank';
-	a.classList.add('menuItem');
-	a.appendChild(document.createTextNode(this.descFun()));
-	dst.appendChild(a);
+    menuFill1(dst, descHtml) {
+	if(null !== this.href) {
+	    const a = document.createElement('a');
+	    a.href = this.href;
+	    a.target = '_blank';
+	    a.classList.add('menuItem');
+	    a.innerHTML = descHtml;
+	    dst.appendChild(a);
+	}
+	else {
+	    const span = document.createElement('span');
+	    span.innerHTML = descHtml;
+	    dst.appendChild(span);
+	}
     }
+
+    menuFill(dst) { return this.menuFill1(dst, this.descHtml); }
 }
 
-class NoteCat extends NoteUrl { descFun() { return 'Catalog'; } }
-class NoteDs extends NoteUrl { descFun() { return 'Datasheet'; } }
-class NoteI extends NoteUrl { descFun() { return 'Install'; } }
-class NoteTb extends NoteUrl { descFun() { return 'Tech brief'; } }
-class NoteU extends NoteUrl { descFun() { return 'User'; } }
+class NoteCat extends NoteUrl { menuFill(dst) { this.menuFill1(dst, 'Catalog'); } }
+class NoteDs extends NoteUrl { menuFill(dst) { this.menuFill1(dst, 'Datasheet'); } }
+class NoteI extends NoteUrl { menuFill(dst) { this.menuFill1(dst, 'Install'); } }
+class NoteTb extends NoteUrl { menuFill(dst) { this.menuFill1(dst, 'Tech Brief'); } }
+class NoteU extends NoteUrl { menuFill(dst) { this.menuFill1(dst, 'User'); } }
 
 class Price1 extends NoteUrl {
     constructor(unitCost, url) {
@@ -71,7 +81,7 @@ class Price1 extends NoteUrl {
 	this.unitCost = unitCost;
     }
 
-    descFun() { return `${toFixedMinMax(this.unitCost, 2, 4)} [${super.descFun()}]`; }
+    menuFill(dst) { return this.menuFill1(dst, `${toFixedMinMax(this.unitCost, 2, 4)} [${this.descHtml}]`); }
     
     price() { return this.unitCost; }
 }
@@ -83,11 +93,7 @@ class Price1Id extends Note {
 	this.id = id;
     }
     
-    descFun() { return `${toFixedMinMax(this.unitCost, 2, 4)} [${this.id}]`; }
-    
-    menuFill(dst) {
-	dst.appendChild(document.createTextNode(this.descFun()));
-    }
+    menuFill(dst) { return this.menuFill1(dst, `${toFixedMinMax(this.unitCost, 2, 4)} [${this.id}]`); }
 }
 
 class PriceN extends NoteUrl {
@@ -97,7 +103,7 @@ class PriceN extends NoteUrl {
 	this.unitQty = unitQty;
     }
 
-    descFun() { return `${toFixedMinMax(this.price(), 2, 4)} = ${this.unitCost}/${this.unitQty} [${super.descFun()}]`; }
+    menuFill(dst) { return this.menuFill1(dst, `${toFixedMinMax(this.price(), 2, 4)} = ${this.unitCost}/${this.unitQty} [${this.descHtml}]`); }
     
     price() { return this.unitCost / this.unitQty; }
 }
@@ -111,25 +117,25 @@ function menuClose(menu) {
 }
 
 class Part {
-    constructor(desc, notes) { // additional arguments: notes
-	this.desc = desc;
+    constructor(descHtml, notes) { // additional arguments: notes
+	this.descHtml = descHtml;
 	this.notes = notes;
 	this.id = PartV.length; 
 	PartV.push(this);
     }
 
-    static nu(desc, ...notes) { return new Part(desc, notes); }
+    static nu(descHtml, ...notes) { return new Part(descHtml, notes); }
 
     descClick(anchor) {
-	let menu,desc,div,a;
+	let menu,aDiv,div,a;
 	
 	document.body.appendChild(menu = document.createElement('div'));
 	menu.classList.add('menu');
 	
-	menu.appendChild(desc = document.createElement('div'));
-	desc.appendChild(a = document.createElement('a'));
+	menu.appendChild(aDiv = document.createElement('div'));
+	aDiv.appendChild(a = document.createElement('a'));
 	a.href = 'javascript:void(0)';
-	a.innerHTML = this.desc;
+	a.innerHTML = this.descHtml;
 	a.addEventListener('click', (ev) => menuClose(menu));
 	
 	for(const note of this.notes) {
@@ -137,7 +143,7 @@ class Part {
 	    note.menuFill(div);
 	}
 
-	const descR = desc.getBoundingClientRect();
+	const descR = aDiv.getBoundingClientRect();
 	const anchorR = anchor.getBoundingClientRect();
 	menu.style.left = `${anchorR.left-descR.left}px`;
 	menu.style.top = `${anchorR.top-descR.top}px`;
@@ -146,7 +152,7 @@ class Part {
 
     descFill(dst) {
 	const a = document.createElement('a');
-	a.appendChild(document.createTextNode(this.desc));
+	a.innerHTML = this.descHtml;
 	a.href = 'javascript:void(0)';
 	a.addEventListener('click', (ev) => this.descClick(a));
 	dst.appendChild(a);
@@ -164,7 +170,7 @@ class Part {
 	for(const note of this.notes) {
 	    const p = note.price();
 	    if(null !== p) {
-		dst.appendChild(document.createTextNode(toFixedMinMax(p, 2, 4)));
+		dst.textContent = toFixedMinMax(p, 2, 4);
 		return p;
 	    }
 	}

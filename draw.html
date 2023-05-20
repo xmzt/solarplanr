@@ -11,6 +11,7 @@
   <script type="text/javascript" src="rail.js"></script>
   <script type="text/javascript" src="rack.js"></script>
   <script type="text/javascript" src="roof.js"></script>
+  <script type="text/javascript" src="invsys.js"></script>
   <script type="text/javascript" src="partTab.js"></script>
   <script type="text/javascript" src="sys.js"></script>
   <script type="text/javascript" src="ui.js"></script>
@@ -19,7 +20,7 @@
 </head>
 
 <body onload="bodyOnload()">
-  <div id="uiSysDiv"></div>
+  <div id="uiSysV"></div>
   
   <div class="para">
     <b>Locality info</b>
@@ -41,20 +42,55 @@
     </tr>
   </template>
 
-  <template id="railGroupLog_tem">
-    <div class="_root log displaynone"></div>
-  </template>
-
-  <template id="railGroupStatus_tem">
-    <div class="_root">
-      <span class="_status status"></span>
-      <button class="_logShow">Log Show/Hide</button>
-    </div>
+  <template id="partTab_tem">
+    <table class="_root colorTab partTab">
+      <thead>
+	<tr class="_headTr">
+	  <td>Description</td>
+	  <td>Price</td>
+	  <td class="_totN">Total N</td>
+	  <td class="_totCost">Total Cost</td>
+	</tr>
+      </thead>
+      <tbody>
+	<tr class="_totTr">
+	  <td class="_desc">
+	    <b>Total</b><br>
+	    Watts: <span class="_totWatts"></span><br>
+	    $/Watt: <span class="_totDpw"></span><br>
+	  </td>
+	  <td class="_price"></td>
+	  <td class="_totN"></td>
+	  <td class="_totCost"></td>
+	</tr>
+      </tbody>
+    </table>
   </template>
   
+  <template id="railGroupDiag_tem">
+    <div class="_root">
+      <button class="_logShow">Log Show/Hide</button>
+      <span class="_status status"></span>
+      <br>
+      <div class="_log log displayNone"></div>
+    </div>
+
+  </template>
+
   <template id="roof_tem">
     <div class="_root">
-      <div class="_desc"></div>
+      <div>
+	<span class="_idSpan"></span>
+	<select class="_roofSel"></select>
+	<select class="_layoutSel"></select>
+	<select class="_rackSel"></select>
+	<select class="_invsysSel marginR"></select>
+	<button class="_roofRemBut">-</button>
+	<button class="_roofAddBut">+</button>
+	<button class="_goBut">Go</button>
+	<button class="_resetBut">Reset</button>
+      </div>
+      <div class="_status"></div>
       <div class="rel0">
 	<canvas class="_can"></canvas>
 	<canvas class="_canRail canZ1"></canvas>
@@ -64,54 +100,9 @@
   
   <template id="sys_tem">
     <div class="_root">
-      <div class="_roofDiv roofRow"></div>
-      <table class="colorTab partTab">
-	<thead>
-	  <tr class="_partTabHeadTr">
-	    <td>Description</td>
-	    <td>Price</td>
-	    <td class="_totN">Total N</td>
-	    <td class="_totCost">Total Cost</td>
-	  </tr>
-	</thead>
-	<tbody>
-	  <tr class="_partTabTotTr">
-	    <td class="_desc">
-	      <b>Total</b><br>
-	      Watts: <span class="_totWatts"></span><br>
-	      $/Watt: <span class="_totDpw"></span><br>
-	      <div class="_railGroupStatusDiv"></div>
-	    </td>
-	    <td class="_price"></td>
-	    <td class="_totN"></td>
-	    <td class="_totCost"></td>
-	  </tr>
-	</tbody>
-      </table>
-      <div class="_railGroupLogDiv"></div>
+      <div class="_roofV roofRow"></div>
+      <div class="_partTabParent"></div>
+      <div class="_railGroupDiagV"></div>
     </div>
   </template>
-  
-  <template id="uiSys_tem">
-    <div class="_root uiSys">
-      <div>
-	<button class="_formAdd">Add roof</button>
-	<button class="_go">Go</button>
-	<button class="_configClear">Config clear</button>
-      </div>
-      <div class="_status"></div>
-      <div class="_sys"></div>
-    </div>
-  </template>
-
-  <template id="uiSysForm_tem">
-    <span class="_root">
-      <br class="_br">
-      <select class="_roof"><option value="">--Select roof plan--</option></select>
-      <select class="_layout"><option value="">--Select panel layout--</option></select>
-      <select class="_rack"><option value="">--Select racking--</option></select>
-      <button class="_remove">Remove roof</button>
-    </span>
-  </template>
-
 </body>

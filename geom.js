@@ -47,6 +47,14 @@ class L2 {
 	ctx.restore();
 	return this;
     }
+    drawDbg(ctx) {
+	ctx.save();
+	ctx.strokeStyle = '#487';
+	ctx.lineWidth = 6;
+	this.drawLine(ctx);
+	ctx.restore();
+	return this;
+    }	
     xfrmParallel(off) {
 	const dx = this.x1 - this.x0;
 	const dy = this.y1 - this.y0;
@@ -71,12 +79,26 @@ class P2 {
     addXY(x,y) { return new P2(this.x + x, this.y + y); }
     l2P(p1) { return new L2(this.x, this.y, p1.x, p1.y); }
 
+    drawDbg(ctx) {
+	ctx.save();
+	ctx.fillStyle = '#487';
+	ctx.beginPath();
+	ctx.arc(this.x, this.y, 12, 0, Math.PI * 2.0, false);
+	ctx.fill();
+	ctx.restore();
+	return this;
+    }
     drawFoot(ctx) {
 	ctx.save();
 	ctx.fillStyle = FootFillStyle;
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, FootRadius, 0, Math.PI * 2.0, false);
 	ctx.fill();
+	if(this.edgeP) {
+	    ctx.strokeStyle = FootEdgeStrokeStyle;
+	    ctx.arc(this.x, this.y, FootEdgeRadius, 0, Math.PI * 2.0, false);
+	    ctx.stroke();
+	}
 	ctx.restore();
 	return this;
     }
@@ -237,8 +259,8 @@ function dist2SegPoint(a, p) {
     const ay = a.y0 - a.y1;
     const abx = a.x0 - p.x;
     const aby = a.y0 - p.y;
-    const bx = p.x - ay;
-    const by = p.y + ax;
+    const bx = -ay;
+    const by = ax;
 
     let ud = ax*by - ay*bx;
     if(ud) {

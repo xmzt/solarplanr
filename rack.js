@@ -4,11 +4,6 @@
 //include rail.js
 
 //-----------------------------------------------------------------------------------------------------------------------
-// globals
-
-var RackClasV = [];
-
-//-----------------------------------------------------------------------------------------------------------------------
 // Rack: abstract base class. represents a specific racking system and panels on it.
 //
 // - subclassed for different type of rail system (e.g. IronRidge XR10, Unirac SM).
@@ -87,9 +82,18 @@ class Rack {
     }
 
     partAddNrail() {
-	for(const panelR of this.panelV)
+	for(const panelR of this.panelV) {
 	    this.roof.partAddWatts(panelR.orient.part, 1, panelR.orient.part.watts);
+	    this.roof.sys.invsys.panelAdd(panelR.orient.part, this);
+	}
     }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// RackNone
+
+class RackNone extends Rack {
+    static IdHtml = '--Select rack--';
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -145,7 +149,7 @@ class RackTworail extends Rack {
 	return reg;
     }
 
-    roofFin() {
+    sysFin() {
 	// compute rail regions
 	let bondI = 0;
 	for(const panelR of this.panelV) {
@@ -188,13 +192,16 @@ class RackIronRidgeXR extends RackTworail {
 	this.panelGapY = 2.54*0.5;
     }
 
+    partAddMlpe(n) {
+	this.roof.partAdd(IronRidgeMlpe, n);
+    }
+
     partAddNrail() {
 	super.partAddNrail()
 	this.roof.partAdd(IronRidgeFoot, this.footV.length);
 	this.roof.partAdd(IronRidgeBolt, this.footV.length);
 	this.roof.partAdd(IronRidgeUfo, this.midV.length);
 	this.roof.partAdd(IronRidgeGroundLug, this.groundLugN);
-	this.roof.partAdd(IronRidgeMlpe, this.panelV.length);
 	// rest (i.e. endV) handled by subclass
     }
 }
@@ -234,11 +241,6 @@ class RackIronRidgeXR100Stopper extends RackIronRidgeXRStopper {
     static RailGroupClas = RailGroupIronRidgeXR100;
 }
 
-RackClasV.push(RackIronRidgeXR10Camo);
-RackClasV.push(RackIronRidgeXR10Stopper);
-RackClasV.push(RackIronRidgeXR100Camo);
-RackClasV.push(RackIronRidgeXR100Stopper);
-
 //-----------------------------------------------------------------------------------------------------------------------
 // RackUniracSm
 
@@ -252,14 +254,15 @@ class RackUniracSm extends RackTworail {
 	this.panelGapY = 2.54*1;
     }
 
+    partAddMlpe(n) {
+	this.roof.partAdd(UniracSmMlpe, this.panelV.length);
+    }
+    
     partAddNrail() {
 	super.partAddNrail()
 	this.roof.partAdd(UniracSmFoot, this.footV.length);
 	this.roof.partAdd(UniracSmEnd, this.endV.length);
 	this.roof.partAdd(UniracSmMid, this.midV.length);
 	this.roof.partAdd(UniracSmGroundLug, this.groundLugN);
-	this.roof.partAdd(UniracSmMlpe, this.panelV.length);
     }
 }
-
-RackClasV.push(RackUniracSm);
