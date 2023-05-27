@@ -1,0 +1,38 @@
+/* SizeX = 11 * 96 = 1056 = 925 + 80 + 3 + 2*24 */
+/* SizeY = 8.5 * 96 = 816 = 766 + 2 + 2*24 */
+#oneBody { margin:0; padding:0; white-space:nowrap; font-family:sans-serif; }
+#oneBody0 { margin:24px; padding:0; display:block flex; flex-flow:row nowrap; }
+#oneMeat { flex:0 0 925px; height:766px; border:1px solid; position:relative; font-size:12px; }
+#oneMeatSvg { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+#oneBar { flex:0 0 80px; border-right:1px solid; display:block flex; flex-flow:column nowrap; }
+
+.oneBarSpA { flex:4 0; border-top:3px solid; }
+.oneBarDes { flex:0 0 400px; border-top:3px solid; display:block flex; flex-flow:row nowrap; font-size:12px; }
+.oneBarDes0 { flex:0 0; padding:2px; writing-mode:sideways-lr; font-size:20px; }
+.oneBarDes1 { flex:1 0; padding:2px; writing-mode:sideways-lr; }
+.oneBarDes2 { flex:0 0; padding:2px; writing-mode:sideways-lr; }
+.oneBarSpB { flex:4 0; border-top:1px solid; }
+.oneBarRevTab { flex:0 0; font-size:8px; border-collapse:collapse; }
+.oneBarRevTab TD { padding:0 2px 0 2px; border-top:1px solid; }
+.oneBarRevTab TD:nth-child(1) { width:0; }
+.oneBarRevTab TD:nth-child(2) { width:100%; border-left:1px solid; }
+.oneBarRevTab TR:last-child TD { padding:12px 2px 6px 2px; }
+.oneBarSpC { flex:1 0; } /* blank */
+.oneBarTit { flex:0 0; text-align:center; font-size:8px; } /* title */
+.oneBarRevId { flex:0 0; text-align:center; border-bottom:5px solid; font-size:20px; font-weight:bold; }
+
+.symLab { display:inline flex; flex-flow:column nowrap; }
+.symLab > DIV { flex:0; }
+.symLab ._labId { padding:2px 2px 0px 2px; border:1px solid; }
+.symLab ._sym { margin-top:2px; }
+
+.desCol { position:absolute; bottom:0px; display:block flex; flex-flow: column nowrap; }
+.desBox { flex:0 0; border-right:1px solid; border-top:1px solid; }
+.desBox > :nth-child(1) { border-bottom:1px solid; display:block flex; flex-flow:row nowrap; }
+.desBox > :nth-child(1) > :nth-child(1) { flex:0 0; padding:2px 4px 2px 2px; font-weight:bold; }
+.desBox > :nth-child(1) > :nth-child(2) { flex:1 0; border-left:1px solid; padding:2px 2px 2px 4px; }
+.desBox > :nth-child(2) { padding:4px 10px; }
+
+.desStringTab TR:first-child { font-weight:bold; }
+.desStringTab TD:nth-child(n + 2) { padding-left:10px; }

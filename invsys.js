@@ -12,28 +12,34 @@ class Invsys {
 	this.sys = sys;
     }
 
-    panelAdd(panelR, roof) {}
+    panelAdd(part, roof) {}
 
     sysFin() {}
 }
 
 class InvsysNone extends Invsys {
-    static IdHtml = '--Select inverter system--';
+    static IdHtml = '--Inverter system--';
 }
 
 class InvsysSolarEdge extends Invsys {
     static IdHtml = 'SolarEdge (optimizers)';
     
-    panelAdd(panelR, rack) {
-	rack.roof.partAdd(SolarEdgeP485, 1);
-	rack.partAddMlpe(1);
-    }
-
     sysFin() {
-	this.sys.partTab.partAddTot(SolarEdgeSe11400h_us000bni4, 1);
-	this.sys.partTab.partAddTot(ScrewSs, 6);
-	this.sys.partTab.partAddTot(WasherSs, 6);
-	this.sys.partTab.partAddTot(SolarEdgeCt225, 2);
+	this.sys.partTab.partAdd(SolarEdgeSe11400h_us000bni4, 1, -1);
+	this.sys.partTab.partAdd(SolarEdgeCt225, 2, -1);
+	this.sys.partTab.partAdd(ScrewSs, 6, -1);
+	this.sys.partTab.partAdd(WasherSs, 6, -1);
+	
+	let panelN = 0;
+	for(const [id,panelV] of Object.entries(this.sys.solarEdgeStringById)) {
+	    for(const panel of panelV) {
+		this.sys.partTab.partAdd(panel.optPart, 1, -1);
+		panel.rack.partAddMlpe(1);
+		++panelN;
+	    }
+	}
+	if(panelN != this.sys.partTab.totPanelN)
+	    this.sys.partTab.statusErr(`invsys.panelN=${panelN} != sys.panelN=${this.sys.partTab.totPanelN}`);
     }
 }
 

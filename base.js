@@ -26,6 +26,8 @@ const LinkRadius = 6;
 const PathStrokeStyle = '#000';
 const PathLineWidth = 3;
 const PipeFillStyle = '#4408';
+const PipeStrokeStyle = '#4408';
+const PipeStrokeRadius = 12;
 const PanelFillStyle = '#ccc8';
 const PanelStrokeStyle = '#000';
 const RafterLineDash = [4,8];
@@ -40,3 +42,38 @@ const SpliceFillStyle = '#0c08';
 const SpliceRadiusX = 2;
 const SpliceRadiusY = 10;
 const VentFillStyle = '#4408';
+
+//-----------------------------------------------------------------------------------------------------------------------
+// helpers
+//-----------------------------------------------------------------------------------------------------------------------
+
+function byIdHtml(...args) { var d = {}; for(const arg of args) d[arg.IdHtml] = arg; return d; }
+
+function eleClas(ele, clas) { ele.classList.add(clas); return ele; }
+
+function eleNu(tag) { return document.createElement(tag); }
+function eleNuAdd(tag, dst) { return dst.appendChild(document.createElement(tag)); }
+function eleNuClas(tag, clas) {
+    const ele = document.createElement(tag);
+    ele.classList.add(clas);
+    return ele;
+}
+function eleNuClasAdd(tag, clas, dst) { return dst.appendChild(eleNuClas(tag, clas)); }
+
+function temRoot(id) { return document.getElementById(id).content.firstElementChild; }
+function temClone(id) { return temRoot(id).cloneNode(/*deep=*/true); }
+
+function toFixedMax(x, prec) {
+    const a = x.toString();
+    const b = x.toFixed(prec);
+    return a.length <= b.length ? a : b;
+}    
+
+function toFixedMinMax(x, precMin, precMax) {
+    const a = x.toString();
+    const b = x.toFixed(precMin);
+    const c = x.toFixed(precMax);
+    return c.length < a.length ? c
+	: b.length > a.length ? b
+	: a;
+}

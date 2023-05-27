@@ -12,6 +12,10 @@ class C2 {
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2.0, false);
 	ctx.fill();
+	ctx.beginPath();
+	ctx.strokeStyle = PipeStrokeStyle;
+	ctx.arc(this.x, this.y, this.r + PipeStrokeRadius, 0, Math.PI * 2.0, false);
+	ctx.stroke();
 	ctx.restore();
 	return this;
     }
@@ -95,6 +99,7 @@ class P2 {
 	ctx.arc(this.x, this.y, FootRadius, 0, Math.PI * 2.0, false);
 	ctx.fill();
 	if(this.edgeP) {
+	    ctx.beginPath();
 	    ctx.strokeStyle = FootEdgeStrokeStyle;
 	    ctx.arc(this.x, this.y, FootEdgeRadius, 0, Math.PI * 2.0, false);
 	    ctx.stroke();
@@ -154,7 +159,12 @@ class P2 {
 //-----------------------------------------------------------------------------------------------------------------------
 
 class R2 {
+    static fromBboxPlus(bbox, dx0, dy0, dx1, dy1) {
+	return new this(bbox.x + dx0, bbox.y + dy0, bbox.x + bbox.width + dx1, bbox.y + bbox.height + dy1);
+    }
+
     constructor(x0,y0,x1,y1) { this.x0 = x0; this.y0 = y0; this.x1 = x1; this.y1 = y1; }
+
     drawFillStyle(ctx, fillStyle) {
 	ctx.save();
 	ctx.fillStyle = fillStyle;
@@ -177,10 +187,12 @@ class R2 {
     drawVent(ctx) { return this.drawFillStyle(ctx, VentFillStyle); }
 }
 
-class PanelOrientR2 extends R2 {
-    constructor(x0, y0, x1, y1, orient) {
+class PanelR2 extends R2 {
+    constructor(x0, y0, x1, y1, orient, rack) {
 	super(x0,y0,x1,y1);
 	this.orient = orient;
+	this.rack = rack;
+	//this.optPart
     }
 
     drawPanel(ctx) {
@@ -190,6 +202,11 @@ class PanelOrientR2 extends R2 {
 	    .drawFillStyle(ctx, RailRegFillStyle);
 	new R2(this.x0, this.y1 - this.orient.clamp1, this.x1, this.y1 - this.orient.clamp0)
 	    .drawFillStyle(ctx, RailRegFillStyle);
+	return this;
+    }
+
+    optSet(optPart) {
+	this.optPart = optPart;
 	return this;
     }
 }

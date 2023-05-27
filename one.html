@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <title>One line diagram - Solarplanr</title>
+  <link type="text/css" rel="stylesheet" href="base.css">
+  <link type="text/css" rel="stylesheet" href="one.css">
+  <script type="text/javascript" src="base.js"></script>
+  <script type="text/javascript" src="geom.js"></script>
+  <script type="text/javascript" src="part.js"></script>
+  <script type="text/javascript" src="partCat.js"></script>
+  <script type="text/javascript" src="rail.js"></script>
+  <script type="text/javascript" src="rack.js"></script>
+  <script type="text/javascript" src="roof.js"></script>
+  <script type="text/javascript" src="invsys.js"></script>
+  <script type="text/javascript" src="partTab.js"></script>
+  <script type="text/javascript" src="sys.js"></script>
+  <script type="text/javascript" src="siteB.js"></script>
+  <script type="text/javascript" src="siteA.js"></script>
+  <script type="text/javascript" src="one.js"></script>
+</head>
+
+<body id="oneBody" onload="oneBodyOnload()">
+  <div id="oneBody0">
+    <div id="oneMeat">
+      <div class="desCol"></div>
+      <svg id="oneMeatSvg" fill="transparent" xmlns="http://www.w3.org/2000/svg">
+	<style>
+	  .label { font:normal 12px sans-serif; fill:black; }
+	  .symFont {font:bold 10px sans-serif; fill:black; } 
+	  .labelBox { rx:4px; ry:4px; stroke:black; stroke-width:0.5; fill:#eee; }
+	  .strok { stroke-linejoin:bevel; stroke:black; }
+	  .group { stroke-linejoin:bevel; stroke:black; stroke-dasharray:4 2; }
+	  .group1 { stroke-linejoin:bevel; stroke:#444; stroke-dasharray:1 2; }
+	  .repeat { stroke-linejoin:bevel; stroke:#444; stroke-dasharray:2 1; }
+	</style>
+
+	<g fill="transparent">
+	  <defs> 
+	    <path id="dc" class="strok" d="M0,0 h10 M0,3 h2 m2,0 h2 m2,0 h2" />
+	    <path id="ac" class="strok" d="M0,0 Q3,-5,5,0 T10,0" />
+	    <path id="module_24x30" class="strok" d="M0,0 V30 H24 V0 H0 L12,12 L24,0" />
+	    <path id="ocpdR_18x0" class="strok" d="M0,0 h5 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0
+						   M5,-2 a1,1,0,0,1,8,0
+						   M18,0 h-5 a1,1,0,0,0,-2,0 a1,1,0,0,0,2,0" />
+	    <path id="ocpdL_18x0" class="strok" d="M0,0 h-5 a1,1,0,0,0,-2,0 a1,1,0,0,0,2,0
+						   M-5,-2 a1,1,0,0,0,-8,0
+						   M-18,0 h5 a1,1,0,0,0,2,0 a1,1,0,0,0,-2,0" />
+	    <path id="utility" class="strok" d="M0,0 l8,-16 h-16 z" />
+	  </defs>
+	  
+	  <symbol id="ammeter_R8" overflow="visible">
+	    <circle class="strok" cx="0" cy="0" r="8" />
+	    <text class="symFont" x="-3.5" y="3">A</text>
+	  </symbol>
+
+	  <symbol id="ctL_R8" overflow="visible">
+	    <path class="strok" d="M-2,-8 a1,1,0,0,1,0,8 a1,1,0,0,1,0,8" />
+	    <text class="symFont" x="4" y="4">CT</text> 
+	  </symbol>
+
+	  <symbol id="dot3_12x2" overflow="visible">
+	    <circle fill="black" cx="1" cy="0" r="1" />
+	    <circle fill="black" cx="6" cy="0" r="1" />
+	    <circle fill="black" cx="11" cy="0" r="1" />
+	  </symbol>
+	    
+	  <symbol id="dcDc_24x24" overflow="visible">
+	    <path class="strok" d="M0,24 V0 H24 V24 H0 L24,0" />
+	    <use href="#dc" x="3" y="3" />
+	    <use href="#dc" x="11" y="18" />
+	  </symbol>
+	  
+	  <symbol id="dcAc_24x24" overflow="visible">
+	    <path class="strok" d="M0,24 V0 H24 V24 H0 L24,0" />
+	    <use href="#dc" x="3" y="3" />
+	    <use href="#ac" x="11" y="18" />
+	  </symbol>
+
+	  <symbol id="meter_R8" overflow="visible">
+	    <circle class="strok" cx="0" cy="0" r="8" />
+	    <text class="symFont" x="-4" y="3.5">M</text>
+	  </symbol>
+
+	  <symbol id="moduleOpt_24x60" overflow="visible">
+	    <use href="#module_24x30" x="0" y="0" />
+	    <use href="#dcDc_24x24" x="0" y="36" />
+	    <path class="strok" d="M12,30 V36">
+	  </symbol>
+
+	  <symbol id="sw_24x0" overflow="visible">
+	    <!-- linkL=0,0 linkR=24,0 -->
+	    <path class="strok" d="M0,0 h6 l12,-6 M24,0 h-6" />
+	    <circle class="strok" fill="white" cx="6" cy="0" r="2" />
+	  </symbol>
+
+	  <symbol id="stringOpt_114x66" overflow="visible">
+	    <!-- linkR=114,66 -->
+	    <use href="#moduleOpt_24x60" x="0" y="0" />
+	    <use href="#moduleOpt_24x60" x="30" y="0" />
+	    <use href="#moduleOpt_24x60" x="90" y="0" />
+	    <use href="#dot3_12x2" x="66" y="30" /> 
+	    <use href="#dot3_12x2" x="66" y="66" /> 
+	    <path class="strok" d="M12,60 v6 H39 v-6  M45,60 v6 h17  M99,60 v6 h-17 M105,60 v6 H114" />
+	  </symbol>
+
+	  <symbol id="inverter_110x0" overflow="visible">
+	    <!-- linkDc0=0,-6 linkDc1=0,0 linkDc2=0,6 linkAc=110,0 linkCt=110,-24 -->
+	    <use href="#ammeter_R8" x="92" y="-24" />
+	    <use href="#sw_24x0" x="20" y="0" />
+	    <use href="#dcAc_24x24" x="50" y="-12" />
+	    <use href="#sw_24x0" x="80" y="0" />
+	    <path class="strok" d="M20,0 H0  m0,-6 h10 v12 h-10  M44,0 H50  M74,0 H80  M104,0 H110  M100,-24 H110" />
+	  </symbol>
+
+	  <symbol id="mep_36x134" overflow="visible">
+	    <!-- linkFeed=18,0 linkOcpdLB=0,134 linkCt=18,12 -->
+	    <path class="strok" d="M18,0 V24  M18,42 V88 M18,100 V134" />
+	    <use href="#ocpdR_18x0" transform="matrix(0 1 -1 0 18 24)" />
+	    <use href="#ocpdL_18x0" x="18" y="54" />
+	    <use href="#ocpdR_18x0" x="18" y="54" />
+	    <use href="#ocpdL_18x0" x="18" y="78" />
+	    <use href="#ocpdR_18x0" x="18" y="78" />
+
+	    <use href="#dot3_12x2" x="12" y="94" />
+	    
+	    <use href="#ocpdL_18x0" x="18" y="110" />
+	    <use href="#ocpdR_18x0" x="18" y="110" />
+	    <use href="#ocpdL_18x0" x="18" y="134" />
+	    <use href="#ocpdR_18x0" x="18" y="134" />
+	  </symbol>
+	</g>
+      </svg>
+    </div>
+    <div id="oneBar">
+      <div class="oneBarSpA"></div>
+      <div class="oneBarDes">
+	<div class="oneBarDes0">SOLAR PANEL INSTALLATION</div>
+	<div class="oneBarDes1">3924 NE 34th Ave, Portland, OR 97212</div>
+	<div class="oneBarDes2">Nick Parish</div>
+	<div class="oneBarDes2">T 646-267-8173</div>
+      </div>
+      <div class="oneBarSpB"></div>
+      <table class="oneBarRevTab">
+	<tbody>
+	  <tr><td>revisions</td><td></td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+	  <tr><td>date</td><td>5/23/2023</td></tr>
+	</tbody>
+      </table>
+      <div class="oneBarSpC"></div>
+      <div class="oneBarTit">ONE LINE DIAGRAM</div>
+      <div class="oneBarSpC"></div>
+      <div class="oneBarRevId">A0.1</div>
+    </div>
+  </div>
+
+  <template id="desStringOpt_tem">
+    <div class="desBox">
+      <div>
+	<div></div>
+      </div>
+      <table class="desStringTab">
+	<thead><tr><td>Quantity</td><td>Module</td><td>Optimizer</td></tr></thead>
+      </table>
+    </div>
+  </template>
+
+  <template id="desModule_tem">
+    <div class="desBox">
+      <div>
+	<div></div>
+	<div></div>
+      </div>
+      <div></div>
+    </div>
+  </template>
+
+  
+  
+</body>

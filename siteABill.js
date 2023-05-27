@@ -20,7 +20,7 @@ class Acq {
 }
 
 function acqTabTr(acq) {
-    const tr = temRootClone('acqTabTr_tem');
+    const tr = temClone('acqTabTr_tem');
     tr.querySelector('._cost').textContent = acq.cost.toFixed(2);
     tr.querySelector('._qty').textContent = acq.qty;
     tr.querySelector('._qtyUsed').textContent = acq.qtyUsed;
@@ -33,7 +33,7 @@ function acqTabTr(acq) {
     return tr;
 }
 function acqTabTrSum(cost, k, v) {
-    const tr = temRootClone('acqTabTr_tem');
+    const tr = temClone('acqTabTr_tem');
     tr.querySelector('._cost').textContent = cost.toFixed(2);
     tr.querySelector(k).textContent = v;
     return tr;
@@ -146,7 +146,7 @@ function leftoverTabTr(acq) {
     acq.leftQty = acq.qty - acq.qtyUsed;
     acq.leftCost = acq.cost * acq.leftQty / acq.qty;
 
-    const tr = temRootClone('leftoverTabTr_tem');
+    const tr = temClone('leftoverTabTr_tem');
     tr.querySelector('._cost').textContent = acq.cost.toFixed(2);
     tr.querySelector('._qty').textContent = acq.qty;
     tr.querySelector('._leftQty').textContent = acq.leftQty;
@@ -156,7 +156,7 @@ function leftoverTabTr(acq) {
 }
 
 function leftoverTabTrSum(leftCost, k, v) {
-    const tr = temRootClone('leftoverTabTr_tem');
+    const tr = temClone('leftoverTabTr_tem');
     tr.querySelector('._leftCost').textContent = leftCost.toFixed(2);
     tr.querySelector(k).textContent = v;
     return tr;

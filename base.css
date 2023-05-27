@@ -1,20 +1,31 @@
 A { color:#04c; text-decoration:none; }
 A:hover { color: #60a; }
 
-BODY { margin:2px; padding:0; }
-
 .acqTab TD:nth-child(1) { text-align:right; }
 .acqTab TD:nth-child(2) { text-align:right; }
 .acqTab TD:nth-child(3) { text-align:right; }
 .acqTab TD:nth-child(4) { text-align:right; }
 
+.avail { color:#a00; font-weight:bold; } 
+
 .canZ1 { position:absolute; top:0; left:0; z-index:1; }
 
-.colorTab THEAD TD { font-weight:bold; }
-.colorTab TD:nth-child(odd) { background-color:#eef; }
-.colorTab TD:nth-child(even) { background-color:#ddf; }
+.colorThead TD { font-weight:bold; }
+.colorThead TD:nth-child(odd) { background-color:#cff4; }
+.colorThead TD:nth-child(even) { background-color:#9ff4; }
+.colorTbody TD:nth-child(odd) { background-color:#cfc2; }
+.colorTbody TD:nth-child(even) { background-color:#afa2; }
+.colorTbody TR:nth-child(odd) { background-color:#caf2; }
+.colorTbody TR:nth-child(even) { background-color:#9af2; }
+.colorTfoot TD:nth-child(odd) { background-color:#cff4; }
+.colorTfoot TD:nth-child(even) { background-color:#9ff4; }
 
+.displayBlock { display:block; }
 .displayNone { display:none; }
+
+.drawBody { margin:2px; padding:0; }
+
+.err { background-color: #f888; }
 
 .log { margin-top:1em; white-space:pre; font-family:monospace; }
 
@@ -35,10 +46,12 @@ BODY { margin:2px; padding:0; }
     left:0px;
     top:0px;
 }
+.menuHeadA { display:block; color:#606; border-bottom:1px solid black; margin-bottom:4px; }
 
-.menu > A { display:block }
+.menuA { display:block; }
 
-.menu > :nth-child(1) { color:#606; border-bottom:1px solid black; margin-bottom:4px; }
+.note {}
+.noteA { display:block; }
 
 .panelTab TD:nth-child(3) { text-align:right; }
 .panelTab TD:nth-child(4) { text-align:right; }
@@ -47,10 +60,7 @@ BODY { margin:2px; padding:0; }
 
 .para { margin-top:1em; }
 
-.partTab TBODY TD:nth-child(n+2) { text-align:right; }
-
-.pend TD:nth-child(odd) { background-color:#ff0; }
-.pend TD:nth-child(even) { background-color:#ee0; }
+.pend { background-color:#ff08; }
 
 .rel0 { position:relative; top:0; left:0; }
 
@@ -62,7 +72,7 @@ BODY { margin:2px; padding:0; }
 .rowFlex1 { flex:1 1 auto; }
 .rowFlex1Pad { flex:1 1 auto; padding-left:2px; }
 
-
+.textAlignRight { text-align:right; }
 
 /*.uiSys { margin:2px; }*/
 

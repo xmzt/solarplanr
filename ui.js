@@ -3,8 +3,6 @@
 //-----------------------------------------------------------------------------------------------------------------------
 // object tables
 
-function byIdHtml(...args) { var d = {}; for(const arg of args) d[arg.IdHtml] = arg; return d; }
-
 var RoofClasByIdHtml;
 var RackClasByIdHtml;
 var InvsysClasByIdHtml;
@@ -45,37 +43,35 @@ class UiRoof {
 	let option;
         for(const k in RoofClasByIdHtml) {
 	    this.roofSel.appendChild(option = uiOptionElem(k));
-	    if(k == config.roof) {
-		option.selected = 1;
+	    if(option.selected = k == config.roof)
 		roofClasSelected = RoofClasByIdHtml[k];
-	    }
 	}
 	this.roofSel.addEventListener('change', (ev) => this.roofSelChange());
 
 	this.layoutSel = root.querySelector('._layoutSel');
-	for(const k in roofClasSelected.LayoutByIdHtml) {
+	for(const k in roofClasSelected.LayoutFunByIdHtml) {
 	    this.layoutSel.appendChild(option = uiOptionElem(k));
-	    if(k == config.layout)
-		option.selected = 1;
+	    option.selected = k == config.layout;
 	}
 
 	this.rackSel = root.querySelector('._rackSel');
 	for(const k in RackClasByIdHtml) {
 	    this.rackSel.appendChild(option = uiOptionElem(k));
-	    if(k == config.rack)
-		option.selected = 1;
+	    option.selected = k == config.rack;
 	}
 	
 	this.invsysSel = root.querySelector('._invsysSel');
 	for(const k in InvsysClasByIdHtml) {
 	    this.invsysSel.appendChild(option = uiOptionElem(k));
-	    if(k == config.invsys)
-		option.selected = 1;
+	    option.selected = k == config.invsys;
 	}
+
+	this.jboxSel = root.querySelector('._jboxSel');
+	for(const option of this.jboxSel.options)
+	    option.selected = option.value == config.jbox;
 	
 	root.querySelector('._goBut').addEventListener('click', (ev) => this.uiSys.goStore());
 	root.querySelector('._resetBut').addEventListener('click', (ev) => this.reset());
-	this.statusElem = root.querySelector('._status');
 	this.canElem = root.querySelector('._can');
 	this.canRailElem = root.querySelector('._canRail');
     }
@@ -86,6 +82,7 @@ class UiRoof {
 	    layout:uiSelectValue(this.layoutSel),
 	    rack:uiSelectValue(this.rackSel),
 	    invsys:uiSelectValue(this.invsysSel),
+	    jbox:uiSelectValue(this.jboxSel),
 	};
     }
 
@@ -100,31 +97,26 @@ class UiRoof {
     
     roofSelChange() {
 	this.layoutSel.replaceChildren();
-	for(const k in RoofClasByIdHtml[uiSelectValue(this.roofSel)].LayoutByIdHtml)
+	for(const k in RoofClasByIdHtml[uiSelectValue(this.roofSel)].LayoutFunByIdHtml)
 	    this.layoutSel.appendChild(uiOptionElem(k));
     }
 
     sysPopu(sys) {
+	sys.jboxSet(parseInt(uiSelectValue(this.jboxSel)));
+	
+	const invsysClas = InvsysClasByIdHtml[uiSelectValue(this.invsysSel)];
+	const invsys = sys.invsysGetOrNew(invsysClas);
+
 	const roofClas = RoofClasByIdHtml[uiSelectValue(this.roofSel)];
-	if(RoofNone !== roofClas) {
-	    const layout = roofClas.LayoutByIdHtml[uiSelectValue(this.layoutSel)];
-	    if(LayoutNone !== layout) {
-		const rackClas = RackClasByIdHtml[uiSelectValue(this.rackSel)];
-		if(RackNone !== rackClas) {
-		    const invsysClas = InvsysClasByIdHtml[uiSelectValue(this.invsysSel)];
-		    sys.invsysSet(new invsysClas(sys));
-		    const roof = new roofClas(sys, this.id, this.canElem, this.canRailElem);
-		    sys.roofAdd(roof);
-		    const rack =  new rackClas(roof);
-		    roof.rackAdd(rack);
-		    layout.rackPopu(rack, roof);
-		    this.statusElem.textContent = null;
-		    return 0;
-		    
-		} else this.statusElem.textContent = 'rack not selected';
-	    } else this.statusElem.textContent = 'layout not selected';
-	} else this.statusElem.textContent = 'roof plan not selected';
-	return -1;
+	const roof = new roofClas(sys, this.id, this.canElem, this.canRailElem);
+	sys.roofAdd(roof);
+
+	const rackClas = RackClasByIdHtml[uiSelectValue(this.rackSel)];
+	const rack =  new rackClas(roof);
+	sys.rackAdd(rack);
+	    
+	const layoutFun = roofClas.LayoutFunByIdHtml[uiSelectValue(this.layoutSel)];
+	layoutFun(rack, roof);
     }
 }
 
@@ -157,7 +149,7 @@ class UiSys {
 	if(1 == this.uiRoofV.length)
 	    this.uiRoofV[0].onlyroofSet(0);
 	const id = this.roofIdAlloc++;
-	const uiRoof = new UiRoof(this, temRootClone('roof_tem'), config, `Roof.${id}`, (0 == this.uiRoofV.length));
+	const uiRoof = new UiRoof(this, temClone('roof_tem'), config, `Roof.${id}`, (0 == this.uiRoofV.length));
 	this.uiRoofV.push(uiRoof);
 	this.roofVElem.appendChild(uiRoof.root);
     }
@@ -174,7 +166,7 @@ class UiSys {
 	this.sys.terminate();
 	this.railGroupDiagVElem.replaceChildren();
 	
-	this.sys = new Sys(new SysPartTab(temRootClone('partTab_tem')), this.railGroupDiagVElem);
+	this.sys = new Sys(new SysPartTab(temClone('partTab_tem')), this.railGroupDiagVElem);
 	this.partTabParentElem.replaceChildren(this.sys.partTab.root);
 	for(const uiRoof of this.uiRoofV)
 	    uiRoof.sysPopu(this.sys);
@@ -207,7 +199,7 @@ class Ui {
     }	
     
     uiSysAdd(config) {
-	const uiSys = new UiSys(this, temRootClone('sys_tem'), config);
+	const uiSys = new UiSys(this, temClone('sys_tem'), config);
 	this.uiSysV.push(uiSys);
 	this.uiSysVElem.appendChild(uiSys.root);
 	uiSys.go();
@@ -224,15 +216,15 @@ class Ui {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// bodyOnload
+// uiBodyOnload
 
-function bodyOnload() {
-     RoofClasByIdHtml = byIdHtml(
-	 RoofNone,
-	 B_Roof,
-	 A_RoofA,
-	 A_RoofB,
-     );
+function uiBodyOnload() {
+    RoofClasByIdHtml = byIdHtml(
+	RoofNone,
+	SiteB_Roof,
+	SiteA_RoofA,
+	SiteA_RoofB,
+    );
     RackClasByIdHtml = byIdHtml(
 	RackNone,
 	RackIronRidgeXR10Camo,

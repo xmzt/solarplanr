@@ -5,18 +5,6 @@
 //include rack.js
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Layout
-
-class Layout {
-    constructor(idHtml, rackPopu) {
-	this.idHtml = idHtml;
-	this.rackPopu = rackPopu;
-    }
-}
-
-var LayoutNone = new Layout('--Select panel layout--', null);
-
-//-----------------------------------------------------------------------------------------------------------------------
 // Roof: roof geometry (border, obstructions), with racks (racks have panels)
 //
 // - subclassed for a specific roof geometry. 
@@ -25,14 +13,11 @@ class Roof {
     //static IdHtml
     //static LayoutByIdHtml
     
-    static layoutAdd(idHtml, rackPopu) { this.LayoutByIdHtml[idHtml] = new Layout(idHtml, rackPopu); }
-
     constructor(sys, id, canElem, canRailElem) {
 	this.sys = sys;
 	this.id = id;
 	this.canElem = canElem;
 	this.canRailElem = canRailElem;
-	this.rackV = [];
 	
 	//plan
 	//this.bpV
@@ -61,20 +46,6 @@ class Roof {
 	this.edgeV = edgeV;
     }
 
-    draw(ctx) {
-	drawPathV(ctx, this.bpV);
-	if(this.edgePathV.length) drawEdgePathV(ctx, this.edgePathV);
-	//for(const x of this.edgeV) x.drawLine(ctx);
-	//for(const x of this.edgeV) x.xfrmParallel(-EdgeWidth).drawLine(ctx);
-	
-	for(const x of this.rafterV) x.drawRafter(ctx);
-	for(const x of this.chimneyV) x.drawChimney(ctx);
-	for(const x of this.fireWalkV) x.drawFireWalk(ctx);
-	for(const x of this.pipeV) x.drawPipe(ctx);
-	for(const x of this.ventV) x.drawVent(ctx);
-	return this;
-    }
-    
     footVFromHoriz(horiz) {
 	// footV = set of all intersections with rafters
 	const footV = [];
@@ -113,17 +84,13 @@ class Roof {
 	}
 	return footV;
     }
-    
+
     partAdd(part, n) {
-	this.sys.partTab.partAddCol(part, n, this.partTabColI);
+	this.sys.partTab.partAdd(part, n, this.partTabSubI);
     }
-    
-    partAddWatts(part, n, watts) {
-	this.sys.partTab.partAddColWatts(part, n, this.partTabColI, watts);
-    }
-    
-    rackAdd(rack) {
-	this.rackV.push(rack);
+
+    partAddPanel(part, n) {
+	this.sys.partTab.partAddPanel(part, n, this.partTabSubI);
     }
 
     railFromReg(reg) {
@@ -154,12 +121,26 @@ class Roof {
 	ctx.clearRect(r.x0, r.y0, r.x1-r.x0, r.y1-r.y0);
 	return ctx;
     }
-    
+
+    ctxClearAll() {
+	this.ctxClear(this.ctxRail);
+	this.ctxClear(this.ctx);
+    }
+
     sysFin() {
-	this.ctx = this.ctxClear(this.canSizeCtx(this.canElem));
-	this.ctxRail = this.ctxClear(this.canSizeCtx(this.canRailElem));
-	this.draw(this.ctx);
-	for(const rack of this.rackV) rack.sysFin();
+	this.ctx = this.canSizeCtx(this.canElem);
+	this.ctxRail = this.canSizeCtx(this.canRailElem);
+
+	// draw
+	drawPathV(this.ctx, this.bpV);
+	if(this.edgePathV.length) drawEdgePathV(this.ctx, this.edgePathV);
+	//for(const x of this.edgeV) x.drawLine(this.ctx);
+	//for(const x of this.edgeV) x.xfrmParallel(-EdgeWidth).drawLine(this.ctx);
+	for(const x of this.rafterV) x.drawRafter(this.ctx);
+	for(const x of this.chimneyV) x.drawChimney(this.ctx);
+	for(const x of this.fireWalkV) x.drawFireWalk(this.ctx);
+	for(const x of this.pipeV) x.drawPipe(this.ctx);
+	for(const x of this.ventV) x.drawVent(this.ctx);
     }
 }
 
@@ -167,6 +148,8 @@ class Roof {
 // RoofNone
 
 class RoofNone extends Roof {
-    static IdHtml = '--Select roof plan--';
-    static LayoutByIdHtml = { [LayoutNone.idHtml]: LayoutNone };
+    static IdHtml = '--Roof plan--';
+    static LayoutFunByIdHtml = {
+	'--Panel layout--': function(rack, roof) {},
+    };
 }

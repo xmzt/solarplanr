@@ -14,12 +14,12 @@
   <script type="text/javascript" src="invsys.js"></script>
   <script type="text/javascript" src="partTab.js"></script>
   <script type="text/javascript" src="sys.js"></script>
-  <script type="text/javascript" src="ui.js"></script>
   <script type="text/javascript" src="siteB.js"></script>
   <script type="text/javascript" src="siteA.js"></script>
+  <script type="text/javascript" src="ui.js"></script>
 </head>
 
-<body onload="bodyOnload()">
+<body class="drawBody" onload="uiBodyOnload()">
   <div id="uiSysV"></div>
   
   <div class="para">
@@ -33,42 +33,25 @@
     <br>Topographical Factor 1 KZT
   </div>
 
-  <template id="partTabTr_tem">
-    <tr class="_root">
-      <td class="_desc"></td>
-      <td class="_price"></td>
-      <td class="_totN"></td>
-      <td class="_totCost"></td>
-    </tr>
-  </template>
-
   <template id="partTab_tem">
-    <table class="_root colorTab partTab">
-      <thead>
-	<tr class="_headTr">
-	  <td>Description</td>
-	  <td>Price</td>
-	  <td class="_totN">Total N</td>
-	  <td class="_totCost">Total Cost</td>
-	</tr>
-      </thead>
-      <tbody>
-	<tr class="_totTr">
-	  <td class="_desc">
+    <table>
+      <thead class="colorThead"><tr><td>Description</td></tr></thead>
+      <tbody class="colorTbody"></tbody>
+      <tfoot class="colorTfoot">
+	<tr>
+	  <td>
 	    <b>Total</b><br>
 	    Watts: <span class="_totWatts"></span><br>
 	    $/Watt: <span class="_totDpw"></span><br>
+	    <div class="_totStatus"></div>
 	  </td>
-	  <td class="_price"></td>
-	  <td class="_totN"></td>
-	  <td class="_totCost"></td>
 	</tr>
-      </tbody>
+      </tfoot>
     </table>
   </template>
   
   <template id="railGroupDiag_tem">
-    <div class="_root">
+    <div>
       <button class="_logShow">Log Show/Hide</button>
       <span class="_status status"></span>
       <br>
@@ -78,19 +61,23 @@
   </template>
 
   <template id="roof_tem">
-    <div class="_root">
+    <div>
       <div>
 	<span class="_idSpan"></span>
 	<select class="_roofSel"></select>
 	<select class="_layoutSel"></select>
 	<select class="_rackSel"></select>
-	<select class="_invsysSel marginR"></select>
+	<select class="_invsysSel"></select>
+	<select class="_jboxSel marginR">
+	  <option value="">--Jbox--</option>
+	  <option value="0">Jbox=0</option>
+	  <option value="1">Jbox=1</option>
+	</select>
 	<button class="_roofRemBut">-</button>
 	<button class="_roofAddBut">+</button>
 	<button class="_goBut">Go</button>
 	<button class="_resetBut">Reset</button>
       </div>
-      <div class="_status"></div>
       <div class="rel0">
 	<canvas class="_can"></canvas>
 	<canvas class="_canRail canZ1"></canvas>
@@ -99,7 +86,7 @@
   </template>
   
   <template id="sys_tem">
-    <div class="_root">
+    <div>
       <div class="_roofV roofRow"></div>
       <div class="_partTabParent"></div>
       <div class="_railGroupDiagV"></div>

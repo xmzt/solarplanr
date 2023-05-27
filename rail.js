@@ -56,7 +56,7 @@ class RailGroup {
     constructor(sys) {
 	this.sys = sys
 	this.railV = [];
-	this.diagElem = temRootClone('railGroupDiag_tem');
+	this.diagElem = temClone('railGroupDiag_tem');
 	this.statusElem = this.diagElem.querySelector('._status');
 	this.logElem = this.diagElem.querySelector('._log');
 	this.diagElem.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
@@ -76,8 +76,8 @@ class RailGroup {
 	this.sys.railWkrCtrl.req(
 	    this,
 	    this.railV.map((r,i) => { return { id:i, len:(r.x1 - r.x0) }; }),
-	    this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.price() }; }),
-	    this.constructor.SplicePart.price(),
+	    this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.sourceV[0].cost1 }; }),
+	    this.constructor.SplicePart.sourceV[0].cost1,
 	);
     }
 
@@ -88,10 +88,10 @@ class RailGroup {
 	if(null !== this.bestComV) {
 	    this.sys.ctxRailClear();
 	    for(const com of this.bestComV) {
-		this.sys.partTab.partAddTot(this.constructor.SplicePart, -(com.segN - 1));
+		this.sys.partTab.partAdd(this.constructor.SplicePart, -(com.segN - 1), -1);
 		for(const partId of com.partIdV) {
 		    const part = this.constructor.RailPartV[partId];
-		    this.sys.partTab.partAddTot(part, -1);
+		    this.sys.partTab.partAdd(part, -1, -1);
 		}
 	    }
 	}
@@ -102,11 +102,11 @@ class RailGroup {
 	    const rail = this.railV[com.railId];
 	    this.logElem.innerHTML +=
 		`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`;
-	    this.sys.partTab.partAddTot(this.constructor.SplicePart, com.segN - 1);
+	    this.sys.partTab.partAdd(this.constructor.SplicePart, com.segN - 1, -1);
 	    let x = 0;
 	    for(const partId of com.partIdV) {
 		const part = this.constructor.RailPartV[partId];
-		this.sys.partTab.partAddTot(part, 1);
+		this.sys.partTab.partAdd(part, 1, -1);
 		if(x)
 		    new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctxRail);
 		x += part.dimL;
@@ -127,7 +127,7 @@ class RailGroup {
 
     railrRspFin() {
 	this.logElem.innerHTML += `railrRspFin\n`;
-	this.sys.pendDec();
+	this.sys.partTab.pendDec();
     }
 }
 

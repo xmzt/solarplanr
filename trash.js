@@ -1,3 +1,144 @@
+class SvgText {
+    constructor(dst, clas, text) {
+	this.ele = svgAddText(dst, 'label', lab);
+	this.eleB = this.ele.getBBox();
+	this.pad = this.eleB.height + this.eleB.y;
+    }
+    
+    posUR(x, y) {
+	svgSetXY(this.ele, x, y - this.pad);
+	this.bbox = [ x, y - this.eleB.height, this.eleB.width, this.eleB.height ];
+	return this;
+    }
+    
+    posDR(x, y) {
+	svgSetXY(this.ele, x, y - this.eleB.y);
+	this.bbox = [ x, y, this.eleB.width, this.eleB.height ];
+	return this;
+    }
+}
+
+    
+class DesBox {
+    constructor(dst0, lab) {
+	const dst = this.dst = svgAddNu(dst0, 'svg');
+	this.border = svgAddNu(dst, 'rect');
+	const t = SvgText(dst, 'label', lab);
+	t.posDR(t.pad, t.pad);
+	this.y = t.bbox[1] + t.bbox[3];
+    }
+
+    line(text) {
+	const t = SvgText(dst, 'label', text);
+	
+	
+	labObj.posDR(labObj.pad, labObj.pad);
+	
+	
+	const t = svgAddText(dst, 'label', lab);
+	const tr = t.getBBox();
+	const tpad = tr.height + tr.y;
+
+	svgSetXY(t, bx + tpad, by + tr.height, 'label');
+	
+    let bx = r.x - pad;
+    const by = r.y - pad - tpad - tr.height;
+    const bh = r.y + r.height + pad - by;
+    let bw = r.width + pad + pad;
+    const bw1 = tr.width + tpad + tpad;
+    if(bw1 >= bw) {
+	bx -= 0.5*(bw1 - bw);
+	bw = bw1;
+    }
+    svgSetRectClas(b, bx, by, bw, bh, 'group');
+}
+
+	
+//-----------------------------------------------------------------------------------------------------------------------
+// derivative
+
+function comLabelR(dst, refB, id, ...noteV) {
+    let bbox = comTextBoxed(dst, refB.x + refB.width + 2, refB.y, 'label', 'strok', id).getBBox();
+    let y = bbox.y;
+    for(const note of noteV) {
+	y += bbox.height;
+	bbox = svgTextBelow(dst, bbox.x, y, 'label', note).getBBox();
+    }
+}
+
+function comIdBoxT(dst, refB, id) {
+    const idText = dst.appendChild(svgTextHidden(id));
+    const idB = idText.getBBox();
+    const pad = idB.height + idB.y;
+    const textY = refB
+    svgTextUnhide(idText, refB.x + pad, refB.y - 2 - pad, 'label');
+    const boxH = idB.height + pad;
+    dst.appendChild(svgRect(refB.x, refB.y - 2 - boxH, idB.width + pad + pad, boxH, 'strok'));
+}
+
+function comLabelB(dst, refB, id, ...noteV) {
+    let bbox = comTextBoxed(dst, refB.x, refB.y + refB.height + 2, 'label', 'strok', id).getBBox();
+    console.log('comLabelB', refB, bbox);
+    let y = bbox.y;
+    for(const note of noteV) {
+	y += bbox.height;
+	bbox = svgTextBelow(dst, bbox.x, y, 'label', note).getBBox();
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// bounds accumulator
+
+function bounNu() {
+    return new R2(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY,
+		  Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+}
+
+function bounBbox(boun, bbox) {
+    if(bbox.x < boun.x0) boun.x0 = bbox.x;
+    if(bbox.x > boun.x1) boun.x1 = bbox.x;
+    if(bbox.y < boun.y0) boun.y0 = bbox.y;
+    if(bbox.y > boun.y1) boun.y1 = bbox.y;
+    const x1 = bbox.x + bbox.width;
+    const y1 = bbox.y + bbox.height;
+    if(x1 < boun.x0) boun.x0 = x1;
+    if(x1 > boun.x1) boun.x1 = x1;
+    if(y1 < boun.y0) boun.y0 = y1;
+    if(y1 > boun.y1) boun.y1 = y1;
+    return bbox;
+}
+       
+function svgSymbolNu(id) {
+    const ele = document.createElementNS('http://www.w3.org/2000/svg','symbol');
+    ele.id = id;
+    ele.setAttribute('overflow', 'visible');
+    return ele;
+}
+
+	{
+	    const cont = this.dst.appendChild(svgSymbolNu('bliza'));
+	    svgText(cont, 4, 4, 'label', 'Label 4,4');
+	    svgText(cont, 0, 20, 'label', 'Label 0,20');
+	    console.log(cont);
+	    //console.log('test0', cont.getBBox(), cont.getCTM(), cont.getScreenCTM());
+	    const inst = this.dst.appendChild(svgUse(this.dst, 500, 200, '#bliza'));
+	    console.log('test1', inst.getBBox(), inst.getCTM(), inst.getScreenCTM());
+	    svgText(inst, 40, 20, 'label', 'Label 40,20');
+	    console.log('test2', inst.getBBox(), inst.getCTM(), inst.getScreenCTM());
+	}
+	{
+    	    const cont = this.dst.appendChild(svgSvgNu('bliza'));
+	    svgText(cont, 4, 4, 'label', 'Label 4,4');
+	    svgText(cont, 0, 20, 'label', 'Label 0,20');
+	    console.log('test0', cont.getBBox(), cont.getCTM(), cont.getScreenCTM());
+	    svgText(cont, 40, 20, 'label', 'Label 40,20');
+	    console.log('test1', cont.getBBox(), cont.getCTM(), cont.getScreenCTM());
+	    svgSetXY(cont, 500, 100);
+	    console.log('test2', parseInt(cont.getAttribute('x')) + 69, cont.firstElementChild.getBBox());
+	}
+
+
+
 //-----------------------------------------------------------------------------------------------------------------------
 // Rack
 //-----------------------------------------------------------------------------------------------------------------------
@@ -51,7 +192,7 @@ class PartTab {
     rowGetNew(part) { return this.rowById[part.id] ??= this.rowNew(part); }
     
     rowNew(part) {
-	const row = new PartTabRow(temRootClone('partsTr_tem'));
+	const row = new PartTabRow(temClone('partsTr_tem'));
 	for(const col of this.colV) {
 	    row[col.idN] = 0;
 	    row[col.idCost] = 0;
