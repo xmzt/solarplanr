@@ -1,4 +1,4 @@
-//include partCatHtml.js
+//include partCat.js
 
 class PartCatTabSource {
     constructor(id, pos, tot) {

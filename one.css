@@ -27,8 +27,11 @@
 .symLab ._labId { padding:2px 2px 0px 2px; border:1px solid; }
 .symLab ._sym { margin-top:2px; }
 
-.desCol { position:absolute; bottom:0px; display:block flex; flex-flow: column nowrap; }
-.desBox { flex:0 0; border-right:1px solid; border-top:1px solid; }
+#desRow { height:100%; display:block flex; flex-flow: row nowrap; }
+.desCol { flex:0 0; display:block flex; flex-flow: column nowrap; }
+.desBox0 { flex:1 0; }
+
+.desBox { flex:0 0; margin:0 0 -1px -1px; border:1px solid; }
 .desBox > :nth-child(1) { border-bottom:1px solid; display:block flex; flex-flow:row nowrap; }
 .desBox > :nth-child(1) > :nth-child(1) { flex:0 0; padding:2px 4px 2px 2px; font-weight:bold; }
 .desBox > :nth-child(1) > :nth-child(2) { flex:1 0; border-left:1px solid; padding:2px 2px 2px 4px; }

@@ -444,18 +444,18 @@ var SnapnrackRluMlpe = new Part('SnapNrack 242-02151 MLPE FRAME ATTACHMENT KIT')
 // Inverter
 //-----------------------------------------------------------------------------------------------------------------------
 
+var SolarEdgeSe11400h_us000bni4 = new InverterPart(
+    /*nick,make,model,more*/ 'SE.11400', 'SolarEdge', 'SE11400H-US000BNI4', 'RGM+Export/Import',
+    /*acWatts,dcWatts*/ 11400, 17650 )
+    .nI('https://knowledge-center.solaredge.com/sites/kc/files/se_hd_wave_inverter_with_SetApp_installation_guide_na.pdf')
+    .s1U(2316.00, 'https://www.platt.com/p/1821855/solaredge/sed-se11400h-us000bni4/sedse11400hus000bi');
+
 var SolarEdgeSe11400h_ussnbbl14 = new InverterPart(
     /*nick,make,model,more*/ 'SE.11400.SNB', 'SolarEdge', 'SE11400H-USSNBBL14', 'Battery+EV+RGM+Export/Import',
     /*acWatts,dcWatts*/ 11400, 22800 )
     .nI('https://knowledge-center.solaredge.com/sites/kc/files/se-single-phase-energy-hub-high-power-installation-guide-na.pdf')
     .nUrl('Battery compatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/se-battery-compatibility-with-energy-hub-guide-nam.pdf')
     .s1U(3589.1900, 'https://www.platt.com/p/1973303/solaredge/11400w-single-hd-wave-phase-inverter/sedse11400hussnbbl');
-
-var SolarEdgeSe11400h_us000bni4 = new InverterPart(
-    /*nick,make,model,more*/ 'SE.11400', 'SolarEdge', 'SE11400H-US000BNI4', 'RGM+Export/Import',
-    /*acWatts,dcWatts*/ 11400, 17650 )
-    .nI('https://knowledge-center.solaredge.com/sites/kc/files/se_hd_wave_inverter_with_SetApp_installation_guide_na.pdf')
-    .s1U(2316.00, 'https://www.platt.com/p/1821855/solaredge/sed-se11400h-us000bni4/sedse11400hus000bi');
 
 var SolarEdgeP400 = new OptimizerPart(
     /*nick,make,model,more*/ 'SE.P400', 'SolarEdge', 'P400', '',
@@ -471,7 +471,9 @@ var SolarEdgeS500 = new OptimizerPart(
     .nUrl('Intercompatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/application_note_intercompatibility_se_power_optimizers.pdf')
     .s1U(84.99, 'https://www.platt.com/p/2011140/solaredge/dc-power-optimizer-500w-60vdc/seds500');
 
-var SolarEdgeCt225 = new Part('SolarEdge SECT-SPL-225A-T-20 Current Transformer, 17ft, 18-20 AWG TP')
+var SolarEdgeCt225 = new CtPart(
+    /*nick,make,model,more*/ 'SE.Ct225', 'SolarEdge', 'SECT-SPL-225A-T-20', '17ft, 18-20 AWG TP',
+    /*boxDesc*/ '225A, Split core, Clamp' )
     .nDs('https://knowledge-center.solaredge.com/sites/kc/files/se-slim-current-transformer-datasheet-na.pdf')
     .s1U(41.62, 'https://www.platt.com/p/1950422/solaredge/slim-current-transformer-split-core/sedsectspl225at20');
 
@@ -479,17 +481,25 @@ var SolarEdgeCt225 = new Part('SolarEdge SECT-SPL-225A-T-20 Current Transformer,
 // Electrical other
 //-----------------------------------------------------------------------------------------------------------------------
 
-var Breaker_HOM260CP = new Part('Breaker Square D 2x60 HOM260CP')
+var Breaker_HOM260CP = new BreakerPart(
+    /*nick,make,model,more*/ 'HOM260CP', 'Square D', 'HOM260CP', '2x60' )
     .s1U(17.83, 'https://www.homedepot.com/p/Square-D-Homeline-60-Amp-2-Pole-Circuit-Breaker-HOM260CP-HOM260CP/202353322');
 
-var Breaker_Q22020CTU = new Part('Breaker Siemens 20,2x20,20 Q22020CTU')
+var Breaker_Q22020CTU = new BreakerPart(
+    /*nick,make,model,more*/ 'Q22020CTU', 'Siemens', 'Q22020CTU', '1x20,2x20,1x20' )
     .s1U(29.85, 'https://www.homedepot.com/p/Siemens-Triplex-Two-Outer-20-Amp-Single-Pole-and-One-Inner-20-Amp-Double-Pole-Circuit-Breaker-Q22020CTU/202276298');
 
-var Breaker_Q260 = new Part('Breaker Siemens 2x60 Q260')
+var Breaker_Q260 = new BreakerPart(
+    /*nick,make,model,more*/ 'Q260', 'Siemens', 'Q260', '2x60' )
     .s1U(15.52, 'https://www.amazon.com/Q260-60-Amp-Double-Circuit-Breaker/dp/B00002N7KY/');
 
-var Breaker_QO260CP = new Part('Breaker Square D 2x60 QO260CP')
+var Breaker_QO260CP = new BreakerPart(
+    /*nick,make,model,more*/ 'QO260CP', 'Square D', 'QO260CP', '2x60' )
     .s1U(41.70, 'https://www.homedepot.com/p/Square-D-QO-60-Amp-2-Pole-Circuit-Breaker-QO260CP-QO260CP/100065234');
+
+var Breaker_QOM2175VH = new BreakerPart(
+    /*nick,make,model,more*/ 'QOM2175VH', 'Square D', 'QOM2175VH', '2x175 Main' )
+    .s1U(299.00, 'https://www.amazon.com/Square-Schneider-Electric-QOM2175VH-Homeline/dp/B00CONRDI8');
 
 var ConduitBody_34_C = new Part('Conduit Body C 3/4"')
     .s1U(6.88, 'https://www.homedepot.com/p/3-4-in-Rigid-Threaded-Aluminum-Conduit-Body-58407/100119285');
@@ -570,11 +580,15 @@ var Ctap_Blue = new Part('C-Tap Crimp Blue <b>[APPROXIMATE]</b>')
 var Ctap_Gray = new Part('C-Tap Crimp Gray <b>[APPROXIMATE]</b>')
     .s1A(4.00, 1, 'matt');
 
-var DisconnectGnf222ra = new Part('Siemens GNF222RA Disconnect 2P 240V 60A (w/ hub provision)')
+var DisconnectGnf222ra = new DisconnectPart(
+    /*nick,make,model,more*/ 'Siemens.GNF222RA', 'Siemens', 'GNF222RA', 'With hub provision',
+    /*boxDesc*/ '60A, 240V, Type 3R, Non-fusible' )
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:5c71c5ec-7826-4b33-bad2-c861d7d9534e/sie-ss-switch-60a-240a-nf3r.pdf')
     .s1U(88.31, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6BXLR/');
 
-var DisconnectLnf222ra = new Part('Siemens LNF222RA Disconnect 2P 240V 60A (no hub provision)')
+var DisconnectLnf222ra = new DisconnectPart(
+    /*nick,make,model,more*/ 'Siemens.LNF222RA', 'Siemens', 'LNF222RA', 'No hub provision',
+    /*boxDesc*/ '60A, 240V, Type 3R, Non-fusible' )
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:7adb416d-e4f1-4e6c-9f9f-32d104e32e6b/sie-ss-switch-60a-240a-nf3r-ln.pdf')
     .s1U(67.49, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6F5PV/');
 
@@ -659,6 +673,13 @@ var Mc4_M = new Part('MC-4 Connector Male')
 var Mc4_F = new Part('MC-4 Connector Female')
     .s1A(2.08, 50, 'matt')
     .s1U(2.08, 'https://www.platt.com/p/0798740/stubli-electrical-connectors/cable-connector-mc-type-4-female/muc320014p0001ur');
+
+var LoadCenterSquaredQO130M200 = new LoadCenterPart(
+    /*nick,make,model,more*/ 'QO130M200', 'Square D', 'QO130M200', '',
+    /*boxDesc*/ '120/240V, 200A, 30 spaces, NEMA1',
+    /*busA*/ 200,
+    /*accept*/ 'QO, QOA, QOC, QOM2(main)' )
+    .nDs('https://www.se.com/us/en/product/download-pdf/QO130M200');
 
 var PaintSprayMatteBlack = new Part('Paint, Spray, Matte Black')
     .s1A(3.00, 1, 'matt')

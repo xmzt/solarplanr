@@ -58,7 +58,11 @@ function eleNuClas(tag, clas) {
     ele.classList.add(clas);
     return ele;
 }
-function eleNuClasAdd(tag, clas, dst) { return dst.appendChild(eleNuClas(tag, clas)); }
+function eleNuClasAdd(tag, clas, dst) {
+    const ele = dst.appendChild(document.createElement(tag));
+    ele.classList.add(clas);
+    return ele;
+}
 
 function temRoot(id) { return document.getElementById(id).content.firstElementChild; }
 function temClone(id) { return temRoot(id).cloneNode(/*deep=*/true); }

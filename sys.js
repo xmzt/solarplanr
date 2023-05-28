@@ -48,9 +48,7 @@ class SysPartTab extends PartTab {
     }
 
     statusErr(msgHtml) {
-	const div = this.totStatusElem.appendChild(document.createElement('div'));
-	div.classList.add('err');
-	div.innerHTML = msgHtml;
+	eleNuClasAdd('div', 'err', this.totStatusElem).innerHTML = msgHtml;
     }
 }
 

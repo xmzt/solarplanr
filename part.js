@@ -236,6 +236,32 @@ class PanelOrient {
     }
 }
 
+class BreakerPart extends ModelPart {
+    constructor(nick, make, model, more) {
+	super(nick, make, model, more);
+    }
+
+    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Breaker]`; }
+}
+
+class CtPart extends ModelPart {
+    constructor(nick, make, model, more, boxDesc) {
+	super(nick, make, model, more);
+	this.boxDesc = boxDesc;
+    }
+    
+    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [CT]`; }
+}
+
+class DisconnectPart extends ModelPart {
+    constructor(nick, make, model, more, boxDesc) {
+	super(nick, make, model, more);
+	this.boxDesc = boxDesc;
+    }
+
+    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Disconnect]`; }
+}
+
 class InverterPart extends ModelPart {
     constructor(nick, make, model, more, acWatts, dcWatts) {
 	super(nick, make, model, more);
@@ -245,6 +271,18 @@ class InverterPart extends ModelPart {
 
     descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Inverter]`; }
 }
+
+class LoadCenterPart extends ModelPart {
+    constructor(nick, make, model, more, boxDesc, busA, accept) {
+	super(nick, make, model, more);
+	this.boxDesc = boxDesc;
+	this.busA = busA;
+	this.accept = accept;
+    }
+
+    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Load center]`; }
+}
+
 class OptimizerPart extends ModelPart {
     constructor(nick, make, model, more, watts, vin, iin, vout, iout) {
 	super(nick, make, model, more);

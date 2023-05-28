@@ -11,7 +11,7 @@ var InvsysClasByIdHtml;
 // helpers
 
 function uiOptionElem(idHtml) {
-    const option = document.createElement('option');
+    const option = eleNu('option');
     option.value = idHtml;
     option.innerHTML = idHtml;
     return option;
