@@ -28,29 +28,22 @@ function urlId(url) {
 //-----------------------------------------------------------------------------------------------------------------------
 
 class Note {
-    constructor(desc) {
-	this.desc = desc;
+    constructor(des) {
+	this.des = des;
     }
-    menuFill(dst) { eleNuClasAdd('div', 'note', dst).innerHTML = this.desc; }
-}
-
-class NoteWar {
-    constructor(desc) {
-	this.desc = desc;
-    }
-    menuFill(dst) { eleNuClasAdd('div', 'note', dst).innerHTML = `Warranty: ${this.desc}`; }
+    menuFill(dst) { eleNuClasAdd('div', 'note', dst).innerHTML = this.des; }
 }
 
 class NoteUrl {
-    constructor(desc, url) {
-	this.desc = desc;
+    constructor(des, url) {
+	this.des = des;
 	this.url = url;
     }
     menuFill(dst) {
 	const a = eleNuClasAdd('a', 'noteA', dst);
 	a.setAttribute('target', '_blank');
 	a.href = this.url;
-	a.innerHTML = this.desc;
+	a.innerHTML = this.des;
     }
 }
 
@@ -110,13 +103,13 @@ class SourceN extends Source1 {
 // Part
 //-----------------------------------------------------------------------------------------------------------------------
 
-//todo rename id to nid
+//todo rename id to uid
 
 function menuClose(menu) {
     document.body.removeChild(menu);
 }
 
-class PartBase {
+class Part {
     constructor() {
 	this.noteV = [];
 	this.sourceV = [];
@@ -124,8 +117,98 @@ class PartBase {
 	PartV.push(this);
     }
 
-    nUrl(desc, url) { this.noteV.push(new NoteUrl(desc, url)); return this; }
-    nWar(desc) { this.noteV.push(new Note(`Warranty: ${desc}`)); return this; }
+    cClampSet(clampL0, clampL1, clampS0, clampS1) {
+	this.clampL0 = clampL0;
+	this.clampL1 = clampL1;
+	this.clampS0 = clampS0;
+	this.clampS1 = clampS1;
+	return this;
+    }
+
+    cDesGeneric(desGeneric) {
+	this.desGeneric = desGeneric;
+	this.desFill = Part.prototype.desFillGeneric;
+	//this.desBoxHeadFill
+	return this;
+    }
+    
+    cDesMakeModelMore(make, model, more) { return this.cDesNickMakeModelMore(model, make, model, more); }
+
+    cDesNickMakeModelMore(nick, make, model, more) {
+	this.nick = nick;
+	this.make = make;
+	this.model = model;
+	this.more = more;
+	this.desFill = Part.prototype.desFillModel;
+	this.desBoxHeadFill = Part.prototype.desBoxHeadFillModel;
+	return this;
+    }
+
+    cDesBoxSpec(desBoxSpec) {
+	this.desBoxSpec = desBoxSpec;
+	this.desBoxSpecFill = Part.prototype.desBoxSpecFill1;
+	return this;
+    }
+
+    cDimTrim(dimL) {
+	this.dimL = dimL;
+	return this;
+    }
+
+    cDimRail(dimL, dimF, dimC) {
+	this.dimL = dimL;
+	this.dimF = dimF;
+	this.dimC = dimC;
+	return this;
+    }	
+    
+    cDimPanel(dimL, dimS, dimH) {
+	this.dimL = dimL;
+	this.dimS = dimS;
+	this.dimH = dimH;
+	return this;
+    }
+
+    cElecInvSe(acW, acV, acIMax, dcW, dcVMax, dcVNom, dcIMax) {
+	this.acW = acW;
+	this.acV = acV;
+	this.acIMax = acIMax;
+	this.dcW = dcW;
+	this.dcVMax = dcVMax;
+	this.dcVNom = dcVNom;
+	this.dcIMax = dcIMax;
+	return this;
+    }
+
+    cElecLc(ibus) {
+	this.ibus = ibus;
+	return this;
+    }
+    
+    cElecOptSe(inoutW, inVMax, inIMax, outVMax, outIMax) {
+	this.inoutW = inoutW;
+	this.inVMax = inVMax;
+	this.inIMax = inIMax;
+	this.outVMax = outVMax;
+	this.outIMax = outIMax;
+	return this;
+    }
+
+    // todo: watts -> wattsStc
+    cElecPanel(watts, voc, isc) {
+	this.watts = watts;
+	this.voc = voc;
+	this.isc = isc;
+	return this;
+    }
+
+    //todo: list in menu
+    cWarranty(warranty) {
+	this.warranty = warranty;
+	return this;
+    }
+    
+    nUrl(des, url) { this.noteV.push(new NoteUrl(des, url)); return this; }
     nCat(url) { this.noteV.push(new NoteUrl('Catalog', url)); return this; }
     nDs(url) { this.noteV.push(new NoteUrl('Datasheet', url)); return this; }
     nI(url) { this.noteV.push(new NoteUrl('Install', url)); return this; }
@@ -138,13 +221,28 @@ class PartBase {
     s1AU(cost1, avail, url) { this.sourceV.push(new Source1(cost1, avail, urlId(url), url)); return this; }
     sN(costA, costB, id) { this.sourceV.push(new SourceN(costA, costB, null, id, null)); return this; }
     sNU(costA, costB, url) { this.sourceV.push(new SourceN(costA, costB, null, urlId(url), url)); return this; }
+
+    desBoxHeadFill(dst) {}
+
+    desBoxHeadFillModel(dst) {
+	todo;
+    }
+
+    desBoxSpecFill(dst) {}
+
+    desBoxSpecFill1(dst) {
+	todo;
+    }
+
+    desFillGeneric(dst) { dst.innerHTML = this.desGeneric; }
+    desFillModel(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more}`; }
     
     menuAClick(anchor) {
 	const menu = eleNuClasAdd('div', 'menu', document.body);
 	const headA = eleNuClasAdd('a', 'menuHeadA', menu);
 	headA.href = 'javascript:void(0)';
 	headA.addEventListener('click', (ev) => menuClose(menu));
-	this.descFill(headA);
+	this.desFill(headA);
 	
 	for(const note of this.noteV)
 	    note.menuFill(menu);
@@ -152,74 +250,45 @@ class PartBase {
 	    source.menuFill(menu);
 
 	// adjust positioning
-	const descR = headA.getBoundingClientRect();
+	const desR = headA.getBoundingClientRect();
 	const anchorR = anchor.getBoundingClientRect();
-	menu.style.left = `${anchorR.left - descR.left}px`;
-	menu.style.top = `${anchorR.top - descR.top}px`;
+	menu.style.left = `${anchorR.left - desR.left}px`;
+	menu.style.top = `${anchorR.top - desR.top}px`;
 	menu.style.visibility = 'visible';
     }
 
-    //descFill(dst)
+    //desFill(dst)
     
     menuAFill(dst) {
 	const a = eleNuClasAdd('a', 'menuA', dst);
 	a.href = 'javascript:void(0)';
 	a.addEventListener('click', (ev) => this.menuAClick(a));
-	this.descFill(a);
+	this.desFill(a);
     }
 
     panelPartP() { return false; }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Part
-//-----------------------------------------------------------------------------------------------------------------------
-
-class Part extends PartBase {
-    constructor(desc) {
-	super();
-	this.desc = desc;
-    }
-
-    descFill(dst) { dst.innerHTML = this.desc; }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// ModelPart: add make, model descriptions to part
-//-----------------------------------------------------------------------------------------------------------------------
-
-class ModelPart extends PartBase {
-    constructor(nick, make, model, more) {
-	super();
-	this.nick = nick;
-	this.make = make;
-	this.model = model;
-	this.more = more;
-    }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
 // Part derived
 //-----------------------------------------------------------------------------------------------------------------------
 
-//todo voc,isc
-class PanelPart extends ModelPart {
-    constructor(nick, make, model, more, watts, voc, isc, dimL, dimS, dimH, clampL0, clampL1, clampS0, clampS1) {
-	super(nick, make, model, more);
-	this.watts = watts;
-	this.voc = voc;
-	this.isc = isc;
-	this.dimL = dimL;
-	this.dimS = dimS;
-	this.dimH = dimH;
-	this.clampL0 = clampL0;
-	this.clampL1 = clampL1;
-	this.clampS0 = clampS0;
-	this.clampS1 = clampS1;
-    }
+class InvPart extends Part {
     
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Panel]`; }
 
+    
+    //todo
+}
+
+class LcPart extends Part {
+    //todo
+}
+
+class OptimizerPart extends Part {
+    //todo
+}
+
+class PanelPart extends Part {
     panelPartP() { return true; }
 
     landscape() { return new PanelOrient(this, this.dimL, this.dimS, this.clampS0, this.clampS1); }
@@ -236,78 +305,10 @@ class PanelOrient {
     }
 }
 
-class BreakerPart extends ModelPart {
-    constructor(nick, make, model, more) {
-	super(nick, make, model, more);
-    }
-
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Breaker]`; }
-}
-
-class CtPart extends ModelPart {
-    constructor(nick, make, model, more, boxDesc) {
-	super(nick, make, model, more);
-	this.boxDesc = boxDesc;
-    }
-    
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [CT]`; }
-}
-
-class DisconnectPart extends ModelPart {
-    constructor(nick, make, model, more, boxDesc) {
-	super(nick, make, model, more);
-	this.boxDesc = boxDesc;
-    }
-
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Disconnect]`; }
-}
-
-class InverterPart extends ModelPart {
-    constructor(nick, make, model, more, acWatts, dcWatts) {
-	super(nick, make, model, more);
-	this.dcWatts = dcWatts;
-	this.acWatts = acWatts;
-    }
-
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Inverter]`; }
-}
-
-class LoadCenterPart extends ModelPart {
-    constructor(nick, make, model, more, boxDesc, busA, accept) {
-	super(nick, make, model, more);
-	this.boxDesc = boxDesc;
-	this.busA = busA;
-	this.accept = accept;
-    }
-
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Load center]`; }
-}
-
-class OptimizerPart extends ModelPart {
-    constructor(nick, make, model, more, watts, vin, iin, vout, iout) {
-	super(nick, make, model, more);
-	this.watts = watts;
-	this.vin = vin;
-	this.iin = iin;
-	this.vout = vout;
-	this.iout = iout;
-    }
-
-    descFill(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more} [Optimizer]`; }
-}
-
 class RailPart extends Part {
-    constructor(desc, dimL, footL, cantiL) {
-	super(desc);
-	this.dimL = dimL;
-	this.footL = footL;
-	this.cantiL = cantiL;
-    }
+    //todo
 }
 
 class TrimPart extends Part {
-    constructor(desc, dimL) {
-	super(desc);
-	this.dimL = dimL;
-    }
+    //todo
 }

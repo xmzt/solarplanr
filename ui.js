@@ -1,178 +1,138 @@
 //include sys.js
 
+function siteLayoutFun(site, layoutId) { return (env) => new site(env, site.LayoutById[layoutId]); }
+
+function siteNop(partTab, railGroupMgr, drawr) {
+}
+
 //-----------------------------------------------------------------------------------------------------------------------
 // object tables
 
-var RoofClasByIdHtml;
-var RackClasByIdHtml;
-var InvsysClasByIdHtml;
+var UiSiteByDes = {
+    '--Select site/layout--': siteNop,
+    'SiteB Q475/400': siteLayoutFun(SiteB, 'Q475/Q400'),
+};
 
 //-----------------------------------------------------------------------------------------------------------------------
 // helpers
 
-function uiOptionElem(idHtml) {
+function uiOptionEle(idHtml) {
     const option = eleNu('option');
     option.value = idHtml;
     option.innerHTML = idHtml;
     return option;
 }
 
-function uiSelectValue(elem) {
-    return elem.item(elem.selectedIndex).value;
+function uiSelectValue(ele) {
+    return ele.item(ele.selectedIndex).value;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// UiRoof
+// UiRailGroup
 
-class UiRoof {
-    static Config0 = { roof:null, layout:null, rack:null, invsys:null };
+class UiRailGroupDiag extends RailGroupDiag {
+    constructor(root) {
+	super();
+	this.statusEle = root.querySelector('._status');
+	this.logEle = root.querySelector('._log');
+	root.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
+    }
 
-    constructor(uiSys, root, config, id, onlyroof) {
-	this.uiSys = uiSys;
-	this.root = root;
-	this.id = id;
-	root.querySelector('._idSpan').textContent = id;
-	this.roofAddBut = root.querySelector('._roofAddBut');
-	this.roofAddBut.addEventListener('click', (ev) => this.uiSys.uiRoofAdd(UiRoof.Config0));
-	this.roofRemBut = root.querySelector('._roofRemBut');
-	this.roofRemBut.addEventListener('click', (ev) => this.uiSys.uiRoofRem(this));
-	if(onlyroof) this.roofRemBut.classList.add('displayNone');
-
-	this.roofSel = root.querySelector('._roofSel');
-	let roofClasSelected = RoofNone;
-	let option;
-        for(const k in RoofClasByIdHtml) {
-	    this.roofSel.appendChild(option = uiOptionElem(k));
-	    if(option.selected = k == config.roof)
-		roofClasSelected = RoofClasByIdHtml[k];
-	}
-	this.roofSel.addEventListener('change', (ev) => this.roofSelChange());
-
-	this.layoutSel = root.querySelector('._layoutSel');
-	for(const k in roofClasSelected.LayoutFunByIdHtml) {
-	    this.layoutSel.appendChild(option = uiOptionElem(k));
-	    option.selected = k == config.layout;
-	}
-
-	this.rackSel = root.querySelector('._rackSel');
-	for(const k in RackClasByIdHtml) {
-	    this.rackSel.appendChild(option = uiOptionElem(k));
-	    option.selected = k == config.rack;
-	}
+    log(msg) { this.logEle.innerHTML += msg; }
 	
-	this.invsysSel = root.querySelector('._invsysSel');
-	for(const k in InvsysClasByIdHtml) {
-	    this.invsysSel.appendChild(option = uiOptionElem(k));
-	    option.selected = k == config.invsys;
-	}
+    logShowClick() { this.logEle.classList.toggle('displayNone'); }
 
-	this.jboxSel = root.querySelector('._jboxSel');
-	for(const option of this.jboxSel.options)
-	    option.selected = option.value == config.jbox;
+    status(msg) { this.statusEle.innerHTML = msg; }
+}
+
+class UiRailGroupMgr extends RailGroupMgr {
+    constructor(diagVEle) {
+	super();
+	this.diagVEle = diagVEle;
+    }
+
+    diagNu() { return new UiRailGroupDiag(this.diagVEle.appendChild(temClone('railGroupDiag_tem'))); }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// UiSysEnv
+
+class UiSysEnv {
+    constructor(root) {
+	this.drawrVEle = eleNuClas('div', 'drawrV');
+	const partTabEle = temClone('partTab_tem');
+	const railGroupDiagVEle = eleNu('div');
+	root.replaceChildren(this.drawrVEle, partTabEle, railGroupDiagVEle);
+	this.partTab = new UiPartTab(partTabEle);
+	this.railGroupMgr = new UiRailGroupMgr(railGroupDiagVEle);
+    }
+
+    drawrNu() {
+	return new CanvasDrawr(this.drawrVEle);
+    }
+
+    terminate() {
+	this.railGroupMgr.terminate();
+    }
+}
+
+class UiSysEnvNop {
+    terminate() {}
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Ui
+
+class Ui {
+    static Config0 = '';
+    
+    constructor(sysSelEle, sysEnvEle, stor, storItem) {
+	this.sysSelEle = sysSelEle;
+	this.sysEnvEle = sysEnvEle;
+	this.sysEnv = new UiSysEnvNop(sysEnvEle);
+	this.stor = stor;
+	this.storItem = storItem;
+	//this.site
+
+	const config = this.configLoad();
 	
-	root.querySelector('._goBut').addEventListener('click', (ev) => this.uiSys.goStore());
-	root.querySelector('._resetBut').addEventListener('click', (ev) => this.reset());
-	this.canElem = root.querySelector('._can');
-	this.canRailElem = root.querySelector('._canRail');
+	let siteFunSel = null;
+        for(const [des,siteFun] of Object.entries(UiSiteByDes)) {
+	    const option = sysSelEle.appendChild(uiOptionEle(des));
+	    if(option.selected = des == config)
+		siteFunSel = siteFun;
+	}
+	sysSelEle.addEventListener('change', (ev) => this.sysSelChange());
+	if(null !== siteFunSel)
+	    this.sysSelGo(siteFunSel);
     }
-
-    configGet() {
-	return {
-	    roof:uiSelectValue(this.roofSel),
-	    layout:uiSelectValue(this.layoutSel),
-	    rack:uiSelectValue(this.rackSel),
-	    invsys:uiSelectValue(this.invsysSel),
-	    jbox:uiSelectValue(this.jboxSel),
-	};
-    }
-
-    onlyroofSet(x) {
-	if(x) this.roofRemBut.classList.add('displayNone');
-	else this.roofRemBut.classList.remove('displayNone');
-    }
-
-    reset() {
-	this.uiSys.ui.configReset();
+    configLoad() {
+	const srcS = this.stor.getItem(this.storItem);
+	return (null !== srcS) ? JSON.parse(srcS) : this.constructor.Config0;
     }
     
-    roofSelChange() {
-	this.layoutSel.replaceChildren();
-	for(const k in RoofClasByIdHtml[uiSelectValue(this.roofSel)].LayoutFunByIdHtml)
-	    this.layoutSel.appendChild(uiOptionElem(k));
+    configReset() {
+	this.stor.removeItem(this.storItem);
     }
 
-    sysPopu(sys) {
-	sys.jboxSet(parseInt(uiSelectValue(this.jboxSel)));
-	
-	const invsysClas = InvsysClasByIdHtml[uiSelectValue(this.invsysSel)];
-	const invsys = sys.invsysGetOrNew(invsysClas);
-
-	const roofClas = RoofClasByIdHtml[uiSelectValue(this.roofSel)];
-	const roof = new roofClas(sys, this.id, this.canElem, this.canRailElem);
-	sys.roofAdd(roof);
-
-	const rackClas = RackClasByIdHtml[uiSelectValue(this.rackSel)];
-	const rack =  new rackClas(roof);
-	sys.rackAdd(rack);
-	    
-	const layoutFun = roofClas.LayoutFunByIdHtml[uiSelectValue(this.layoutSel)];
-	layoutFun(rack, roof);
-    }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// UiSys
-
-class UiSys {
-    static Config0 = [ UiRoof.Config0 ];
-
-    constructor(ui, root, config) {
-	this.ui = ui;
-	this.root = root;
-	this.roofIdAlloc = 0;
-	this.uiRoofV = [];
-	this.roofVElem = root.querySelector('._roofV');
-	this.partTabParentElem = root.querySelector('._partTabParent');
-	this.railGroupDiagVElem = root.querySelector('._railGroupDiagV');
-
-	for(const x of config)
-	    this.uiRoofAdd(x);
-
-	this.sys = new SysPlaceholder();
+    configStore() {
+	this.stor.setItem(this.storItem, JSON.stringify(uiSelectValue(this.sysSelEle)));
     }
 
-    configGet() {
-	return this.uiRoofV.map((x) => x.configGet());
-    }
-	
-    uiRoofAdd(config) {
-	if(1 == this.uiRoofV.length)
-	    this.uiRoofV[0].onlyroofSet(0);
-	const id = this.roofIdAlloc++;
-	const uiRoof = new UiRoof(this, temClone('roof_tem'), config, `Roof.${id}`, (0 == this.uiRoofV.length));
-	this.uiRoofV.push(uiRoof);
-	this.roofVElem.appendChild(uiRoof.root);
+    sysSelChange() {
+	this.sysSelGo(UiSiteByDes[uiSelectValue(this.sysSelEle)]);
     }
 
-    uiRoofRem(uiRoof) {
-	this.roofVElem.removeChild(uiRoof.root);
-	this.uiRoofV.splice(this.uiRoofV.findIndex((x) => x === uiRoof), 1);
-	if(1 == this.uiRoofV.length)
-	    this.uiRoofV[0].onlyroofSet(1);
-    }
+    sysSelGo(siteFun) {
+	// stop old uiSysEnv
+	this.sysEnv.terminate();
 
-    go() {
-	// stop old uiSys. add uiSys to document before uiSysFin so that canvas ctx is valid
-	this.sys.terminate();
-	this.railGroupDiagVElem.replaceChildren();
-	
-	this.sys = new Sys(new SysPartTab(temClone('partTab_tem')), this.railGroupDiagVElem);
-	this.partTabParentElem.replaceChildren(this.sys.partTab.root);
-	for(const uiRoof of this.uiRoofV)
-	    uiRoof.sysPopu(this.sys);
-	this.sys.sysFin()
+	// add new uiSysEnv
+	this.configStore();
+	this.sysEnv = new UiSysEnv(this.sysEnvEle);
+	siteFun(this.sysEnv);
     }
-
+    
     goStore() {
 	this.ui.configStore();
 	this.go();
@@ -180,63 +140,8 @@ class UiSys {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Ui
-
-class Ui {
-    static Config0 = [ UiSys.Config0 ];
-
-    constructor(uiSysVElem, stor, storItem) {
-	this.uiSysVElem = uiSysVElem;
-	this.stor = stor;
-	this.storItem = storItem;
-	this.uiSysV = [];
-	
-	// load config or new
-	const srcS = stor.getItem(storItem);
-	const config = (null !== srcS) ? JSON.parse(srcS) : this.constructor.Config0;
-	for(const x of config)
-	    this.uiSysAdd(x);
-    }	
-    
-    uiSysAdd(config) {
-	const uiSys = new UiSys(this, temClone('sys_tem'), config);
-	this.uiSysV.push(uiSys);
-	this.uiSysVElem.appendChild(uiSys.root);
-	uiSys.go();
-    }
-
-    configReset() {
-	this.stor.removeItem(this.storItem);
-    }
-
-    configStore() {
-	const dst = JSON.stringify(this.uiSysV.map((x) => x.configGet()));
-	this.stor.setItem(this.storItem, dst);
-    }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
 // uiBodyOnload
 
 function uiBodyOnload() {
-    RoofClasByIdHtml = byIdHtml(
-	RoofNone,
-	SiteB_Roof,
-	SiteA_RoofA,
-	SiteA_RoofB,
-    );
-    RackClasByIdHtml = byIdHtml(
-	RackNone,
-	RackIronRidgeXR10Camo,
-	RackIronRidgeXR10Stopper,
-	RackIronRidgeXR100Camo,
-	RackIronRidgeXR100Stopper,
-    );
-    InvsysClasByIdHtml = byIdHtml(
-	InvsysNone,
-	InvsysSolarEdge,
-	InvsysEnphase,
-	InvsysSunnyBoy,
-    );
-    new Ui(document.getElementById('uiSysV'), window.localStorage, 'uiConfig');
+    new Ui(document.getElementById('sysSel'), document.getElementById('sys'), window.localStorage, 'uiConfig');
 }

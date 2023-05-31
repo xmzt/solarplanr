@@ -20,9 +20,19 @@ class RailRegR2 extends R2 {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// RailWkrCtrl
+// RailGroupDiag
 
-class RailWkrCtrl {
+class RailGroupDiag {
+    log(msg) {}
+    status(msg) {}
+}
+
+var RailGroupDiagNopSingleton = new RailGroupDiag(); // todo is this necessary or does bare class work
+
+//-----------------------------------------------------------------------------------------------------------------------
+// RailGroupMgr
+
+class RailGroupMgr {
     constructor() {
 	this.reqI = 0;
 	this.reqHandByI = {};
@@ -33,6 +43,8 @@ class RailWkrCtrl {
 	};
     }
 
+    diagNu() { return RailGroupDiagNopSingleton; }
+    
     req(...argV) {
 	const i = this.reqI++;
 	this.reqHandByI[i] = argV[0];
@@ -53,27 +65,22 @@ class RailGroup {
     //static RailPartV
     //static SplicePart
 
-    constructor(sys) {
-	this.sys = sys
+    constructor(railGroupMgr, partTabSub) {
+	this.railGroupMgr = railGroupMgr;
+	this.partTabSub = partTabSub;
+	this.diag = railGroupMgr.diagNu();
 	this.railV = [];
-	this.diagElem = temClone('railGroupDiag_tem');
-	this.statusElem = this.diagElem.querySelector('._status');
-	this.logElem = this.diagElem.querySelector('._log');
-	this.diagElem.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
 	this.bestComV = null;
     }
-
-    logShowClick() {
-	this.logElem.classList.toggle('displayNone');
-    }	
     
     railAdd(rail) {
 	this.railV.push(rail);
     }
-    
-    railWkrReq() {
+
+    layoutFin() {
+	this.partTabSub.pendInc();
 	// todo rails are currently horizontal-only
-	this.sys.railWkrCtrl.req(
+	this.railGroupMgr.req(
 	    this,
 	    this.railV.map((r,i) => { return { id:i, len:(r.x1 - r.x0) }; }),
 	    this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.sourceV[0].cost1 }; }),
@@ -86,71 +93,52 @@ class RailGroup {
     railrRspBest(comV) {
 	// undo previous best
 	if(null !== this.bestComV) {
-	    this.sys.ctxRailClear();
+	    for(const drawr of this.bestDrawrSet)
+		drawr.clear_1();
 	    for(const com of this.bestComV) {
-		this.sys.partTab.partAdd(this.constructor.SplicePart, -(com.segN - 1), -1);
+		this.partTabSub.partAdd(this.constructor.SplicePart, 1 - com.segN);
 		for(const partId of com.partIdV) {
 		    const part = this.constructor.RailPartV[partId];
-		    this.sys.partTab.partAdd(part, -1, -1);
+		    this.partTabSub.partAdd(part, -1);
 		}
 	    }
 	}
 	
 	this.bestComV = comV;
-	this.logElem.innerHTML += `best\n`;
+	this.bestDrawrSet = new Set();
+	this.diag.log(`best\n`);
 	for(const com of comV) {
 	    const rail = this.railV[com.railId];
-	    this.logElem.innerHTML +=
-		`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`;
-	    this.sys.partTab.partAdd(this.constructor.SplicePart, com.segN - 1, -1);
+	    this.diag.log(`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`);
+	    this.partTabSub.partAdd(this.constructor.SplicePart, com.segN - 1);
 	    let x = 0;
 	    for(const partId of com.partIdV) {
 		const part = this.constructor.RailPartV[partId];
-		this.sys.partTab.partAdd(part, 1, -1);
-		if(x)
-		    new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctxRail);
+		this.partTabSub.partAdd(part, 1);
+		if(x) {
+		    rail.rack.roof.drawr.addSplice_1(new P2(rail.x0 + x, rail.y0));
+		    this.bestDrawrSet.add(rail.rack.roof.drawr);
+		}
 		x += part.dimL;
 	    }
-	    if(x && 0 < com.need)
-		new P2(rail.x0 + x, rail.y0).drawSplice(rail.rack.roof.ctxRail);
+	    if(x && 0 < com.need) {
+		rail.rack.roof.drawr.addSplice_1(new P2(rail.x0 + x, rail.y0));
+		this.bestDrawrSet.add(rail.rack.roof.drawr);
+	    }
+
 	}
     }
 
     railrRspLog(msg) {
-	this.logElem.innerHTML += `${msg}\n`;
+	this.diag.log(`${msg}\n`);
     }
 
     railrRspStatus(s) {
-	this.statusElem.textContent =
-	    `${s.iterI}/${s.iterN} -> ${s.accOkN} -> ${s.okN} -> ${s.bestN}, ${s.tsB - s.tsA} ms`;
+	this.diag.status(`${s.iterI}/${s.iterN} -> ${s.accOkN} -> ${s.okN} -> ${s.bestN}, ${s.tsB - s.tsA} ms`);
     }
 
     railrRspFin() {
-	this.logElem.innerHTML += `railrRspFin\n`;
-	this.sys.partTab.pendDec();
+	this.diag.log(`fin\n`);
+	this.partTabSub.pendDec();
     }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// RailGroupIronRidge
-
-class RailGroupIronRidgeXR10 extends RailGroup {
-    static ClasId = ++RailGroupClasId;
-    static RailPartV = IronRidgeXR10RailV;
-    static SplicePart = IronRidgeXR10Splice;
-}
-
-class RailGroupIronRidgeXR100 extends RailGroup {
-    static ClasId = ++RailGroupClasId;
-    static RailPartV = IronRidgeXR100RailV;
-    static SplicePart = IronRidgeXR100Splice;
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// RailGroupUnirac
-
-class RailGroupUniracSm extends RailGroup {
-    static ClasId = ++RailGroupClasId;
-    static RailPartV = UniracSmRailV;
-    static SplicePart = UniracSmSplice;
 }

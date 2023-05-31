@@ -28,7 +28,7 @@ function acqTabTr(acq) {
     tr.querySelector('._kws').textContent = acq.kws.join(' ');
     tr.querySelector('._buyr').textContent = acq.buyr;
     tr.querySelector('._fro').textContent = acq.fro;
-    acq.part.descFill(tr.querySelector('._part'));
+    acq.part.desFill(tr.querySelector('._part'));
     tr.querySelector('._rec').textContent = acq.rec;
     return tr;
 }
@@ -151,7 +151,7 @@ function leftoverTabTr(acq) {
     tr.querySelector('._qty').textContent = acq.qty;
     tr.querySelector('._leftQty').textContent = acq.leftQty;
     tr.querySelector('._leftCost').textContent = acq.leftCost.toFixed(2);
-    acq.part.descFill(tr.querySelector('._part'));
+    acq.part.desFill(tr.querySelector('._part'));
     return tr;
 }
 

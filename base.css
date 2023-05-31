@@ -10,22 +10,26 @@ A:hover { color: #60a; }
 
 .canZ1 { position:absolute; top:0; left:0; z-index:1; }
 
-.colorThead TD { font-weight:bold; }
-.colorThead TD:nth-child(odd) { background-color:#cff4; }
-.colorThead TD:nth-child(even) { background-color:#9ff4; }
-.colorTbody TD:nth-child(odd) { background-color:#cfc2; }
-.colorTbody TD:nth-child(even) { background-color:#afa2; }
-.colorTbody TR:nth-child(odd) { background-color:#caf2; }
-.colorTbody TR:nth-child(even) { background-color:#9af2; }
-.colorTfoot TD:nth-child(odd) { background-color:#cff4; }
-.colorTfoot TD:nth-child(even) { background-color:#9ff4; }
+.colorTab > THEAD { background-color:#9ff4; font-weight:bold; }
+.colorTab > TFOOT { background-color:#9ff4; }
+.colorTab > TBODY :nth-child(odd) { background-color:#afc2; }
+.colorTab > TBODY :nth-child(even) { background-color:#cfc2; }
+.colorTab TR :nth-child(odd) { background-color:#ccc2; } 
+.colorTab TR :nth-child(even) { background-color:#aaa2; } 
+.colorTab TR TD._anchorCol { background-color: #4442; }
+.colorTab TR.pend { background-color:#ff08; }
+.colorTab .err { background-color: #f888; }
+.colorTab TD:nth-child(n+2) { text-align:right; }
+
 
 .displayBlock { display:block; }
 .displayNone { display:none; }
 
-.drawBody { margin:2px; padding:0; }
+.drawBody { /*margin:2px;*/ padding:0 2px; }
 
-.err { background-color: #f888; }
+.drawrV { display:block flex; flex-flow:row wrap; }
+.drawrStack { flex:0 0; position:relative; top:0; left:0; }
+.drawrStack :nth-child(n+2) { position:absolute; top:0; left:0; }
 
 .log { margin-top:1em; white-space:pre; font-family:monospace; }
 
@@ -53,24 +57,7 @@ A:hover { color: #60a; }
 .note {}
 .noteA { display:block; }
 
-.panelTab TD:nth-child(3) { text-align:right; }
-.panelTab TD:nth-child(4) { text-align:right; }
-.panelTab TD:nth-child(5) { text-align:right; }
-.panelTab TD:nth-child(6) { text-align:right; }
-
 .para { margin-top:1em; }
-
-.pend { background-color:#ff08; }
-
-.rel0 { position:relative; top:0; left:0; }
-
-.roofRow { display:block flex; flex-flow: row wrap; }
-.roofRow > * { flex:0 0 auto; }
-
-.row { display:block flex; flex-direction:row; }
-.rowFlex0 { flex:0 0 auto; }
-.rowFlex1 { flex:1 1 auto; }
-.rowFlex1Pad { flex:1 1 auto; padding-left:2px; }
 
 .textAlignRight { text-align:right; }
 

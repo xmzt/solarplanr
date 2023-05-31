@@ -6,19 +6,6 @@
 
 class C2 {
     constructor(x,y,r) { this.x = x; this.y = y; this.r = r; }
-    drawPipe(ctx) {
-	ctx.save();
-	ctx.fillStyle = PipeFillStyle;
-	ctx.beginPath();
-	ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2.0, false);
-	ctx.fill();
-	ctx.beginPath();
-	ctx.strokeStyle = PipeStrokeStyle;
-	ctx.arc(this.x, this.y, this.r + PipeStrokeRadius, 0, Math.PI * 2.0, false);
-	ctx.stroke();
-	ctx.restore();
-	return this;
-    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -29,36 +16,6 @@ class L2 {
     constructor(x0,y0,x1,y1) { this.x0 = x0; this.y0 = y0; this.x1 = x1; this.y1 = y1; }
     addX(x) { return new L2(this.x0 + x, this.y0, this.x1 + x, this.y1); }
     addY(y) { return new L2(this.x0, this.y0 + y, this.x1, this.y1 + y); }
-    drawLine(ctx) {
-	ctx.beginPath();
-	ctx.moveTo(this.x0, this.y0);
-	ctx.lineTo(this.x1, this.y1);
-	ctx.stroke();
-	return this;
-    }	
-    drawRafter(ctx) {
-	ctx.save();
-	ctx.setLineDash(RafterLineDash);
-	ctx.strokeStyle = RafterStrokeStyle;
-	this.drawLine(ctx);
-	ctx.restore();
-	return this;
-    }
-    drawRail(ctx) {
-	ctx.save();
-	ctx.strokeStyle = RailStrokeStyle;
-	this.drawLine(ctx);
-	ctx.restore();
-	return this;
-    }
-    drawDbg(ctx) {
-	ctx.save();
-	ctx.strokeStyle = '#487';
-	ctx.lineWidth = 6;
-	this.drawLine(ctx);
-	ctx.restore();
-	return this;
-    }	
     xfrmParallel(off) {
 	const dx = this.x1 - this.x0;
 	const dy = this.y1 - this.y0;
@@ -82,76 +39,6 @@ class P2 {
     addY(y) { return new P2(this.x, this.y + y); }
     addXY(x,y) { return new P2(this.x + x, this.y + y); }
     l2P(p1) { return new L2(this.x, this.y, p1.x, p1.y); }
-
-    drawDbg(ctx) {
-	ctx.save();
-	ctx.fillStyle = '#487';
-	ctx.beginPath();
-	ctx.arc(this.x, this.y, 12, 0, Math.PI * 2.0, false);
-	ctx.fill();
-	ctx.restore();
-	return this;
-    }
-    drawFoot(ctx) {
-	ctx.save();
-	ctx.fillStyle = FootFillStyle;
-	ctx.beginPath();
-	ctx.arc(this.x, this.y, FootRadius, 0, Math.PI * 2.0, false);
-	ctx.fill();
-	if(this.edgeP) {
-	    ctx.beginPath();
-	    ctx.strokeStyle = FootEdgeStrokeStyle;
-	    ctx.arc(this.x, this.y, FootEdgeRadius, 0, Math.PI * 2.0, false);
-	    ctx.stroke();
-	}
-	ctx.restore();
-	return this;
-    }
-    drawLink(ctx) {
-	ctx.save();
-	ctx.strokeStyle = LinkFillStyle;
-	ctx.lineWidth = LinkLineWidth;
-	ctx.beginPath();
-	ctx.moveTo(this.x - LinkRadius, this.y - LinkRadius);
-	ctx.lineTo(this.x + LinkRadius, this.y + LinkRadius);
-	ctx.moveTo(this.x - LinkRadius, this.y + LinkRadius);
-	ctx.lineTo(this.x + LinkRadius, this.y - LinkRadius);
-	ctx.stroke();
-	ctx.restore();
-	return this;
-    }
-    drawSplice(ctx) {
-	ctx.save();
-	ctx.fillStyle = SpliceFillStyle;
-	ctx.beginPath();
-	ctx.fillRect(this.x - SpliceRadiusX, this.y - SpliceRadiusY, 2*SpliceRadiusX, 2*SpliceRadiusY);
-	ctx.restore();
-	return this;
-    }
-    drawEnd(ctx) {
-	ctx.save();
-	ctx.strokeStyle = ClampFillStyle;
-	ctx.lineWidth = ClampLineWidth;
-	ctx.beginPath();
-	ctx.moveTo(this.x - ClampRadius, this.y - ClampRadius);
-	ctx.lineTo(this.x + ClampRadius, this.y + ClampRadius);
-	ctx.stroke();
-	ctx.restore();
-	return this;
-    }
-    drawMid(ctx) {
-	ctx.save();
-	ctx.strokeStyle = ClampFillStyle;
-	ctx.lineWidth = ClampLineWidth;
-	ctx.beginPath();
-	ctx.moveTo(this.x - ClampRadius, this.y - ClampRadius);
-	ctx.lineTo(this.x + ClampRadius, this.y + ClampRadius);
-	ctx.moveTo(this.x - ClampRadius, this.y + ClampRadius);
-	ctx.lineTo(this.x + ClampRadius, this.y - ClampRadius);
-	ctx.stroke();
-	ctx.restore();
-	return this;
-    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -164,53 +51,8 @@ class R2 {
     }
 
     constructor(x0,y0,x1,y1) { this.x0 = x0; this.y0 = y0; this.x1 = x1; this.y1 = y1; }
-
-    drawFillStyle(ctx, fillStyle) {
-	ctx.save();
-	ctx.fillStyle = fillStyle;
-	ctx.beginPath();
-	ctx.fillRect(this.x0, this.y0, this.x1 - this.x0, this.y1 - this.y0);
-	ctx.restore();
-	return this;
-    }
-    drawStrokeStyle(ctx, strokeStyle) {
-	ctx.save();
-	ctx.strokeStyle = strokeStyle;
-	ctx.beginPath();
-	ctx.strokeRect(this.x0, this.y0, this.x1 - this.x0, this.y1 - this.y0);
-	ctx.restore();
-	return this;
-    }
-    drawChimney(ctx) { return this.drawFillStyle(ctx, ChimneyFillStyle); }
-    drawFireWalk(ctx) { return this.drawFillStyle(ctx, FireWalkFillStyle); }
-    drawSkirt(ctx) { return this.drawFillStyle(ctx, SkirtFillStyle); }
-    drawVent(ctx) { return this.drawFillStyle(ctx, VentFillStyle); }
 }
 
-class PanelR2 extends R2 {
-    constructor(x0, y0, x1, y1, orient, rack) {
-	super(x0,y0,x1,y1);
-	this.orient = orient;
-	this.rack = rack;
-	//this.optPart
-    }
-
-    drawPanel(ctx) {
-	this.drawStrokeStyle(ctx, PanelStrokeStyle);
-	this.drawFillStyle(ctx, PanelFillStyle);
-	new R2(this.x0, this.y0 + this.orient.clamp0, this.x1, this.y0 + this.orient.clamp1)
-	    .drawFillStyle(ctx, RailRegFillStyle);
-	new R2(this.x0, this.y1 - this.orient.clamp1, this.x1, this.y1 - this.orient.clamp0)
-	    .drawFillStyle(ctx, RailRegFillStyle);
-	return this;
-    }
-
-    optSet(optPart) {
-	this.optPart = optPart;
-	return this;
-    }
-}
-	
 //-----------------------------------------------------------------------------------------------------------------------
 // math
 //
@@ -308,6 +150,20 @@ function dist2SegPoint(a, p) {
 // edge path stuff
 //-----------------------------------------------------------------------------------------------------------------------
 
+function boundR2FromP2V(pV) {
+    let x0 = pV[0].x;
+    let y0 = pV[0].y;
+    let x1 = pV[0].x;
+    let y1 = pV[0].y;
+    for(let i = 1; i < pV.length; ++i) {
+	if(pV[i].x < x0) x0 = pV[i].x;
+	if(pV[i].x > x1) x1 = pV[i].x;
+	if(pV[i].y < y0) y0 = pV[i].y;
+	if(pV[i].y > y1) y1 = pV[i].y;
+    }
+    return new R2(x0, y0, x1, y1);
+}
+
 function l2VFromP2V(pV) {
     const l2V = [];
     for(let i = 1; i < pV.length; ++i)
@@ -350,25 +206,3 @@ function edgePathVCwOpen(edgeV) {
     return pathV;
 }
 
-function drawPathV(ctx, pV) {
-    ctx.save();
-    ctx.strokeStyle = PathStrokeStyle;
-    ctx.lineWidth = PathLineWidth;
-    ctx.beginPath();
-    ctx.moveTo(pV[0].x, pV[0].y);
-    for(let i = 0; i < pV.length; i++)
-	ctx.lineTo(pV[i].x, pV[i].y);
-    ctx.stroke();
-    ctx.restore();
-}
-
-function drawEdgePathV(ctx, pV) {
-    ctx.save();
-    ctx.fillStyle = EdgeFillStyle;
-    ctx.beginPath();
-    ctx.moveTo(pV[0].x, pV[0].y);
-    for(let i = 0; i < pV.length; i++)
-	ctx.lineTo(pV[i].x, pV[i].y);
-    ctx.fill();
-    ctx.restore();
-}

@@ -5,49 +5,80 @@
 //-----------------------------------------------------------------------------------------------------------------------
 // Invsys: abstract base class. represents an inverter system
 
+class InvsysString {
+    constructor(id) {
+	this.id = id;
+	this.panelV = [];
+    }
+}
+
 class Invsys {
     //static IdHtml
 
-    constructor(sys) {
-	this.sys = sys;
+    constructor(partTabSub) {
+	this.partTabSub = partTabSub;
+	this.stringV = [];
     }
-
-    panelAdd(part, roof) {}
-
-    sysFin() {}
 }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// InvsysNone
 
 class InvsysNone extends Invsys {
     static IdHtml = '--Inverter system--';
 }
 
-class InvsysSolarEdge extends Invsys {
+//-----------------------------------------------------------------------------------------------------------------------
+// SolarEdgeInvsys
+
+class SolarEdgeInvsys extends Invsys {
     static IdHtml = 'SolarEdge (optimizers)';
+
+    constructor(partTabSub, attachPart) {
+	super(partTabSub);
+	//this.invPart
+	this.attachPart = attachPart;
+	this.stringV = [];
+    }
+
+    invSet(invPart) {
+	this.invPart = invPart;
+	this.partTabSub.partAdd(invPart, 1);
+	this.partTabSub.partAdd(ScrewSs, 6);
+	this.partTabSub.partAdd(WasherSs, 6);
+	return this;
+    }
+
+    partAdd(part, qty) {
+	this.partTabSub.partAdd(part, qty);
+	return this;
+    }
     
-    sysFin() {
-	this.sys.partTab.partAdd(SolarEdgeSe11400h_us000bni4, 1, -1);
-	this.sys.partTab.partAdd(SolarEdgeCt225, 2, -1);
-	this.sys.partTab.partAdd(ScrewSs, 6, -1);
-	this.sys.partTab.partAdd(WasherSs, 6, -1);
-	
-	let panelN = 0;
-	for(const [id,panelV] of Object.entries(this.sys.solarEdgeStringById)) {
-	    for(const panel of panelV) {
-		this.sys.partTab.partAdd(panel.optPart, 1, -1);
-		panel.rack.partAddMlpe(1);
-		++panelN;
-	    }
-	}
-	if(panelN != this.sys.partTab.totPanelN)
-	    this.sys.partTab.statusErr(`invsys.panelN=${panelN} != sys.panelN=${this.sys.partTab.totPanelN}`);
+    panelOptAdd(string, panel, optPart) {
+	panel.optPart = optPart;
+	string.panelV.push(panel);
+	this.partTabSub.partAdd(panel.optPart, 1);
+	this.partTabSub.partAdd(this.attachPart, 1);
+    }
+
+    stringAdd(id) {
+	const string = new InvsysString(id);
+	this.stringV.push(string);
+	return string;
     }
 }
 
-class InvsysEnphase extends Invsys {
+//-----------------------------------------------------------------------------------------------------------------------
+// EnphaseInvsys
+
+class EnphaseInvsys extends Invsys {
     static IdHtml = 'Enphase (microinverters)';
 }
 
-class InvsysSunnyBoy extends Invsys {
+//-----------------------------------------------------------------------------------------------------------------------
+// SunnyBoyInvsys
+
+class SunnyBoyInvsys extends Invsys {
     static IdHtml = 'SunnyBoy string inverter';
 }
 

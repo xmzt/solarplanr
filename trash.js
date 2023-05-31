@@ -1,3 +1,162 @@
+.row { display:block flex; flex-direction:row; }
+.rowFlex0 { flex:0 0 auto; }
+.rowFlex1 { flex:1 1 auto; }
+.rowFlex1Pad { flex:1 1 auto; padding-left:2px; }
+
+
+Roof()
+Roof.canDraw(ctx);
+
+Rack(partTabSub);
+Rack.panelFin(roof);
+Rack.canDraw(ctx);
+RackTwoRail.railGroupGo(railGroup);
+
+Invsys(partTabSub);
+Invsys.panelFin();
+
+class Sys {
+    invsysGetOrNu(clas) {
+	return this.invsysByClasId[clas.ClasId] ??= new clas(this);
+    }
+
+    jboxSet(x) {
+	this.jboxP = x;
+    }
+
+    rackAdd(rack) {
+	this.rackV.push(rack);
+    }
+
+    railGroupGetOrNu(clas) {
+	return this.railGroupByClasId[clas.ClasId] ??= this.railGroupAdd(new clas(this));
+    }
+
+    railGroupAdd(railGroup) {
+	this.railGroupDiagVElem.appendChild(railGroup.diagElem);
+	return railGroup;
+    }
+    roofAdd(roof) {
+	this.roofV.push(roof);
+	roof.partTabSubI = this.partTab.subAdd(roof.id);
+    }
+
+    solarEdgeStringGetOrNu(id) {
+	return this.solarEdgeStringById[id] ??= [];
+    }
+    sysFin() {
+	for(const roof of this.roofV)
+	    roof.sysFin();
+	for(const rack of this.rackV)
+	    rack.sysFin();
+	for(const k in this.railGroupByClasId) {
+	    this.partTab.pendInc();
+	    this.railGroupByClasId[k].railWkrReq();
+	}
+	for(const k in this.invsysByClasId)
+	    this.invsysByClasId[k].sysFin();
+    }
+
+    terminate() {
+	this.railWkrCtrl.terminate();
+	for(const roof of this.roofV)
+	    roof.ctxClearAll();
+    }
+}
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+// old
+
+class SiteB_RoofOld extends Roof {
+    constructor(sys) {
+	this.bpVSet([
+	    this.aa = new P2(0,0),
+	    this.ac = this.aa.addY(242 * 2.54), // n side, eave to ridge, 242"
+	    this.bc = this.ac.addX(161 * 2.54), // ridge, drop to n side, 161" 
+	    this.bd = this.bc.addY(20 * 2.54), // drop, 20"
+	    this.dd = this.bd.addX(360 * 2.54), // ridge, s side to drop, 360"
+	    this.db = this.dd.addY(-201 * 2.54), // s side, eave to ridge, 201"
+	    this.cb = this.db.addX(-236 * 2.54), // eave, s side to hike, 236"
+	    this.ca = this.cb.addY(-62 * 2.54), // hike, 62"
+	    this.aa1 = this.ca.addX(-282.5 * 2.54), // eave, hike to n side, 282.5"
+	]);
+	this.edgeV = l2VFromP2V(this.bpV);
+	this.edgePathV = edgePathVCwClose(this.edgeV);
+
+	this.rafterV = [];
+	for(let x = this.aa.x + 6; x <= this.cb.x; x += 16 * 2.54) {
+	    this.rafterV.push(new L2(x, this.aa.y, x, this.dd.y));
+	}
+	for(let x = this.dd.x - 6; x > this.cb.x; x -= 16 * 2.54) {
+	    this.rafterV.push(new L2(x, this.aa.y, x, this.dd.y));
+	}
+
+	this.fireWalkV = [
+	    new R2(this.db.x - FireWalkWidth, this.db.y, this.dd.x, this.dd.y),
+	];
+	
+	this.pipeV = [ new C2((this.cb.x + this.db.x)/2, this.db.y + 30, 5/2.0) ];
+
+	let x = this.aa.x + 30;
+	let y = (this.aa.y + this.ac.y)/2;
+	this.vent0 = new R2(x, y, x + 31, y + 31);
+	x = this.vent0.x1 + 39 * 30.48;
+ 	this.ventV = [ this.vent0, new R2(x, y, x + 31, y + 31) ];
+    }
+}
+
+
+class Roof {
+    
+    constructor(sys, id, canElem, canRailElem) {
+	this.sys = sys;
+	this.id = id;
+	this.canElem = canElem;
+	this.canRailElem = canRailElem;
+    }
+
+    partAdd(part, n) {
+	this.sys.partTab.partAdd(part, n, this.partTabSubI);
+    }
+
+    partAddPanel(part, n) {
+	this.sys.partTab.partAddPanel(part, n, this.partTabSubI);
+    }
+
+    canDraw(ctx) {
+	this.ctx = this.canSizeCtx(this.canElem);
+	this.ctxRail = this.canSizeCtx(this.canRailElem);
+    }
+	// draw
+
+    
+}
+
+class IronRidgeXRRack10Camo extends IronRidgeXRRackCamo {
+    static IdHtml = 'IronRidge XR10, end:camo';
+    static RailGroupClas = IronRidgeXR10RailGroup;
+}
+
+class IronRidgeXRRack10Stopper extends IronRidgeXRRackStopper {
+    static IdHtml = 'IronRidge XR10, end:stopper';
+    static RailGroupClas = IronRidgeXR10RailGroup;
+}
+
+class IronRidgeXRRack100Camo extends IronRidgeXRRackCamo {
+    static IdHtml = 'IronRidge XR100, end:camo';
+    static RailGroupClas = IronRidgeXR100RailGroup;
+}
+
+class IronRidgeXRRack100Stopper extends IronRidgeXRRackStopper {
+    static IdHtml = 'IronRidge XR100, end:stopper';
+    static RailGroupClas = IronRidgeXR100RailGroup;
+}
+
+
+
 class SvgText {
     constructor(dst, clas, text) {
 	this.ele = svgAddText(dst, 'label', lab);
@@ -169,7 +328,7 @@ class Rack {
     dump(pre0, pre1) {
 	console.log(pre0, `panelV`);
 	for(const p of this.panelV)
-	    console.log(pre1, `(${p.x0},${p.y0}) (${p.x1},${p.y1}) ${p.shape.part.desc}`);
+	    console.log(pre1, `(${p.x0},${p.y0}) (${p.x1},${p.y1}) ${p.shape.part.des}`);
     }
     
     finalize(roof) {}
@@ -197,7 +356,7 @@ class PartTab {
 	    row[col.idN] = 0;
 	    row[col.idCost] = 0;
 	}
-	part.descFill(row.tr.querySelector('._desc'));
+	part.desFill(row.tr.querySelector('._des'));
 	row.price = part.priceFill(row.tr.querySelector('._price'));
 	this.elemTbody.insertBefore(row.tr, this.totalRow.tr);
 	this.rowV.push(row);

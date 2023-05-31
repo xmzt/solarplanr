@@ -9,8 +9,10 @@ class PartCatTabSource {
 }
 
 class PartCatTab {
-    constructor(tab) {
-	this.tab = tab;
+    constructor(root) {
+	this.headTr = root.createTHead().insertRow(-1);
+	this.headTr.insertCell(-1).textContent = 'Description';
+	this.body = root.createTBody();
 	this.sourceV = [];
 	this.sourceById = {};
 	this.panelPartV = [];
@@ -25,12 +27,12 @@ class PartCatTab {
 	    }
 	}
     }
-
+    
     rowNu(part) {
-	const tr = this.tab.tBodies[0].insertRow(-1);
+	const tr = this.body.insertRow(-1);
 	part.menuAFill(tr.insertCell(-1));
 	for(const source of this.sourceV)
-	    eleClas(tr.insertCell(-1), 'textAlignRight');
+	    tr.insertCell(-1);
 	return tr;
     }
 
@@ -40,29 +42,30 @@ class PartCatTab {
 	    i = this.sourceV.length;
 	const source = new PartCatTabSource(id, i, 0);
 	this.sourceV.splice(i, 0, source);
-	this.tab.rows[0].insertCell(1 + i).textContent = id;
-	for(const tr of this.tab.tBodies[0].rows) 
-	    eleClas(tr.insertCell(i + 1), 'textAlignRight');
+	this.headTr.insertCell(1 + i).textContent = id;
+	for(const tr of this.body.rows) 
+	    tr.insertCell(1 + i);
 	for(++i; i < this.sourceV.length; ++i)
 	    this.sourceV[i].pos = i;
 	return source;
     }
 }
 
-function panelTabFill(tab) {
+function panelTabFill(root) {
+    const body = root.createTBody();
     for(const part of PartV.filter(x => x.panelPartP())) {
-	const tr = tab.tBodies[0].insertRow(-1);
+	const tr = body.insertRow(-1);
 	part.menuAFill(tr.insertCell(-1));
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = part.watts;
+	tr.insertCell(-1).textContent = part.watts;
 	const source = part.sourceV.reduce((acc, x) => x.cost1 < acc.cost1 ? x : acc);
-	source.partCatFill(eleClas(tr.insertCell(-1), 'textAlignRight'));
+	source.partCatFill(tr.insertCell(-1));
 	tr.insertCell(-1).textContent = `${part.dimL.toFixed(1)} * ${part.dimS.toFixed(1)} * ${part.dimH.toFixed(1)}`;
 	const area = part.dimL * part.dimS;
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = area.toFixed(4);
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = (part.watts / source.cost1).toFixed(4);
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = (part.watts / area).toFixed(4);
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = part.voc.toFixed(2);
-	eleClas(tr.insertCell(-1), 'textAlignRight').textContent = part.isc.toFixed(2);
+	tr.insertCell(-1).textContent = area.toFixed(4);
+	tr.insertCell(-1).textContent = (part.watts / source.cost1).toFixed(4);
+	tr.insertCell(-1).textContent = (part.watts / area).toFixed(4);
+	tr.insertCell(-1).textContent = part.voc.toFixed(2);
+	tr.insertCell(-1).textContent = part.isc.toFixed(2);
     }
 }
 

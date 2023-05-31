@@ -167,7 +167,7 @@ class DiscoGroup {
 	partDesBox(dst, this.lab, 'AC Disconnect',
 		   `Make: ${this.part.make}`,
 		   `Model: ${this.part.model}`,
-		   this.part.boxDesc,
+		   this.part.boxDes,
 		  );
     }
 }
@@ -190,7 +190,7 @@ class LoadCenterGroup {
 	partDesBox(dst, this.lab, 'Load center',
 		   `Make: ${this.part.make}`,
 		   `Model: ${this.part.model}`,
-		   this.part.boxDesc,
+		   this.part.boxDes,
 		   `Breaker, main: ${this.ocpdMainA}A ${this.ocpdMainPart.model}`,
 		   `Breaker, inverter: ${this.ocpdInvA}A ${this.ocpdInvPart.model}`,
 		  );
@@ -213,7 +213,7 @@ class Ct {
 	partDesBox(dst, this.lab, 'Current transformer',
 		   `Make: ${this.part.make}`,
 		   `Model: ${this.part.model}`,
-		   this.part.boxDesc,
+		   this.part.boxDes,
 		  );
     }
 }
@@ -289,6 +289,10 @@ class SiteBOneLine extends OneLine {
     }
     
     popu() {
+	
+
+	
+
 	let y = 30;
 	const s1 = new StringOptGroup(this, this.svg, 20, y, 'STRING1',
 				      [ 1, PanelQ400, SolarEdgeS500 ],
