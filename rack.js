@@ -8,6 +8,8 @@ class PanelR2 extends R2 {
 	super(x0,y0,x1,y1);
 	this.orient = orient;
 	this.rack = rack;
+	this.clamp0R = new R2(x0, y0 + orient.clamp0, x1, y0 + orient.clamp1);
+	this.clamp1R = new R2(x0, y1 - orient.clamp1, x1, y1 - orient.clamp0);
 	//this.optPart added by invsys
     }
 }
@@ -130,29 +132,29 @@ class RackTworail extends Rack {
 	this.groundLugN = null;
     }
 
-    railRegAdd(x0, y0, x1, y1) {
+    railRegAdd(clampR) {
 	for(const reg of this.railRegV) {
-	    if(y0 <= reg.y1 && reg.y0 < y1) {
-		if(x0 < reg.x0 && (x1 + 2*this.gapX()) >= reg.x0) {
+	    if(clampR.y0 <= reg.y1 && reg.y0 < clampR.y1) {
+		if(clampR.x0 < reg.x0 && (clampR.x1 + 2*this.gapX()) >= reg.x0) {
 		    // add panel and mid to left of existing reg
-		    reg.midXV.push((x1 + reg.x0)/2);
-		    reg.x0 = x0;
-		    if(y0 > reg.y0) reg.y0 = y0;
-		    if(y1 < reg.y1) reg.y1 = y1;
+		    reg.midXV.push((clampR.x1 + reg.x0)/2);
+		    reg.x0 = clampR.x0;
+		    if(clampR.y0 > reg.y0) reg.y0 = clampR.y0;
+		    if(clampR.y1 < reg.y1) reg.y1 = clampR.y1;
 		    return reg;
 		}
-		else if(x0 > reg.x0 && (x0 - 2*this.gapX()) <= reg.x1) {
+		else if(clampR.x0 > reg.x0 && (clampR.x0 - 2*this.gapX()) <= reg.x1) {
 		    // add panel and mid to right of existing reg
-		    reg.midXV.push((reg.x1 + x0)/2);
-		    reg.x1 = x1;
-		    if(y0 > reg.y0) reg.y0 = y0;
-		    if(y1 < reg.y1) reg.y1 = y1;
+		    reg.midXV.push((reg.x1 + clampR.x0)/2);
+		    reg.x1 = clampR.x1;
+		    if(clampR.y0 > reg.y0) reg.y0 = clampR.y0;
+		    if(clampR.y1 < reg.y1) reg.y1 = clampR.y1;
  		    return reg;
 		}
 	    }
 	}
 	// new reg
-	const reg = new RailRegR2(x0, y0, x1, y1);
+	const reg = new RailRegR2(clampR.x0, clampR.y0, clampR.x1, clampR.y1);
 	this.railRegV.push(reg);
 	return reg;
     }
@@ -162,8 +164,8 @@ class RackTworail extends Rack {
 	let bondI = 0;
 	for(const panel of this.panelV) {
 	    const orient = panel.orient;
-	    const reg0 = this.railRegAdd(panel.x0, panel.y0 + orient.clamp0, panel.x1, panel.y0 + orient.clamp1);
-	    const reg1 = this.railRegAdd(panel.x0, panel.y1 - orient.clamp1, panel.x1, panel.y1 - orient.clamp0);
+	    const reg0 = this.railRegAdd(panel.clamp0R);
+	    const reg1 = this.railRegAdd(panel.clamp1R);
 	    if(! reg0.bondI) reg0.bondI = ++bondI;
 	    if(! reg1.bondI) reg1.bondI = reg0.bondI;
 	}

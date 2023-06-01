@@ -1,3 +1,21 @@
+    desBox() {
+	const box = temClone('conduitDesBox_tem');
+	box.firstElementChild.firstElementChild.innerHTML = this.lab;
+	box.firstElementChild.children[1].innerHTML = 'Conduit'
+	this.part.desFill(box.children[1]);
+	const tab = box.children[2];
+	const wirePartQtyD = {};
+	for(const part of this.wirePartV) {
+	    const partQty = wirePartQtyD[part.id] ??= [ part, 0 ];
+	    ++partQty[1];
+	}
+	for(const [part,qty] of Object.values(wirePartQtyD)) {
+	    const tr = tab.insertRow(-1);
+	    tr.insertCell(-1).textContent = qty;
+	    tr.insertCell(-1).textContent = `${part.awg} AWG, ${part.typ}, ${part.color}`;
+	}
+	return box;
+    }
 .row { display:block flex; flex-direction:row; }
 .rowFlex0 { flex:0 0 auto; }
 .rowFlex1 { flex:1 1 auto; }

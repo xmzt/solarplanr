@@ -7,7 +7,7 @@
 var PanelBoviet370 = new PanelPart()
     .cDesNickMakeModelMore('Boviet.370', 'Boviet', 'BVM6610M-370S-H-HC-BF', 'Panel')
     .cDimPanel(/*long*/179.4, /*short*/104.6, /*height*/3.5)
-    .cClampSet(/*long0*/27.0, /*long1*/35.5, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/27.0, /*long1*/35.5, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/370, /*voc*/38.00, /*isc*/9.27)
     .cWarranty('25/25')
     .nDs('https://bovietsolar.com/wp-content/uploads/Boviet-Solar_4.-Vega-Series_Mono_Bifacial_CI_PV-Module_Transparent-Back_360-370W_April2023.pdf')
@@ -17,7 +17,7 @@ var PanelBoviet370 = new PanelPart()
 var PanelBoviet370_libclamp = new PanelPart()
     .cDesNickMakeModelMore('Boviet.370', 'Boviet', 'BVM6610M-370S-H-HC-BF', 'Panel')
     .cDimPanel(/*long*/179.4, /*short*/104.6, /*height*/3.5)
-    .cClampSet(/*long0*/27.0, /*long1*/55.0, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/27.0, /*long1*/55.0, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/370, /*voc*/38.00, /*isc*/9.27)
     .cWarranty('25/25')
     .nDs('https://bovietsolar.com/wp-content/uploads/Boviet-Solar_4.-Vega-Series_Mono_Bifacial_CI_PV-Module_Transparent-Back_360-370W_April2023.pdf')
@@ -27,7 +27,7 @@ var PanelBoviet370_libclamp = new PanelPart()
 var PanelJa535 = new PanelPart()
     .cDesNickMakeModelMore('JA.535', 'JA', 'JAM72D30', 'Panel')
     .cDimPanel(/*long*/227.8, /*short*/113.4, /*height*/3.5) 
-    .cClampSet(/*long0*/52, /*long1*/62, /*short0*/25, /*short1*/35)
+    .cClamp(/*long0*/52, /*long1*/62, /*short0*/25, /*short1*/35)
     .cElecPanel(/*watts*/535, /*voc*/49.45, /*isc*/13.79)  
     .cWarranty('25/25')
     .nDs('https://www.jasolar.com/uploadfile/2022/0511/20220511055529246.pdf')
@@ -37,7 +37,7 @@ var PanelJa535 = new PanelPart()
 var PanelMse380 = new PanelPart()
     .cDesNickMakeModelMore('Mission.380', 'Misson Solar', 'MSE380SX5R', 'Panel')
     .cDimPanel(/*long*/190.7, /*short*/104.4, /*height*/4.0) 
-    .cClampSet(/*long0*/39, /*long1*/49, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/39, /*long1*/49, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/380, /*voc*/44.84, /*isc*/10.91)
     .cWarranty('25/25')
     .nDs('https://rexel-cdn.com/products/6.pdf?i=30E98CA0-6C44-4CBD-80F5-86889ABD2C48')
@@ -46,7 +46,7 @@ var PanelMse380 = new PanelPart()
 var PanelMse420 = new PanelPart()
     .cDesNickMakeModelMore('Mission.420', 'Mission Solar', 'MSE420SX6W', 'Panel')
     .cDimPanel(/*long*/208.6, /*short*/105.4, /*height*/4.0)
-    .cClampSet(/*long0*/39, /*long1*/49, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/39, /*long1*/49, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/420, /*voc*/49.14, /*isc*/11.05)
     .cWarranty('25/25')
     .nDs('https://rexel-cdn.com/products/mse420sx6w.pdf?i=BC55BE43-0035-44AB-98B3-1489834CD83F')
@@ -55,7 +55,7 @@ var PanelMse420 = new PanelPart()
 var PanelQ475 = new PanelPart()
     .cDesNickMakeModelMore('Q.475', 'Q.Cells', 'Q.PEAK DUO XL-G10.c', 'Panel')
     .cDimPanel(/*long*/221.6, /*short*/104.5, /*height*/3.5)
-    .cClampSet(/*long0*/30, /*long1*/55, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/30, /*long1*/55, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/475, /*voc*/53.58, /*isc*/11.24)
     .cWarranty('25/25')
     .nDs('https://rexel-cdn.com/products/6.pdf?i=F7962CDC-0877-46BD-BF50-391892EB180C')
@@ -63,9 +63,9 @@ var PanelQ475 = new PanelPart()
     .s1U(275.50, 'https://www.platt.com/p/2047104/q-cells/475w-solar-module-156-half-cell-black-aluminum/qclqpeakduoxlg1047');
 
 var PanelQ400 = new PanelPart()
-    .cDesNickMakeModelMore('Q.475', 'Q.Cells', 'Q.PEAK DUO BLK ML-G10+', 'Panel')
+    .cDesNickMakeModelMore('Q.400', 'Q.Cells', 'Q.PEAK DUO BLK ML-G10+', 'Panel')
     .cDimPanel(/*long*/187.9, /*short*/104.5, /*height*/3.2) 
-    .cClampSet(/*long0*/20, /*long1*/65, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/20, /*long1*/65, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/400, /*voc*/45.30, /*isc*/11.14)
     .cWarranty('25/25')
     .nDs('https://rexel-cdn.com/products/6.pdf?i=6E8DE030-1C26-4F37-8226-E744C491CCCE')
@@ -75,7 +75,7 @@ var PanelQ400 = new PanelPart()
 var PanelRec370 = new PanelPart()
     .cDesNickMakeModelMore('Rec.370', 'REC', 'REC370NP2 Black', 'Panel')
     .cDimPanel(/*long*/175.5, /*short*/104.0, /*height*/3.0)
-    .cClampSet(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
+    .cClamp(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
     .cElecPanel(/*watts*/370, /*voc*/41.1, /*isc*/11.41)
     .cWarranty('20/25')
     .nDs('https://usa.recgroup.com/sites/default/files/documents/ds_rec_n-peak_2_black_series_en_us.pdf')
@@ -84,7 +84,7 @@ var PanelRec370 = new PanelPart()
 var PanelRec405AA = new PanelPart()
     .cDesNickMakeModelMore('Rec.405', 'REC', 'REC405AA', 'Panel')
     .cDimPanel(/*long*/182.1, /*short*/101.6, /*height*/3.0)
-    .cClampSet(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
+    .cClamp(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
     .cElecPanel(/*watts*/405, /*voc*/49.1, /*isc*/10.41)
     .cWarranty('25/25')
     .nDs('https://www.recgroup.com/sites/default/files/documents/ds_rec_alpha_pure_series_en_us.pdf')
@@ -94,7 +94,7 @@ var PanelRec405AA = new PanelPart()
 var PanelSeg400 = new PanelPart()
     .cDesNickMakeModelMore('Seg.400', 'SEG', 'SEG-400-BMD-HV', 'Panel')
     .cDimPanel(/*long*/172.2, /*short*/113.4, /*height*/3.5)
-    .cClampSet(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
+    .cClamp(/*long0*/25.5, /*long1*/61.0, /*short0*/20.0, /*short1*/30.0)
     .cElecPanel(/*watts*/400, /*voc*/37.22, /*isc*/13.70)
     .cWarranty('25/25')
     .nDs('https://es-media-prod.s3.amazonaws.com/media/components/panels/spec-sheets/SEG_400w_Triple_Black.pdf')
@@ -103,7 +103,7 @@ var PanelSeg400 = new PanelPart()
 var PanelSil360 = new PanelPart()
     .cDesNickMakeModelMore('Sil.360', 'Silfab', 'SIL360NX', 'Mono PERC 66 Black Panel')
     .cDimPanel(/*long*/183.2, /*short*/100.0, /*height*/3.8)
-    .cClampSet(/*long0*/41.1, /*long1*/43.6, /*short0*/17.5, /*short1*/22.5)
+    .cClamp(/*long0*/41.1, /*long1*/43.6, /*short0*/17.5, /*short1*/22.5)
     .cElecPanel(/*watts*/360, /*voc*/45.40, /*isc*/10.20)
     .cWarranty('25/30')
     .nDs('https://silfabsolar.com/wp-content/uploads/2021/09/Silfab-SIL-360-NX-20210722-Final.pdf')
@@ -113,7 +113,7 @@ var PanelSil360 = new PanelPart()
 var PanelSil490 = new PanelPart()
     .cDesNickMakeModelMore('Sil.490', 'Silfab', 'SIL490HN', 'Mono PERC 156/2 Panel')
     .cDimPanel(/*long*/226.3, /*short*/103.7, /*height*/3.5)
-    .cClampSet(/*long0*/51, /*long1*/61, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/51, /*long1*/61, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/490, /*voc*/53.96, /*isc*/11.36)
     .cWarranty('25/30')
     .nDs('https://silfabsolar.com/wp-content/uploads/2022/10/Silfab-SIL-490-HN-Data-Generic-20221017.pdf')
@@ -123,7 +123,7 @@ var PanelSil490 = new PanelPart()
 var PanelUreco400 = new PanelPart()
     .cDesNickMakeModelMore('Ureco.400', 'Ureco', 'FBM400MFG-BB', 'Panel')
     .cDimPanel(/*long*/172.3, /*short*/113.3, /*height*/3.5)
-    .cClampSet(/*long0*/16.1, /*long1*/36.6, /*short0*/20, /*short1*/30)
+    .cClamp(/*long0*/16.1, /*long1*/36.6, /*short0*/20, /*short1*/30)
     .cElecPanel(/*watts*/400, /*voc*/37.20, /*isc*/13.68)
     .cWarranty('25/25')
     .nDs('https://www.urecorp.com/upload/product/20211207145032_module_0.pdf')
@@ -475,7 +475,7 @@ var SnapnrackRluMlpe = new Part()
 //-----------------------------------------------------------------------------------------------------------------------
 
 var SolarEdgeSe11400h_us000bni4 = new InvPart()
-    .cDesMakeModelMore('SolarEdge', 'SE11400H-US000BNI4', 'RGM+Export/Import')
+    .cDesNickMakeModelMore('SE.11400H-US', 'SolarEdge', 'SE11400H-US000BNI4', 'RGM+Export/Import')
     .cElecInvSe(/*acW*/11400, /*acV*/240, /*acIMax*/47.5, /*dcW*/17650, /*dcVMax*/480, /*dcVNom*/400, /*dcIMax*/30.5)
     .nI('https://knowledge-center.solaredge.com/sites/kc/files/se_hd_wave_inverter_with_SetApp_installation_guide_na.pdf')
     .s1U(2316.00, 'https://www.platt.com/p/1821855/solaredge/sed-se11400h-us000bni4/sedse11400hus000bi');
@@ -501,9 +501,9 @@ var SolarEdgeS500 = new OptimizerPart()
     .nUrl('Intercompatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/application_note_intercompatibility_se_power_optimizers.pdf')
     .s1U(84.99, 'https://www.platt.com/p/2011140/solaredge/dc-power-optimizer-500w-60vdc/seds500');
 
-var SolarEdgeCt225 = new Part()
+var SolarEdgeCt225 = new Spec1Part()
     .cDesMakeModelMore('SolarEdge', 'SECT-SPL-225A-T-20', '17ft, 18-20 AWG TP, CT')
-    .cDesBoxSpec('225A, Split core, Clamp')
+    .cSpec1('225A, Split core, Clamp')
     .nDs('https://knowledge-center.solaredge.com/sites/kc/files/se-slim-current-transformer-datasheet-na.pdf')
     .s1U(41.62, 'https://www.platt.com/p/1950422/solaredge/slim-current-transformer-split-core/sedsectspl225at20');
 
@@ -643,25 +643,27 @@ var Ctap_Gray = new Part()
     .cDesGeneric('C-Tap Crimp Gray <b>[APPROXIMATE]</b>')
     .s1A(4.00, 1, 'matt');
 
-var DisconnectGnf222ra = new Part()
+var DisconnectGnf222ra = new Spec1Part()
     .cDesMakeModelMore('Siemens', 'GNF222RA', 'Disconnect w/ hub provision')
-    .cDesBoxSpec('60A, 240V, Type 3R, Non-fusible')
+    .cSpec1('60A, 240V, Type 3R, Non-fusible')
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:5c71c5ec-7826-4b33-bad2-c861d7d9534e/sie-ss-switch-60a-240a-nf3r.pdf')
     .s1U(88.31, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6BXLR/');
 
-var DisconnectLnf222ra = new Part()
+var DisconnectLnf222ra = new Spec1Part()
     .cDesMakeModelMore('Siemens', 'LNF222RA', 'Disconnect w/o hub provision')
-    .cDesBoxSpec('60A, 240V, Type 3R, Non-fusible')
+    .cSpec1('60A, 240V, Type 3R, Non-fusible')
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:7adb416d-e4f1-4e6c-9f9f-32d104e32e6b/sie-ss-switch-60a-240a-nf3r-ln.pdf')
     .s1U(67.49, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6F5PV/');
 
-var Emt_34 = new Part()
+var Emt_34 = new ConduitPart()
     .cDesGeneric('EMT Conduit, 3/4", Steel, 1ft')
+    .cConduit('EMT', '3/4"', 23.4, 20.9)
     .s1A(1.17, 50, 'matt')
     .sNU(1.17*10, 10, 'https://www.platt.com/p/0065970/emt-conduit-3-4-steel-10/091111020025/34e');
 
-var Emt_1 = new Part()
+var Emt_1 = new ConduitPart()
     .cDesGeneric('EMT Conduit, 1", Steel, 1ft')
+    .cConduit('EMT', '1"', 29.5, 26.6)
     .sNU(18.56, 10, 'https://www.homedepot.com/p/1-in-x-10-ft-Electric-Metallic-Tube-EMT-Conduit-101568/100400409')
     .sNU(2.22*10, 10, 'https://www.platt.com/p/0065797/emt-conduit-1-steel-10/091111020032/1e');
 
@@ -762,9 +764,9 @@ var Mc4_F = new Part()
     .s1A(2.08, 50, 'matt')
     .s1U(2.08, 'https://www.platt.com/p/0798740/stubli-electrical-connectors/cable-connector-mc-type-4-female/muc320014p0001ur');
 
-var LcSquaredQO130M200 = new LcPart()
+var LcSquaredQO130M200 = new Spec1Part()
     .cDesMakeModelMore('Square D', 'QO130M200', 'Load center')
-    .cDesBoxSpec('120/240V, 200A, 30 spaces, NEMA1')
+    .cSpec1('120/240V, 200A, 30 spaces, NEMA1')
     .cElecLc(/*ibus*/200)
     .nDs('https://www.se.com/us/en/product/download-pdf/QO130M200');
 
@@ -787,54 +789,80 @@ var ReducingWasher_1_34 = new Part()
     .s1A(0.34, 10, 'matt')
     .s1U(0.34, 'https://www.platt.com/p/0676009/dottie/reducing-washer-1-x-3-4-steel/781002301097/dotrw32');
 
-var Wire_bare_6 = new Part()
+var Wire_bare_6 = new WirePart()
     .cDesGeneric('Wire, Bare, 6 AWG, Solid, 1ft')
+    .cWire(/*awg*/6, /*typ*/'solid', /*color*/'bare')
     .s1A(0.65, 290, 'matt')
     .sNU(199.00, 315, 'https://www.ebay.com/');
 
-var Wire_pv_10 = new Part()
+var Wire_pv_10 = new WirePart()
     .cDesGeneric('Wire, PV, 10 AWG, Black, 1ft')
+    .cWire(/*awg*/10, /*typ*/'PV', /*color*/'black')
     .s1A(0.51, 180, 'matt')
     .sNU(255.00, 500, 'https://www.platt.com/p/0043334/10-awg-1000v-solar-pv-wire-500-black/10pv1000vblax500');
 
-var Wire_thhn_10_blk = new Part()
-    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Black, 1ft')
-    .s1A(0.32, 50, 'matt')
-    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062557/10-awg-thhn-thwn-2-stranded-copper-black-500/048243230006/10thhncstrblax500');
+var Wire_tffn_18_blk = new WirePart()
+    .cDesGeneric('Wire, TFFN, 18 AWG, Black')
+    .cWire(/*awg*/18, /*typ*/'TFFN', /*color*/'black');
 
-var Wire_thhn_10_grn = new Part()
-    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Green, 1ft')
-    .s1A(0.32, 438, 'matt')
-    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062575/10-awg-thhn-thwn-stranded-copper-green-500/048243230402/10thhncstrgrex500');
+var Wire_tffn_18_wht = new WirePart()
+    .cDesGeneric('Wire, TFFN, 18 AWG, White')
+    .cWire(/*awg*/18, /*typ*/'TFFN', /*color*/'white');
 
-var Wire_thhn_10_red = new Part()
-    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Red, 1ft')
-    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062593/10-awg-thhn-thwn-2-stranded-copper-red-500/048243230204/10thhncstrredx500');
-
-var Wire_thhn_10_wht = new Part()
-    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Wht, 1ft')
-    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062598/10-awg-thhn-thwn-2-stranded-copper-white-500/048243230105/10thhncstrwhix500');
-
-var Wire_thhn_6_blk = new Part()
+var Wire_thhn_6_blk = new WirePart()
     .cDesGeneric('Wire, THHN/THWN-2, 6 AWG, Black, 1ft')
+    .cWire(/*awg*/6, /*typ*/'THWN-2', /*color*/'black')
     .s1U(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Black-Stranded-CU-SIMpull-THHN-Wire-20493399/204632784');
 
-var Wire_thhn_6_grn = new Part()
+var Wire_thhn_6_grn = new WirePart()
     .cDesGeneric('Wire, THHN/THWN-2, 6 AWG, Green, 1ft')
+    .cWire(/*awg*/6, /*typ*/'THWN-2', /*color*/'green')
     .s1A(0.87, 500, 'matt')
     .sNU(0.87*500, 500, 'https://www.platt.com/p/0062733/6-awg-thhn-thwn-2-stranded-copper-green-500/048243231928/6thhncstrgrex500');
 
-var Wire_thhn_6_red = new Part()
+var Wire_thhn_6_red = new WirePart()
     .cDesGeneric('Wire THHN/THWN-2, 6 AWG, Red, 1ft')
+    .cWire(/*awg*/6, /*typ*/'THWN-2', /*color*/'red')
     .s1U(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-Red-Stranded-CU-SIMpull-THHN-Wire-20495899/204632880');
 
-var Wire_thhn_6_wht = new Part()
+var Wire_thhn_6_wht = new WirePart()
     .cDesGeneric('Wire THHN/THWN-2, 6 AWG, White, 1ft')
+    .cWire(/*awg*/6, /*typ*/'THWN-2', /*color*/'white')
     .s1U(1.58, 'https://www.homedepot.com/p/Southwire-By-the-Foot-6-White-Stranded-CU-SIMpull-THHN-Wire-20494199/204632877');
 
-var Wire_thhn_8_grn = new Part()
+var Wire_thhn_8_grn = new WirePart()
     .cDesGeneric('Wire, THHN/THWN-2, 8 AWG, Green, 1ft')
+    .cWire(/*awg*/8, /*typ*/'THWN-2', /*color*/'green')
+    .s1U(0.97, 'https://www.homedepot.com/p/Southwire-By-the-Foot-8-Green-Stranded-CU-SIMpull-THHN-Wire-20492599/204632885')
     .sNU(0.54, 1, 'https://www.platt.com/p/0099636/8-awg-thhn-thwn-2-stranded-copper-green-2500/048243231423/8thhncstrgrex2500');
+
+var Wire_thhn_8_wht = new WirePart()
+    .cDesGeneric('Wire, THHN/THWN-2, 8 AWG, White, 1ft')
+    .cWire(/*awg*/8, /*typ*/'THWN-2', /*color*/'white')
+    .s1U(0.97, 'https://www.homedepot.com/p/Southwire-By-the-Foot-8-White-Stranded-CU-SIMpull-THHN-Wire-20489199/204632884');
+
+
+var Wire_thhn_10_blk = new WirePart()
+    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Black, 1ft')
+    .cWire(/*awg*/10, /*typ*/'THWN-2', /*color*/'black')
+    .s1A(0.32, 50, 'matt')
+    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062557/10-awg-thhn-thwn-2-stranded-copper-black-500/048243230006/10thhncstrblax500');
+
+var Wire_thhn_10_grn = new WirePart()
+    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Green, 1ft')
+    .cWire(/*awg*/10, /*typ*/'THWN-2', /*color*/'green')
+    .s1A(0.32, 438, 'matt')
+    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062575/10-awg-thhn-thwn-stranded-copper-green-500/048243230402/10thhncstrgrex500');
+
+var Wire_thhn_10_red = new WirePart()
+    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Red, 1ft')
+    .cWire(/*awg*/10, /*typ*/'THWN-2', /*color*/'red')
+    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062593/10-awg-thhn-thwn-2-stranded-copper-red-500/048243230204/10thhncstrredx500');
+
+var Wire_thhn_10_wht = new WirePart()
+    .cDesGeneric('Wire, THHN/THWN-2, 10 AWG, Wht, 1ft')
+    .cWire(/*awg*/10, /*typ*/'THWN-2', /*color*/'white')
+    .sNU(0.32*500, 500, 'https://www.platt.com/p/0062598/10-awg-thhn-thwn-2-stranded-copper-white-500/048243230105/10thhncstrwhix500');
 
 var WireClip = new Part()
     .cDesGeneric('Wire Clip, Heyco S6405 SunRunner Stainless Steel')

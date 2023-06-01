@@ -66,6 +66,17 @@ class R2 {
 function interpX(a, b, y) { return a.x + ((b.x - a.x) * (y - a.y) / (b.y - a.y)); }
 function interpY(a, b, x) { return a.y + ((b.y - a.y) * (x - a.x) / (b.x - a.x)); }
 
+function interpIncX(a, b, dx) {
+    const abX = b.x - a.x;
+    if(0 > abX) dx = -dx;
+    return new P2(b.x + dx, b.y + ((b.y - a.y) * dx / abX));
+}
+function interpIncY(a, b, dy) {
+    const abY = b.y - a.y;
+    if(0 > abY) dy = -dy;
+    return new P2(b.x + ((b.x - a.x) * dy / abY), b.y + dy);
+}
+
 function interLineLine(a, b) {
     const ax = a.x0 - a.x1;
     const ay = a.y0 - a.y1;
@@ -101,6 +112,12 @@ function interSegSeg(a, b) {
     }
     return null;
 }
+
+function distAB(a,b) {
+    const abX = b.x - a.x;
+    const abY = b.y - a.y;
+    return Math.sqrt(abX*abX + abY*abY);
+}    
 
 function dist2LinePoint(a, p) {
     const ax = a.x0 - a.x1;
@@ -146,6 +163,32 @@ function dist2SegPoint(a, p) {
     return null;
 }
 
+function bisectSegSeg(a, b, c, scale) {
+    // very acute angles are bad for this algorithm (i.e. unit(CB) + unit(BA) close to 0). should be fine for a roof.
+    // other possible algorithms? atan2(det,dot)-based
+    let cbx = c.x - b.x;
+    let cby = c.y - b.y;
+    let bax = b.x - a.x;
+    let bay = b.y - a.y;
+    let cbM = 1/Math.sqrt(cbx*cbx + cby*cby);
+    let baM = 1/Math.sqrt(bax*bax + bay*bay);
+    // unscaled bisection vector is sum of CB and BA unit vectors
+    let bix = cbx*cbM + bax*baM;
+    let biy = cby*cbM + bay*baM
+    let biM = scale/Math.sqrt(bix*bix + biy*biy);
+    // scale bisection unit vector, rotate by pi/2, translate by b
+    return new P2(b.x - biM*biy, b.y + biM*bix);
+}
+
+function matAbcdRotateAB(vx,vy) {
+    // return a transform of a coordinate system by AB with origin at C
+    // this is a "passive" transformation 
+    const rmag = 1/Math.sqrt(vx*vx + vy*vy);
+    const ux = vx*rmag;
+    const uy = vy*rmag;
+    return [ux, uy, -uy, ux];
+}
+
 //-----------------------------------------------------------------------------------------------------------------------
 // edge path stuff
 //-----------------------------------------------------------------------------------------------------------------------
@@ -166,8 +209,11 @@ function boundR2FromP2V(pV) {
 
 function l2VFromP2V(pV) {
     const l2V = [];
-    for(let i = 1; i < pV.length; ++i)
-	l2V.push(pV[i-1].l2P(pV[i]));
+    let a = pV[pV.length - 1];
+    for(const b of pV) {
+	l2V.push(new L2(a.x, a.y, b.x, b.y));
+	a = b;
+    }
     return l2V;
 }
     

@@ -23,26 +23,38 @@ class Roof {
     
     constructor(drawr) {
 	this.drawr = drawr;
-	//this.bpV
+	//this.bor
 	//this.boundR
 	//this.edgeV
 	this.rafterV = [];
 	this.featureV = [];
     }
 
-    bpVSet(bpV) {
-	this.bpV = bpV;
-	this.boundR = boundR2FromP2V(bpV);
-	this.edgeV = l2VFromP2V(bpV);
+    borSet(bor) {
+	this.bor = bor;
+	const pV = Object.values(bor);
+	this.boundR = boundR2FromP2V(pV);
+	this.edgeV = l2VFromP2V(pV);
 	this.drawr.sizeSetR(this.boundR);
-	this.drawr.addPathV(this.bpV);
+	this.drawr.addPathVClose(pV);
+	
+	// border labels
+	const idPV = Object.entries(bor);
+	let [aId,a] = idPV[idPV.length - 2];
+	let [bId,b] = idPV[idPV.length - 1];
+	for(const [cId,c] of idPV) {
+	    this.drawr.addLabelPoint(b, bisectSegSeg(a, b, c, 60), `${bId}=(${b.x.toFixed(3)}, ${b.y.toFixed(3)})`);
+	    a = b;
+	    b = c;
+	    bId = cId;
+	}
     }
 
     rafterAddXs(...xV) {
 	for(const x of xV) {
-	    const rafter = new L2(x, this.boundR.y0, x, this.boundR.y1);
+	    const rafter = new L2(x, this.boundR.y0 - 30, x, this.boundR.y1 + 100);
 	    this.rafterV.push(rafter);
-	    this.drawr.addRafter(rafter);
+	    this.drawr.addRafter(rafter, `R${this.rafterV.length - 1} x=${x.toFixed(3)}`);
 	}
     }
 

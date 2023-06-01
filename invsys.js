@@ -15,8 +15,9 @@ class InvsysString {
 class Invsys {
     //static IdHtml
 
-    constructor(partTabSub) {
+    constructor(partTabSub, invId) {
 	this.partTabSub = partTabSub;
+	this.invId = invId;
 	this.stringV = [];
     }
 }
@@ -31,11 +32,42 @@ class InvsysNone extends Invsys {
 //-----------------------------------------------------------------------------------------------------------------------
 // SolarEdgeInvsys
 
+class SolarEdgeInvsysString extends InvsysString {
+    desBox(modPartQtyD, optPartQtyD) {
+	const panelQtyD = {};
+	for(const panel of this.panelV) {
+	    const k = `${panel.orient.part.nick},${panel.optPart.nick}`;
+	    const panelQty = panelQtyD[k] ??= [ panel, 0 ];
+	    ++panelQty[1];
+	    const modPartQty = modPartQtyD[panel.orient.part.id] ??= { part:panel.orient.part, qty:0 };
+	    ++modPartQty.qty;
+	    const optPartQty = optPartQtyD[panel.optPart.id] ??= { part:panel.optPart, qty:0 };
+	    ++optPartQty.qty;
+	}
+
+	const box = eleNuClas('div', 'desBox');
+	eleNuAdd('div', box).innerHTML = this.id;
+	const tab = eleNuClasAdd('table', 'desBoxTab', box);
+	let tr = tab.createTHead().insertRow(-1);
+	tr.insertCell(-1).textContent = 'Quantity';
+	tr.insertCell(-1).textContent = 'Module';
+	tr.insertCell(-1).textContent = 'Optimizer';
+	const tbody = tab.createTBody();
+	for(const [panel,qty] of Object.values(panelQtyD)) {
+	    tr = tbody.insertRow(-1);
+	    tr.insertCell(-1).textContent = qty;
+	    tr.insertCell(-1).textContent = panel.orient.part.nick;
+	    tr.insertCell(-1).textContent = panel.optPart.nick;
+	}
+	return box;
+    }
+}
+    
 class SolarEdgeInvsys extends Invsys {
     static IdHtml = 'SolarEdge (optimizers)';
 
-    constructor(partTabSub, attachPart) {
-	super(partTabSub);
+    constructor(partTabSub, invId, attachPart) {
+	super(partTabSub, invId);
 	//this.invPart
 	this.attachPart = attachPart;
 	this.stringV = [];
@@ -62,7 +94,7 @@ class SolarEdgeInvsys extends Invsys {
     }
 
     stringAdd(id) {
-	const string = new InvsysString(id);
+	const string = new SolarEdgeInvsysString(id);
 	this.stringV.push(string);
 	return string;
     }

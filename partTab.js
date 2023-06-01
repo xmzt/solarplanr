@@ -47,6 +47,10 @@ class PartTabBase {
 	this.partAdd(part, qty, subI);
     }
 
+    pendInc() {}
+
+    pendDec() {}
+
     rowGetOrNu(part) {
 	return this.rowByPartId[part.id] ??= this.rowNuInit(part);
     }
@@ -150,7 +154,7 @@ class PartTabSub {
 class PartTab extends PartTabBase {
     constructor() {
 	super();
-	this.totRow = PartTabTotRow();
+	this.totRow = new PartTabTotRow();
     }
 
     rowNu(part, rowI) { return new PartTabRow(part); }

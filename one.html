@@ -28,7 +28,7 @@
 <body id="oneBody" onload="oneBodyOnload()">
   <div id="oneBody0">
     <div id="oneMeat">
-      <div id="desRow"></div>
+      <div id="desRowBot" class="desRow"></div>
       <svg id="oneMeatSvg" fill="transparent" xmlns="http://www.w3.org/2000/svg">
 	<style>
 	  .label { font:normal 12px sans-serif; fill:black; }
@@ -117,7 +117,7 @@
 	    <path class="strok" d="M20,0 H0  m0,-6 h10 v12 h-10  M44,0 H50  M74,0 H80  M104,0 H110  M100,-24 H110" />
 	  </symbol>
 
-	  <symbol id="loadCenter_36x134" overflow="visible">
+	  <symbol id="lc_36x134" overflow="visible">
 	    <!-- linkFeed=18,0 linkOcpdLB=0,134 linkCt=18,12 -->
 	    <path class="strok" d="M18,0 V24  M18,42 V88 M18,100 V134" />
 	    <use href="#ocpdR_18x0" transform="matrix(0 1 -1 0 18 24)" />
@@ -169,18 +169,7 @@
     </div>
   </div>
 
-  <template id="desStringOpt_tem">
-    <div class="desBox">
-      <div>
-	<div></div>
-      </div>
-      <table class="desStringTab">
-	<thead><tr><td>Quantity</td><td>Module</td><td>Optimizer</td></tr></thead>
-      </table>
-    </div>
-  </template>
-
-  <template id="partDesBox_tem">
+  <template id="desBox_tem">
     <div class="desBox">
       <div>
 	<div></div>
@@ -190,6 +179,28 @@
     </div>
   </template>
 
-  
-  
+  <template id="stringOptDesBox_tem">
+    <div class="desBox">
+      <div>
+	<div></div>
+      </div>
+      <table class="desBoxTab">
+	<thead><tr><td>Quantity</td><td>Module</td><td>Optimizer</td></tr></thead>
+      </table>
+    </div>
+  </template>
+
+  <template id="conduitDesBox_tem">
+    <div class="desBox">
+      <div>
+	<div></div>
+	<div></div>
+      </div>
+      <div></div>
+      <table class="desBoxTab">
+	<thead><tr><td>Quantity</td><td>Wire</td></tr></thead>
+      </table>
+    </div>
+  </template>
+
 </body>

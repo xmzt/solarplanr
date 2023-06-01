@@ -117,18 +117,9 @@ class Part {
 	PartV.push(this);
     }
 
-    cClampSet(clampL0, clampL1, clampS0, clampS1) {
-	this.clampL0 = clampL0;
-	this.clampL1 = clampL1;
-	this.clampS0 = clampS0;
-	this.clampS1 = clampS1;
-	return this;
-    }
-
     cDesGeneric(desGeneric) {
 	this.desGeneric = desGeneric;
 	this.desFill = Part.prototype.desFillGeneric;
-	//this.desBoxHeadFill
 	return this;
     }
     
@@ -140,43 +131,11 @@ class Part {
 	this.model = model;
 	this.more = more;
 	this.desFill = Part.prototype.desFillModel;
-	this.desBoxHeadFill = Part.prototype.desBoxHeadFillModel;
 	return this;
     }
 
-    cDesBoxSpec(desBoxSpec) {
-	this.desBoxSpec = desBoxSpec;
-	this.desBoxSpecFill = Part.prototype.desBoxSpecFill1;
-	return this;
-    }
-
-    cDimTrim(dimL) {
-	this.dimL = dimL;
-	return this;
-    }
-
-    cDimRail(dimL, dimF, dimC) {
-	this.dimL = dimL;
-	this.dimF = dimF;
-	this.dimC = dimC;
-	return this;
-    }	
-    
-    cDimPanel(dimL, dimS, dimH) {
-	this.dimL = dimL;
-	this.dimS = dimS;
-	this.dimH = dimH;
-	return this;
-    }
-
-    cElecInvSe(acW, acV, acIMax, dcW, dcVMax, dcVNom, dcIMax) {
-	this.acW = acW;
-	this.acV = acV;
-	this.acIMax = acIMax;
-	this.dcW = dcW;
-	this.dcVMax = dcVMax;
-	this.dcVNom = dcVNom;
-	this.dcIMax = dcIMax;
+    cSpec1(spec1) {
+	this.spec1 = spec1;
 	return this;
     }
 
@@ -185,29 +144,12 @@ class Part {
 	return this;
     }
     
-    cElecOptSe(inoutW, inVMax, inIMax, outVMax, outIMax) {
-	this.inoutW = inoutW;
-	this.inVMax = inVMax;
-	this.inIMax = inIMax;
-	this.outVMax = outVMax;
-	this.outIMax = outIMax;
-	return this;
-    }
-
-    // todo: watts -> wattsStc
-    cElecPanel(watts, voc, isc) {
-	this.watts = watts;
-	this.voc = voc;
-	this.isc = isc;
-	return this;
-    }
-
     //todo: list in menu
     cWarranty(warranty) {
 	this.warranty = warranty;
 	return this;
     }
-    
+
     nUrl(des, url) { this.noteV.push(new NoteUrl(des, url)); return this; }
     nCat(url) { this.noteV.push(new NoteUrl('Catalog', url)); return this; }
     nDs(url) { this.noteV.push(new NoteUrl('Datasheet', url)); return this; }
@@ -221,18 +163,6 @@ class Part {
     s1AU(cost1, avail, url) { this.sourceV.push(new Source1(cost1, avail, urlId(url), url)); return this; }
     sN(costA, costB, id) { this.sourceV.push(new SourceN(costA, costB, null, id, null)); return this; }
     sNU(costA, costB, url) { this.sourceV.push(new SourceN(costA, costB, null, urlId(url), url)); return this; }
-
-    desBoxHeadFill(dst) {}
-
-    desBoxHeadFillModel(dst) {
-	todo;
-    }
-
-    desBoxSpecFill(dst) {}
-
-    desBoxSpecFill1(dst) {
-	todo;
-    }
 
     desFillGeneric(dst) { dst.innerHTML = this.desGeneric; }
     desFillModel(dst) { dst.innerHTML = `${this.make} ${this.model} ${this.more}`; }
@@ -273,26 +203,102 @@ class Part {
 // Part derived
 //-----------------------------------------------------------------------------------------------------------------------
 
-class InvPart extends Part {
-    
+class ConduitPart extends Part {
+    cConduit(typ, size, od, id) {
+	this.typ = typ;
+	this.size = size;
+	this.od = od;
+	this.id = id;
+	return this;
+    }
 
-    
-    //todo
+    desBoxHeadFill(dst) { dst.innerHTML = `${this.typ} ${this.size}`; }
 }
 
-class LcPart extends Part {
-    //todo
+class InvPart extends Part {
+    cElecInvSe(acW, acV, acIMax, dcW, dcVMax, dcVNom, dcIMax) {
+	this.acW = acW;
+	this.acV = acV;
+	this.acIMax = acIMax;
+	this.dcW = dcW;
+	this.dcVMax = dcVMax;
+	this.dcVNom = dcVNom;
+	this.dcIMax = dcIMax;
+	return this;
+    }
+
+    desBox(id, n) {
+	return desBox(
+	    id, 'Inverter',
+	    `Make: ${this.make}`,
+	    `Model: ${this.model}`,
+	    `AC Output: ${this.acW}W(max), ${this.acIMax}A(max) @ ${this.acV}V`,
+	    `DC Input: ${this.dcW}W(max), ${this.dcVMax}V(max), ${this.dcVNom}V(nominal), ${this.dcIMax}A(max)`,
+	    `Quantity: ${n}`,
+	);
+    }
 }
 
 class OptimizerPart extends Part {
-    //todo
+    cElecOptSe(inoutW, inVMax, inIMax, outVMax, outIMax) {
+	this.inoutW = inoutW;
+	this.inVMax = inVMax;
+	this.inIMax = inIMax;
+	this.outVMax = outVMax;
+	this.outIMax = outIMax;
+	return this;
+    }
+
+    desBox(id, n) {
+	return desBox(
+	    id, 'Optimizer',
+	    `Make: ${this.make}`,
+	    `Model: ${this.model}`,
+	    `Input: ${this.inoutW}W, ${this.inVMax}V(max), ${this.inIMax}A(max)`,
+	    `Output: ${this.inoutW}W, ${this.outVMax}V(max), ${this.outIMax}A(max)`,
+	    `Quantity: ${n}`,
+	);
+    }
 }
 
 class PanelPart extends Part {
     panelPartP() { return true; }
 
+    cClamp(clampL0, clampL1, clampS0, clampS1) {
+	this.clampL0 = clampL0;
+	this.clampL1 = clampL1;
+	this.clampS0 = clampS0;
+	this.clampS1 = clampS1;
+	return this;
+    }
+
+    cDimPanel(dimL, dimS, dimH) {
+	this.dimL = dimL;
+	this.dimS = dimS;
+	this.dimH = dimH;
+	return this;
+    }
+
+    // todo: watts -> wattsStc
+    cElecPanel(watts, voc, isc) {
+	this.watts = watts;
+	this.voc = voc;
+	this.isc = isc;
+	return this;
+    }
+
     landscape() { return new PanelOrient(this, this.dimL, this.dimS, this.clampS0, this.clampS1); }
     portrait() { return new PanelOrient(this, this.dimS, this.dimL, this.clampL0, this.clampL1); }
+
+    desBox(id, n) {
+	return desBox(
+	    id, 'PV Module',
+	    `Make: ${this.make}`,
+	    `Model: ${this.model}`,
+	    `Output: ${this.watts}W(max), Voc=${this.voc}V, Isc=${this.isc}A`,
+	    `Quantity: ${n}`,
+	);
+    }
 }
 
 class PanelOrient {
@@ -306,9 +312,38 @@ class PanelOrient {
 }
 
 class RailPart extends Part {
-    //todo
+    cDimRail(dimL, dimF, dimC) {
+	this.dimL = dimL;
+	this.dimF = dimF;
+	this.dimC = dimC;
+	return this;
+    }	
+}
+
+class Spec1Part extends Part {
+    desBox(id, n) {
+	return desBox(
+	    id, 'AC Disconnect',
+	    `Make: ${this.make}`,
+	    `Model: ${this.model}`,
+	    this.spec1,
+	    `Quantity: ${n}`,
+	);
+    }
 }
 
 class TrimPart extends Part {
-    //todo
+    cDimTrim(dimL) {
+	this.dimL = dimL;
+	return this;
+    }
+}
+
+class WirePart extends Part {
+    cWire(awg, typ, color) {
+	this.awg = awg;
+	this.typ = typ;
+	this.color = color;
+	return this;
+    }
 }
