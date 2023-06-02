@@ -1,21 +1,36 @@
-    desBox() {
-	const box = temClone('conduitDesBox_tem');
-	box.firstElementChild.firstElementChild.innerHTML = this.lab;
-	box.firstElementChild.children[1].innerHTML = 'Conduit'
-	this.part.desFill(box.children[1]);
-	const tab = box.children[2];
-	const wirePartQtyD = {};
-	for(const part of this.wirePartV) {
-	    const partQty = wirePartQtyD[part.id] ??= [ part, 0 ];
-	    ++partQty[1];
-	}
-	for(const [part,qty] of Object.values(wirePartQtyD)) {
-	    const tr = tab.insertRow(-1);
-	    tr.insertCell(-1).textContent = qty;
-	    tr.insertCell(-1).textContent = `${part.awg} AWG, ${part.typ}, ${part.color}`;
-	}
-	return box;
-    }
+	const x0L = wallA.x1 - (wallA.y1 - wallA.y0) * pitchX / pitchY;
+	let bx = x0L + 400;
+	let by = y0 + 400 * pitchY / pitchX;
+	ax = bx - 517.5 * pitchX / pitchH;
+	ay = by - 517.5 * pitchY / pitchH;
+	const rafterL = new Quad(ax,ay, ax,ay+dy, bx,by+dy, bx,by);
+	bx += Wid_x1;
+	const ridgeBoard = new Xyxy(rafterL.x2,rafterL.y2-Wid_x8, bx, rafterL.y2);
+	ax = bx + rafterL.x3 - rafterL.x0;
+	const rafterR = new Quad(ax,ay, ax,ay+dy, bx,by+dy, bx,by);
+	const x0R = bx + rafterL.x3 - x0L;
+	const joist = new Xyxy(x0L,y0-Wid_x10, x0R,y0);
+	
+	this.svg.appendChild(wallA.svgNuClas('strok'));
+	this.svg.appendChild(wallB.svgNuClas('strok'));
+	this.svg.appendChild(wallD.svgNuClas('strok'));
+	this.svg.appendChild(rafterL.svgNuClas('strok'));
+	this.svg.appendChild(ridgeBoard.svgNuClas('strok'));
+	this.svg.appendChild(rafterR.svgNuClas('strok'));
+	this.svg.appendChild(joist.svgNuClas('strok'));
+
+
+
+    .acqTab TD:nth-child(1) { text-align:right; }
+.acqTab TD:nth-child(2) { text-align:right; }
+.acqTab TD:nth-child(3) { text-align:right; }
+.acqTab TD:nth-child(4) { text-align:right; }
+
+.leftoverTab TD:nth-child(1) { text-align:right; }
+.leftoverTab TD:nth-child(2) { text-align:right; }
+.leftoverTab TD:nth-child(3) { text-align:right; }
+.leftoverTab TD:nth-child(4) { text-align:right; }
+
 .row { display:block flex; flex-direction:row; }
 .rowFlex0 { flex:0 0 auto; }
 .rowFlex1 { flex:1 1 auto; }

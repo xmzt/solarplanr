@@ -1,66 +1,12 @@
 //include geom.js
-
-//-----------------------------------------------------------------------------------------------------------------------
-// svg helper
-
-function svgNu(typ) { return document.createElementNS('http://www.w3.org/2000/svg', typ); }
-
-function svgAddNu(dst, typ) { return dst.appendChild(svgNu(typ)); }
-
-function svgAddText(dst, clas, text) {
-    const ele = svgAddNu(dst, 'text');
-    ele.classList.add(clas);
-    ele.appendChild(document.createTextNode(text));
-    return ele;
-}
-
-function svgAddUseXYHref(dst, x, y, href) {
-    return svgSetXYHref(svgAddNu(dst, 'use'), x, y, href);
-}
-
-function svgSetCxCyRxRyClas(ele, cx, cy, rx, ry, clas) {
-    ele.setAttribute('cx', cx);
-    ele.setAttribute('cy', cy);
-    ele.setAttribute('rx', rx);
-    ele.setAttribute('ry', ry);
-    ele.classList.add(clas);
-    return ele;
-}
-
-function svgSetDClas(ele, d, clas) {
-    ele.setAttribute('d', d);
-    ele.classList.add(clas);
-    return ele;
-}
-
-function svgSetRectClas(ele, x, y, w, h, clas) {
-    ele.setAttribute('x', x);
-    ele.setAttribute('y', y);
-    ele.setAttribute('width', w);
-    ele.setAttribute('height', h);
-    ele.classList.add(clas);
-    return ele;
-}
-
-function svgSetXY(ele, x, y) {
-    ele.setAttribute('x', x);
-    ele.setAttribute('y', y);
-    return ele;
-}
-
-function svgSetXYHref(ele, x, y, href) {
-    ele.setAttribute('x', x);
-    ele.setAttribute('y', y);
-    ele.setAttribute('href', href);
-    return ele;
-}
+//include svg.js
 
 //-----------------------------------------------------------------------------------------------------------------------
 // composite functions
 
 function groupLabel(dst, r, pad, lab) {
-    const b = svgAddNu(dst, 'rect');
-    const t = svgAddText(dst, 'label', lab);
+    const b = svgAddNuClas(dst, 'rect', 'group');
+    const t = svgAddNuClasText(dst, 'label', lab);
     const tr = t.getBBox();
     const tpad = tr.height + tr.y;
     let bx = r.x - pad;
@@ -72,17 +18,17 @@ function groupLabel(dst, r, pad, lab) {
 	bx -= 0.5*(bw1 - bw);
 	bw = bw1;
     }
-    svgSetRectClas(b, bx, by, bw, bh, 'group');
+    svgSetXYWH(b, bx, by, bw, bh);
     svgSetXY(t, bx + tpad, by + tr.height);
 }
 
 class Conduit {
     constructor(dst, x, y, ry, lab, part, len, ...wirePartV) {
-	svgSetCxCyRxRyClas(svgAddNu(dst, 'ellipse'), x, y, 0.75*ry, ry, 'strok');
+	svgSetCxCyRxRy(svgAddNuClas(dst, 'ellipse', 'strok'), x, y, 0.75*ry, ry);
 	y += ry;
-	svgSetDClas(svgAddNu(dst, 'path'), `M${x},${y} v20`, 'strok');
+	svgSetD(svgAddNuClas(dst, 'path', 'strok'), `M${x},${y} v20`);
 	y += 20;
-	const t = svgAddText(dst, 'label', lab);
+	const t = svgAddNuClasText(dst, 'label', lab);
 	const tr = t.getBBox();
 	svgSetXY(t, x - 0.5*tr.width, y + tr.height);
 	this.lab = lab;
@@ -178,7 +124,7 @@ class LcGroup {
 class Ct {
     constructor(dst, x, y, lab) {
 	svgAddUseXYHref(dst, x, y, '#ctL_R8');
-	const t = svgAddText(dst, 'label', lab);
+	const t = svgAddNuClasText(dst, 'label', lab);
 	const tr = t.getBBox();
 	const tpad = tr.height + tr.y;
 	svgSetXY(t, x + 2 + tpad, y - 0.5*tr.y);
@@ -203,18 +149,14 @@ class Utility {
     }
 }
 
-
 //-----------------------------------------------------------------------------------------------------------------------
 // description boxes
 
-function oneDesRowColNu(row) {
+function desRowBotColNu(row) {
     const col = eleNuClasAdd('div', 'desRowCol', row);
-    eleNuClasAdd('div', 'desBox0', col);
+    eleNuClasAdd('div', 'desBoxPad', col);
     return col;
 }
-
-//-----------------------------------------------------------------------------------------------------------------------
-// desBox
 
 function desBox(head0, head1, ...lineV) {
     const box = eleNuClas('div', 'desBox');
@@ -279,7 +221,7 @@ class SiteBOneLine extends OneLine {
 	    if(il[1] < ymin) ymin = il[1];
 	    if(il[1] > ymax) ymax = il[1];
 	}
-	svgSetDClas(svgAddNu(this.svg, 'path'), d, 'strok');
+	svgSetD(svgAddNuClas(this.svg, 'path', 'strok'), d);
 	this.conduitAdd(new Conduit(this.svg, inv.linkDcV[0][0] - 30, 0.5*(ymin + ymax), 0.5*(ymax - ymin) + 6,
 				    'C1', Emt_1, 19,
 				    Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10,
@@ -306,7 +248,7 @@ class SiteBOneLine extends OneLine {
 	const ct = new Ct(this.svg, mep.linkCt[0], mep.linkCt[1], 'CT');
 	
 	this.wireStringVInv(stringV, inv);
-	svgSetDClas(svgAddNu(this.svg, 'path')
+	svgSetD(svgAddNuClas(this.svg, 'path', 'strok')
 		    , `M${inv.linkAc[0]},${inv.linkAc[1]} L${disco.linkL[0]},${disco.linkL[1]}`
 		    + `M${disco.linkR[0]},${disco.linkR[1]} L${mep.linkOcpdLB[0]},${mep.linkOcpdLB[1]}`
 		    + `M${inv.linkCt[0]},${inv.linkCt[1]} h30 V${inv.linkAc[1] - 6} H${disco.linkL[0] - 20}`
@@ -334,21 +276,21 @@ class SiteBOneLine extends OneLine {
 				    Wire_tffn_18_blk, Wire_tffn_18_wht,
 				   ));
 	
-	let row = document.getElementById('desRowBot');
-	let col = oneDesRowColNu(row);
+	let row = this.div.appendChild(eleNuClas('div', 'desRowBot'));
+	let col = desRowBotColNu(row);
 
 	const modPartQtyD = {};
 	const optPartQtyD = {};
 	for(const string of sys.invsys.stringV)
 	    col.appendChild(string.desBox(modPartQtyD, optPartQtyD));
 
-	col = oneDesRowColNu(row);
+	col = desRowBotColNu(row);
 	for(const partQty of Object.values(modPartQtyD))
 	    col.appendChild(partQty.part.desBox(partQty.part.nick, partQty.qty));
 	for(const partQty of Object.values(optPartQtyD))
 	    col.appendChild(partQty.part.desBox(partQty.part.nick, partQty.qty));
 
-	col = oneDesRowColNu(row);
+	col = desRowBotColNu(row);
 	col.appendChild(sys.invsys.invPart.desBox(inv.lab, 1));
 	col.appendChild(DisconnectLnf222ra.desBox(disco.lab, 1));
 	col.appendChild(mep.desBox());
@@ -368,6 +310,6 @@ class SiteBOneLine extends OneLine {
 // bodyOnload
 
 function oneBodyOnload() {
-    const one = new SiteBOneLine(document.getElementById('oneMeat'), document.getElementById('oneMeatSvg'));
+    const one = new SiteBOneLine(document.getElementById('oneDiv'), document.getElementById('oneSvg'));
     one.popu();
 }

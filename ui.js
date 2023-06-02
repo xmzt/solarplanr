@@ -31,15 +31,20 @@ function uiSelectValue(ele) {
 // UiRailGroup
 
 class UiRailGroupDiag extends RailGroupDiag {
-    constructor(root) {
+    constructor(dst) {
 	super();
-	this.statusEle = root.querySelector('._status');
-	this.logEle = root.querySelector('._log');
-	root.querySelector('._logShow').addEventListener('click', (ev) => this.logShowClick(ev));
+	const root = eleNu('div');
+	const head = eleNuAdd('div', root);
+	const logShow = eleNuAdd('button', head);
+	logShow.textContent = 'Log Show/Hide';
+	this.statusEle = eleNuClasAdd('span', 'railGroupStatus', head);
+	this.logEle = eleClas(eleNuClasAdd('div', 'railGroupLog', root), 'displayNone');
+	logShow.addEventListener('click', (ev) => this.logShowClick(ev));
+	dst.appendChild(root);
     }
 
     log(msg) { this.logEle.innerHTML += msg; }
-	
+    
     logShowClick() { this.logEle.classList.toggle('displayNone'); }
 
     status(msg) { this.statusEle.innerHTML = msg; }
@@ -51,7 +56,7 @@ class UiRailGroupMgr extends RailGroupMgr {
 	this.diagVEle = diagVEle;
     }
 
-    diagNu() { return new UiRailGroupDiag(this.diagVEle.appendChild(temClone('railGroupDiag_tem'))); }
+    diagNu() { return new UiRailGroupDiag(this.diagVEle); }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 //todo convert to svg
 //todo convert base unit to mm
 //todo choose units to display in
+//todo svgNu and eleNu make consistent argument ordering etc
 
 //-----------------------------------------------------------------------------------------------------------------------
 // constants
