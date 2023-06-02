@@ -52,11 +52,11 @@ class PartTabBase {
     pendDec() {}
 
     rowGetOrNu(part) {
-	return this.rowByPartId[part.id] ??= this.rowNuInit(part);
+	return this.rowByPartId[-part.sortid] ??= this.rowNuInit(part);
     }
 
     rowNuInit(part) {
-	let rowI = this.rowV.findIndex(r => r.part.id > part.id);
+	let rowI = this.rowV.findIndex(r => r.part.sortid > part.sortid);
 	if(-1 == rowI)
 	    rowI = this.rowV.length;
 	const row = this.rowNu(part, rowI);

@@ -39,10 +39,10 @@ class SolarEdgeInvsysString extends InvsysString {
 	    const k = `${panel.orient.part.nick},${panel.optPart.nick}`;
 	    const panelQty = panelQtyD[k] ??= [ panel, 0 ];
 	    ++panelQty[1];
-	    const modPartQty = modPartQtyD[panel.orient.part.id] ??= { part:panel.orient.part, qty:0 };
-	    ++modPartQty.qty;
-	    const optPartQty = optPartQtyD[panel.optPart.id] ??= { part:panel.optPart, qty:0 };
-	    ++optPartQty.qty;
+	    const modPartQty = modPartQtyD[-panel.orient.part.sortid] ??= [ panel.orient.part, 0 ];
+	    ++modPartQty[1];
+	    const optPartQty = optPartQtyD[-panel.optPart.sortid] ??= [ panel.optPart, 0 ];
+	    ++optPartQty[1];
 	}
 
 	const box = eleNuClas('div', 'desBox');

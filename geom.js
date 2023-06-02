@@ -63,6 +63,11 @@ class R2 {
 // ub/ud = wikipedia.u = scaling factor for b [result = (b.x0 - bx*ua/ud, b.y0 - by*ua/ud) ]
 //-----------------------------------------------------------------------------------------------------------------------
 
+function unitXY(x, y) {
+    const rmag = 1/Math.sqrt(x*x + y*y);
+    return [rmag*x, rmag*y];
+}
+
 function interpX_c(ax,ay, bx,by, cy) { return ax + ((bx - ax) * (cy - ay) / (by - ay)); }
 function interpY_c(ax,ay, bx,by, cx) { return ay + ((by - ay) * (cx - ax) / (bx - ax)); }
 

@@ -103,8 +103,6 @@ class SourceN extends Source1 {
 // Part
 //-----------------------------------------------------------------------------------------------------------------------
 
-//todo rename id to uid
-
 function menuClose(menu) {
     document.body.removeChild(menu);
 }
@@ -113,7 +111,7 @@ class Part {
     constructor() {
 	this.noteV = [];
 	this.sourceV = [];
-	this.id = PartV.length; 
+	this.sortid = PartV.length; 
 	PartV.push(this);
     }
 
@@ -204,11 +202,11 @@ class Part {
 //-----------------------------------------------------------------------------------------------------------------------
 
 class ConduitPart extends Part {
-    cConduit(typ, size, od, id) {
+    cConduit(typ, size, odia, idia) {
 	this.typ = typ;
 	this.size = size;
-	this.od = od;
-	this.id = id;
+	this.odia = odia;
+	this.idia = idia;
 	return this;
     }
 

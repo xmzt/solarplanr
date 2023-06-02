@@ -14,7 +14,7 @@ const Perf = self.performance;
 
 function segAEPartIdV(seg) {
     const dst = [];
-    for( ; null !== seg; seg = seg.ae) dst.push(seg.part.id);
+    for( ; null !== seg; seg = seg.ae) dst.push(seg.part.sortid);
     return dst;
 }
 
@@ -44,7 +44,7 @@ function go(reqId, railV, partV, spliceCost) {
     //         segN: number of segments in parent rail 
     //         cost: cost of this combination in full parts used
     //         need: how much more is needed (negative means this com has surplus to be used elsewhere)
-    //         partIdV: part.id of each full part used 
+    //         partIdV: part.sortid of each full part used 
     //
     // needMap: set of all possible values of com.need  
     

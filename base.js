@@ -1,6 +1,5 @@
 //todo roof cross section
 //todo wire diameter/area and conduit fill
-//todo one inverter take out ac switch
 //todo parts instantiable, loadcenter, panel
 //todo site config connects parts with wires, one-line lays them out with minimal help
 //todo convert to svg

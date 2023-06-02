@@ -40,7 +40,7 @@ class Conduit {
     desBox() {
 	const wirePartQtyD = {};
 	for(const part of this.wirePartV) {
-	    const partQty = wirePartQtyD[part.id] ??= [ part, 0 ];
+	    const partQty = wirePartQtyD[-part.sortid] ??= [ part, 0 ];
 	    ++partQty[1];
 	}
 
@@ -73,15 +73,15 @@ class StringOptGroup {
 
 class InverterGroup {
     constructor(dst, x, y, lab) {
-	groupLabel(dst, svgAddUseXYHref(dst, x, y, '#inverter_110x0').getBBox(), 10, lab);
+	groupLabel(dst, svgAddUseXYHref(dst, x, y, '#inverter_80x0').getBBox(), 10, lab);
 	this.lab = lab;
 	this.linkDcV = [
 	    [ x + 0, y - 6 ],
 	    [ x + 0, y + 0 ],
 	    [ x + 0, y + 6 ],
 	];
-	this.linkAc = [ x + 110, y + 0 ];
-	this.linkCt = [ x + 100, y - 24 ];
+	this.linkAc = [ x + 80, y + 0 ];
+	this.linkCt = [ x + 80, y - 24 ];
     }
 }
 
@@ -238,11 +238,11 @@ class SiteBOneLine extends OneLine {
 	    stringV.push(new StringOptGroup(this, this.svg, 20, y, string.id));
 	    y += 120;
 	}
-	const utility = new Utility(this.svg, 680, 24);
-	const meter = new MeterGroup(this.svg, 620, y = 36, 'METER');
-	const mep = new LcGroup(this.svg, 520, y, 'MEP', LcSquaredQO130M200,
+	const utility = new Utility(this.svg, 640, 24);
+	const meter = new MeterGroup(this.svg, 590, y = 36, 'METER');
+	const mep = new LcGroup(this.svg, 486, y, 'MEP', LcSquaredQO130M200,
 				175, Breaker_QOM2175VH, 60, Breaker_QO260CP);
-	const disco = new DiscoGroup(this.svg, 410, y = mep.linkOcpdLB[1], 'DISCO');
+	const disco = new DiscoGroup(this.svg, 380, y = mep.linkOcpdLB[1], 'DISCO');
 	const inv = new InverterGroup(this.svg, 220, y, 'INVERTER', SolarEdgeSe11400h_us000bni4);
 
 	const ct = new Ct(this.svg, mep.linkCt[0], mep.linkCt[1], 'CT');
@@ -251,7 +251,7 @@ class SiteBOneLine extends OneLine {
 	svgSetD(svgAddNuClas(this.svg, 'path', 'strok')
 		    , `M${inv.linkAc[0]},${inv.linkAc[1]} L${disco.linkL[0]},${disco.linkL[1]}`
 		    + `M${disco.linkR[0]},${disco.linkR[1]} L${mep.linkOcpdLB[0]},${mep.linkOcpdLB[1]}`
-		    + `M${inv.linkCt[0]},${inv.linkCt[1]} h30 V${inv.linkAc[1] - 6} H${disco.linkL[0] - 20}`
+		    + `M${inv.linkCt[0]},${inv.linkCt[1]} h20 V${inv.linkAc[1] - 6} H${disco.linkL[0] - 20}`
 		    + ` v-40 H${disco.linkR[0] + 20} v40 H${mep.linkOcpdLB[0] - 20} V${mep.linkCt[1]} H${mep.linkCt[0]}`
 		    + `M${mep.linkFeed[0]},${mep.linkFeed[1]} L${meter.linkL[0]},${meter.linkL[1]}`
 		    + `M${meter.linkR[0]},${meter.linkR[1]} H${utility.link[0]} V${utility.link[1]}`
@@ -266,7 +266,7 @@ class SiteBOneLine extends OneLine {
 				    Wire_tffn_18_blk, Wire_tffn_18_wht,
 				    Wire_tffn_18_blk, Wire_tffn_18_wht,
 				   ));
-	this.conduitAdd(new Conduit(this.svg, disco.linkR[0] + 48, disco.linkR[1], 12,
+	this.conduitAdd(new Conduit(this.svg, disco.linkR[0] + 40, disco.linkR[1], 12,
 				    'C3', Emt_34, 2,
 				    Wire_thhn_6_blk,
 				    Wire_thhn_6_red,
@@ -285,10 +285,10 @@ class SiteBOneLine extends OneLine {
 	    col.appendChild(string.desBox(modPartQtyD, optPartQtyD));
 
 	col = desRowBotColNu(row);
-	for(const partQty of Object.values(modPartQtyD))
-	    col.appendChild(partQty.part.desBox(partQty.part.nick, partQty.qty));
-	for(const partQty of Object.values(optPartQtyD))
-	    col.appendChild(partQty.part.desBox(partQty.part.nick, partQty.qty));
+	for(const [part,qty] of Object.values(modPartQtyD))
+	    col.appendChild(part.desBox(part.nick, qty));
+	for(const [part,qty] of Object.values(optPartQtyD))
+	    col.appendChild(part.desBox(part.nick, qty));
 
 	col = desRowBotColNu(row);
 	col.appendChild(sys.invsys.invPart.desBox(inv.lab, 1));
