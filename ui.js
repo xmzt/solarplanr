@@ -2,16 +2,7 @@
 
 function siteLayoutFun(site, layoutId) { return (env) => new site(env, site.LayoutById[layoutId]); }
 
-function siteNop(partTab, railGroupMgr, drawr) {
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// object tables
-
-var UiSiteByDes = {
-    '--Select site/layout--': siteNop,
-    'SiteB Q475/400': siteLayoutFun(SiteB, 'Q475/Q400'),
-};
+function siteNop(env) {}
 
 //-----------------------------------------------------------------------------------------------------------------------
 // helpers
@@ -28,11 +19,10 @@ function uiSelectValue(ele) {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// UiRailGroup
+// UiRailGroupDiag
 
-class UiRailGroupDiag extends RailGroupDiag {
+class UiRailGroupDiag {
     constructor(dst) {
-	super();
 	const root = eleNu('div');
 	const head = eleNuAdd('div', root);
 	const logShow = eleNuAdd('button', head);
@@ -50,15 +40,6 @@ class UiRailGroupDiag extends RailGroupDiag {
     status(msg) { this.statusEle.innerHTML = msg; }
 }
 
-class UiRailGroupMgr extends RailGroupMgr {
-    constructor(diagVEle) {
-	super();
-	this.diagVEle = diagVEle;
-    }
-
-    diagNu() { return new UiRailGroupDiag(this.diagVEle); }
-}
-
 //-----------------------------------------------------------------------------------------------------------------------
 // UiSysEnv
 
@@ -66,24 +47,42 @@ class UiSysEnv {
     constructor(root) {
 	this.drawrVEle = eleNuClas('div', 'drawrV');
 	const partTabEle = temClone('partTab_tem');
-	const railGroupDiagVEle = eleNu('div');
-	root.replaceChildren(this.drawrVEle, partTabEle, railGroupDiagVEle);
+	this.logEle = eleNuClas('div', 'log');
+	this.railGroupDiagVEle = eleNu('div');
+	root.replaceChildren(this.drawrVEle, partTabEle, this.logEle, this.railGroupDiagVEle);
 	this.partTab = new UiPartTab(partTabEle);
-	this.railGroupMgr = new UiRailGroupMgr(railGroupDiagVEle);
+
+	this.wkrReqI = 0;
+	this.wkrReqHandByI = {};
+	this.wkr = new Worker('railWkr.js'); // todo? wkr thread more generalized than railWkr.js
+	this.wkr.onmessage = (ev) => {
+	    const hand = this.wkrReqHandByI[ev.data[0]];
+	    hand[ev.data[1]].apply(hand, ev.data.slice(2)); // todo remove slice?
+	};
+	
     }
 
-    drawrNu() {
-	return new CanvasDrawr(this.drawrVEle);
-    }
+    drawrNu() { return new CanvasDrawr(this.drawrVEle); }
 
-    terminate() {
-	this.railGroupMgr.terminate();
+    log(msg) { this.logEle.appendChild(eleNu('div')).textContent = msg; }
+
+    oneObjReg(obj) {}
+    
+    railGroupDiagNu() { return new UiRailGroupDiag(this.railGroupDiagVEle); }
+
+    terminate() { this.wkr.terminate(); }
+
+    wkrReq(...argV) {
+	const i = this.wkrReqI++;
+	this.wkrReqHandByI[i] = argV[0];
+	argV[0] = i;
+	this.wkr.postMessage(argV);
     }
 }
 
-class UiSysEnvNop {
-    terminate() {}
-}
+var UiSysEnvNopSingleton = {
+    terminate: () => {},
+};
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Ui
@@ -91,18 +90,19 @@ class UiSysEnvNop {
 class Ui {
     static Config0 = '';
     
-    constructor(sysSelEle, sysEnvEle, stor, storItem) {
+    constructor(sysSelEle, sysEnvEle, stor, storItem, siteByDes) {
 	this.sysSelEle = sysSelEle;
 	this.sysEnvEle = sysEnvEle;
-	this.sysEnv = new UiSysEnvNop(sysEnvEle);
+	this.sysEnv = UiSysEnvNopSingleton;
 	this.stor = stor;
 	this.storItem = storItem;
+	this.siteByDes = siteByDes;
 	//this.site
 
 	const config = this.configLoad();
 	
 	let siteFunSel = null;
-        for(const [des,siteFun] of Object.entries(UiSiteByDes)) {
+        for(const [des,siteFun] of Object.entries(this.siteByDes)) {
 	    const option = sysSelEle.appendChild(uiOptionEle(des));
 	    if(option.selected = des == config)
 		siteFunSel = siteFun;
@@ -125,7 +125,7 @@ class Ui {
     }
 
     sysSelChange() {
-	this.sysSelGo(UiSiteByDes[uiSelectValue(this.sysSelEle)]);
+	this.sysSelGo(this.siteByDes[uiSelectValue(this.sysSelEle)]);
     }
 
     sysSelGo(siteFun) {
@@ -148,5 +148,15 @@ class Ui {
 // uiBodyOnload
 
 function uiBodyOnload() {
-    new Ui(document.getElementById('sysSel'), document.getElementById('sys'), window.localStorage, 'uiConfig');
+    const siteByDes = { '--Select site/layout--': siteNop };
+    for(const site of [SiteB]) {
+	for(const [des,fun] of Object.entries(site.NuByDes)) {
+	    siteByDes[`${site.Des} ${des}`] = fun;
+	}
+    }
+    new Ui(document.getElementById('sysSel'),
+	   document.getElementById('sys'),
+	   window.localStorage,
+	   'uiConfig',
+	   siteByDes);
 }

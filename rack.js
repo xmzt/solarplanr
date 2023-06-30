@@ -3,17 +3,6 @@
 //include partCat.js
 //include rail.js
 
-class PanelR2 extends R2 {
-    constructor(x0, y0, x1, y1, orient, rack) {
-	super(x0,y0,x1,y1);
-	this.orient = orient;
-	this.rack = rack;
-	this.clamp0R = new R2(x0, y0 + orient.clamp0, x1, y0 + orient.clamp1);
-	this.clamp1R = new R2(x0, y1 - orient.clamp1, x1, y1 - orient.clamp0);
-	//this.optPart added by invsys
-    }
-}
-
 class RackR2 extends R2 {
     constructor(x0,y0,x1,y1, rack) {
 	super(x0,y0,x1,y1);
@@ -33,10 +22,10 @@ class RackR2 extends R2 {
 // - RailGroup takes care of figuring out specific lengths of rail and splices fit best.
 
 class Rack {
-    //static IdHtml
-
-    constructor(partTabSub, roof) {
-	this.partTabSub = partTabSub;
+    constructor(env, partSub, panelPartSub, roof) {
+	this.env = env;
+	this.partSub = partSub;
+	this.panelPartSub = panelPartSub;
 	this.roof = roof;
 	this.panelV = [];
     }
@@ -46,45 +35,17 @@ class Rack {
 
     panelAdd(panel) {
 	this.panelV.push(panel);
-	this.partTabSub.partAddPanel(panel.orient.part, 1);
 	this.roof.drawr.addPanel(panel);
+	this.panelPartSub.partAddPanel(panel, 1);
     }
     
-    panelBlockLeftDn(orient, x0, y1, nX, nY) {
-	let r;
-	let y = y1;
-	for(let iY = nY; iY--; ) {
-	    let x = x0;
-	    for(let iX = 0; iX < nX; iX++) {
-		this.panelAdd(r = new PanelR2(x, y - orient.sizeY, x + orient.sizeX, y, orient, this));
-		x = r.x1 + this.gapX();
-	    }
-	    y = r.y0 - this.gapY();
-	}
-	return new RackR2(x0, r.y0, r.x1, y1, this);
-    }
-
-    panelBlockLeftUp(orient, x0, y0, nX, nY) {
-	let r;
-	let y = y0;
-	for(let iY = 0; iY < nY; iY++) {
-	    let x = x0;
-	    for(let iX = 0; iX < nX; iX++) {
-		this.panelAdd(r = new PanelR2(x, y, x + orient.sizeX, y + orient.sizeY, orient, this));
-		x = r.x1 + this.gapX();
-	    }
-	    y = r.y1 + this.gapY();
-	}
-	return new RackR2(x0, y0, r.x1, r.y1, this);
-    }
-
-    panelBlockRightDn(orient, x1, y1, nX, nY) {
+    panelBlockLtDn(orient, x1, y1, nX, nY) {
 	let r;
 	let y = y1;
 	for(let iY = nY; iY--; ) {
 	    let x = x1;
 	    for(let iX = nX; iX--; ) {
-		this.panelAdd(r = new PanelR2(x - orient.sizeX, y - orient.sizeY, x, y, orient, this));
+		this.panelAdd(r = orient.instNuLtDn(x,y, this));
 		x = r.x0 - this.gapX();
 	    }
 	    y = r.y0 - this.gapY();
@@ -92,13 +53,13 @@ class Rack {
 	return new RackR2(r.x0, r.y0, x1, y1, this);
     }
 
-    panelBlockRightUp(orient, x1, y0, nX, nY) {
+    panelBlockLtUp(orient, x1, y0, nX, nY) {
 	let r;
 	let y = y0;
 	for(let iY = 0; iY < nY; iY++) {
 	    let x = x1;
 	    for(let iX = nX; iX--; ) {
-		this.panelAdd(r = new PanelR2(x - orient.sizeX, y, x, y + orient.sizeY, orient, this));
+		this.panelAdd(r = orient.instNuLtUp(x,y, this));
 		x = r.x0 - this.gapX();
 	    }
 	    y = r.y1 + this.gapY();
@@ -106,24 +67,47 @@ class Rack {
 	return new RackR2(r.x0, y0, x1, r.y1, this);
     }
 
-    mlpePart() { return TbdMlpePart; }
+    panelBlockRtDn(orient, x0, y1, nX, nY) {
+	let r;
+	let y = y1;
+	for(let iY = nY; iY--; ) {
+	    let x = x0;
+	    for(let iX = 0; iX < nX; iX++) {
+		this.panelAdd(r = orient.instNuRtDn(x,y, this));
+		x = r.x1 + this.gapX();
+	    }
+	    y = r.y0 - this.gapY();
+	}
+	return new RackR2(x0, r.y0, r.x1, y1, this);
+    }
 
-    layoutFin(railGroup) {}
-}
+    panelBlockRtUp(orient, x0, y0, nX, nY) {
+	let r;
+	let y = y0;
+	for(let iY = 0; iY < nY; iY++) {
+	    let x = x0;
+	    for(let iX = 0; iX < nX; iX++) {
+		this.panelAdd(r = orient.instNuRtUp(x,y, this));
+		x = r.x1 + this.gapX();
+	    }
+	    y = r.y1 + this.gapY();
+	}
+	return new RackR2(x0, y0, r.x1, r.y1, this);
+    }
 
-//-----------------------------------------------------------------------------------------------------------------------
-// RackNone
+    optMount(partSub) { partSub.partAdd(TbdMlpePart, 1); }
 
-class RackNone extends Rack {
-    static IdHtml = '--Rack--';
+    layoutFin() {}
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // RackTworail
 
 class RackTworail extends Rack {
-    constructor(partTabSub, roof) {
-	super(partTabSub, roof);
+    constructor(env, partSub, panelPartSub, roof, railGroup) {
+	super(env, partSub, panelPartSub, roof);
+	this.railGroup = railGroup;
+	railGroup.rackAdd(this);
 	this.railRegV = [];
 	this.railV = [];
 	this.footV = [];
@@ -159,24 +143,23 @@ class RackTworail extends Rack {
 	return reg;
     }
 
-    layoutFin(railGroup) {
-	// compute rail regions
+    layoutFin() {
+	// compute panel area and rail regions
 	let bondI = 0;
 	for(const panel of this.panelV) {
-	    const orient = panel.orient;
-	    const reg0 = this.railRegAdd(panel.clamp0R);
-	    const reg1 = this.railRegAdd(panel.clamp1R);
+	    const reg0 = this.railRegAdd(panel.clampR0());
+	    const reg1 = this.railRegAdd(panel.clampR1());
 	    if(! reg0.bondI) reg0.bondI = ++bondI;
 	    if(! reg1.bondI) reg1.bondI = reg0.bondI;
 	}
-
+	
 	// for each region, rail, ends, mids
 	for(const reg of this.railRegV) {
 	    const rail = this.roof.railFromReg(reg);
 	    this.railV.push(rail);
 	    this.roof.drawr.addRail(rail);
 	    rail.rack = this;
-	    railGroup.railAdd(rail);
+	    this.railGroup.railAdd(rail);
 	    
 	    for(const foot of rail.footV) {
 		this.footV.push(foot);
@@ -193,5 +176,8 @@ class RackTworail extends Rack {
 	}
 
 	this.groundLugN = bondI;
+	this.railGroup.rackFin(this);
     }
+
+    panelArea() { return this.panelV.reduce((acc,x) => acc + x.dimL * x.dimS, 0); }
 }

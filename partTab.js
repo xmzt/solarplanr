@@ -87,12 +87,12 @@ class PartTabBase {
 	for(const row of this.rowV)
 	    row.subAdd(this.subN);
 	this.totRow.subAdd(this.subN);
-	return new PartTabSub(this, this.subN++);
+	return new PartSub(this, this.subN++);
     }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// PartTabRow PartTabTotRow PartTabSource PartTabSub PartTab
+// PartTabRow PartTabTotRow PartTabSource PartSub PartTab
 
 class PartTabRow {
     constructor(part) {
@@ -139,7 +139,7 @@ class PartTabSource {
     }
 }
 
-class PartTabSub {
+class PartSub {
     constructor(tab, pos) {
 	this.tab = tab;
 	this.pos = pos;

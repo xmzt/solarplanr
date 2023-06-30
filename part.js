@@ -5,6 +5,8 @@
 var PartV = [];
 var menuOpen;
 
+var BreakerVByTyp = {};
+
 //-----------------------------------------------------------------------------------------------------------------------
 // extract id from url
 //-----------------------------------------------------------------------------------------------------------------------
@@ -50,13 +52,6 @@ class NoteUrl {
 //-----------------------------------------------------------------------------------------------------------------------
 // Source
 //-----------------------------------------------------------------------------------------------------------------------
-
-class SourceId {
-    constructor(str) {
-	this.str = str;
-	//this.num
-    }
-}
 
 class Source1 {
     constructor(cost1, avail, id, url) {
@@ -108,6 +103,8 @@ function menuClose(menu) {
 }
 
 class Part {
+    panelPartP() { return false; }
+
     constructor() {
 	this.noteV = [];
 	this.sourceV = [];
@@ -132,16 +129,6 @@ class Part {
 	return this;
     }
 
-    cSpec1(spec1) {
-	this.spec1 = spec1;
-	return this;
-    }
-
-    cElecLc(ibus) {
-	this.ibus = ibus;
-	return this;
-    }
-    
     //todo: list in menu
     cWarranty(warranty) {
 	this.warranty = warranty;
@@ -194,11 +181,32 @@ class Part {
 	this.desFill(a);
     }
 
-    panelPartP() { return false; }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Part derived
+// BreakerPart
+//-----------------------------------------------------------------------------------------------------------------------
+
+class BreakerPart extends Part {
+    cBreaker(typ, pole, itrip) {
+	this.typ = typ;
+	this.pole = pole;
+	this.itrip = itrip;
+	(BreakerVByTyp[typ] ??= []).push(this);
+	return this;
+    }
+}
+
+class BreakerPlexPart extends Part {
+    cBreakerPlex(typ, ...poleItripV) {
+	this.typ = typ;
+	this.poleItripV = poleItripV;
+	return this;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// ConduitPart
 //-----------------------------------------------------------------------------------------------------------------------
 
 class ConduitPart extends Part {
@@ -213,37 +221,119 @@ class ConduitPart extends Part {
     desBoxHeadFill(dst) { dst.innerHTML = `${this.typ} ${this.size}`; }
 }
 
-class InvPart extends Part {
-    cElecInvSe(acW, acV, acIMax, dcW, dcVMax, dcVNom, dcIMax) {
-	this.acW = acW;
-	this.acV = acV;
-	this.acIMax = acIMax;
-	this.dcW = dcW;
-	this.dcVMax = dcVMax;
-	this.dcVNom = dcVNom;
-	this.dcIMax = dcIMax;
+//-----------------------------------------------------------------------------------------------------------------------
+// CtPart
+//-----------------------------------------------------------------------------------------------------------------------
+
+class CtPart extends Part {
+    cCt(imax, enclosure) {
+	this.imax = imax;
+	this.enclosure = enclosure;
 	return this;
     }
 
     desBox(id, n) {
 	return desBox(
-	    id, 'Inverter',
+	    id, 'Current Transformer',
 	    `Make: ${this.make}`,
 	    `Model: ${this.model}`,
-	    `AC Output: ${this.acW}W(max), ${this.acIMax}A(max) @ ${this.acV}V`,
-	    `DC Input: ${this.dcW}W(max), ${this.dcVMax}V(max), ${this.dcVNom}V(nominal), ${this.dcIMax}A(max)`,
+	    `${this.imax}A, ${enclosure}`,
 	    `Quantity: ${n}`,
 	);
     }
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+// DiscoPart
+//-----------------------------------------------------------------------------------------------------------------------
+
+class DiscoPart extends Part {
+    cDisco(phase, pole, imax, enclosure) {
+	this.phase = phase;
+	this.pole = pole;
+	this.imax = imax;
+	this.enclosure = enclosure;
+	return this;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// SolarEdgeInvPart
+//-----------------------------------------------------------------------------------------------------------------------
+
+class SolarEdgeInvPart extends Part {
+    cElecInvSe(acW, acV, acImax, dcW, dcVmax, dcVNom, dcImax) {
+	this.acW = acW;
+	this.acV = acV;
+	this.acImax = acImax;
+	this.dcW = dcW;
+	this.dcVmax = dcVmax;
+	this.dcVNom = dcVNom;
+	this.dcImax = dcImax;
+	return this;
+    }
+}
+    
+//-----------------------------------------------------------------------------------------------------------------------
+// LoadcenterPart
+//-----------------------------------------------------------------------------------------------------------------------
+
+class LoadcenterPart extends Part {
+    cElecLoadcenter(phase, ibus, spaceN, enclosure, typV, mainTypV) {
+	this.phase = phase;
+	this.ibus = ibus;
+	this.spaceN = spaceN;
+	this.enclosure = enclosure;
+	this.typV = typV;
+	this.mainTypV = mainTypV;
+	return this;
+    }
+
+    breakerGeTypV(itrip, typV) {
+	// todo what criteria to pick the best one
+	let best = null;
+	for(const typ of typV) {
+	    for(const b of BreakerVByTyp[typ]) {
+		if(b.itrip >= itrip) {
+		    if(null === best || (b.itrip < best.itrip))
+			best = b;
+		}
+	    }
+	}
+	return best;
+    }
+    breakerGe(itrip) { return this.breakerGeTypV(itrip, this.typV); } 
+    
+    breakerLeTypV(itrip, typV) {
+	// todo what criteria to pick the best one
+	let best = null;
+	for(const typ of typV) {
+	    for(const b of BreakerVByTyp[typ]) {
+		if(b.itrip <= itrip) {
+		    if(null === best || (b.itrip > best.itrip))
+			best = b;
+		}
+	    }
+	}
+	return best;
+    }
+    breakerLe(itrip) { return this.breakerGeTypV(itrip, this.typV); } 
+    
+    mainBreakerGe(itrip) { return this.breakerGeTypV(itrip, this.mainTypV); } 
+    mainBreakerLe(itrip) { return this.breakerLeTypV(itrip, this.mainTypV); } 
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// OptimizerPart
+//-----------------------------------------------------------------------------------------------------------------------
+
 class OptimizerPart extends Part {
-    cElecOptSe(inoutW, inVMax, inIMax, outVMax, outIMax) {
+    cElecOptSe(inoutW, inVmax, inImax, outVmax, outImax) {
 	this.inoutW = inoutW;
-	this.inVMax = inVMax;
-	this.inIMax = inIMax;
-	this.outVMax = outVMax;
-	this.outIMax = outIMax;
+	this.inVmax = inVmax;
+	this.inImax = inImax;
+	this.outVmax = outVmax;
+	this.outImax = outImax;
 	return this;
     }
 
@@ -252,12 +342,16 @@ class OptimizerPart extends Part {
 	    id, 'Optimizer',
 	    `Make: ${this.make}`,
 	    `Model: ${this.model}`,
-	    `Input: ${this.inoutW}W, ${this.inVMax}V(max), ${this.inIMax}A(max)`,
-	    `Output: ${this.inoutW}W, ${this.outVMax}V(max), ${this.outIMax}A(max)`,
+	    `Input: ${this.inoutW}W, ${this.inVmax}V(max), ${this.inImax}A(max)`,
+	    `Output: ${this.inoutW}W, ${this.outVmax}V(max), ${this.outImax}A(max)`,
 	    `Quantity: ${n}`,
 	);
     }
 }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// PanelPart
+//-----------------------------------------------------------------------------------------------------------------------
 
 class PanelPart extends Part {
     panelPartP() { return true; }
@@ -285,9 +379,6 @@ class PanelPart extends Part {
 	return this;
     }
 
-    landscape() { return new PanelOrient(this, this.dimL, this.dimS, this.clampS0, this.clampS1); }
-    portrait() { return new PanelOrient(this, this.dimS, this.dimL, this.clampL0, this.clampL1); }
-
     desBox(id, n) {
 	return desBox(
 	    id, 'PV Module',
@@ -297,17 +388,78 @@ class PanelPart extends Part {
 	    `Quantity: ${n}`,
 	);
     }
+
+    landscape() {
+	return {
+	    __proto__:this,
+	    sizeX:this.dimL,
+	    sizeY:this.dimS,
+	    clampY0:this.clampS0,
+	    clampY1:this.clampS1,
+	};
+    }
+
+    portrait() {
+	return {
+	    __proto__:this,
+	    sizeX:this.dimS,
+	    sizeY:this.dimL,
+	    clampY0:this.clampL0,
+	    clampY1:this.clampL1,
+	};
+    }
+
+    instNuLtDn(x,y, rack) {
+	return {
+	    __proto__:this,
+	    x0:x - this.sizeX,
+	    y0:y - this.sizeY,
+	    x1:x,
+	    y1:y,
+	    rack:rack,
+	};
+    }
+
+    instNuLtUp(x,y, rack) {
+	return {
+	    __proto__:this,
+	    x0:x - this.sizeX,
+	    y0:y,
+	    x1:x,
+	    y1:y + this.sizeY,
+	    rack:rack,
+	};
+    }
+
+    instNuRtDn(x,y, rack) {
+	return {
+	    __proto__:this,
+	    x0:x,
+	    y0:y - this.sizeY,
+	    x1:x + this.sizeX,
+	    y1:y,
+	    rack:rack,
+	};
+    }
+
+    instNuRtUp(x,y, rack) {
+	return {
+	    __proto__:this,
+	    x0:x,
+	    y0:y,
+	    x1:x + this.sizeX,
+	    y1:y + this.sizeY,
+	    rack:rack,
+	};
+    }
+
+    clampR0() {	return new R2(this.x0, this.y0 + this.clampY0, this.x1, this.y0 + this.clampY1); }
+    clampR1() { return new R2(this.x0, this.y1 - this.clampY1, this.x1, this.y1 - this.clampY0); }
 }
 
-class PanelOrient {
-    constructor(part, sizeX, sizeY, clamp0, clamp1) {
-	this.part = part;
-	this.sizeX = sizeX;
-	this.sizeY = sizeY;
-	this.clamp0 = clamp0;
-	this.clamp1 = clamp1;
-    }
-}
+//-----------------------------------------------------------------------------------------------------------------------
+// RailPart
+//-----------------------------------------------------------------------------------------------------------------------
 
 class RailPart extends Part {
     cDimRail(dimL, dimF, dimC) {
@@ -318,17 +470,9 @@ class RailPart extends Part {
     }	
 }
 
-class Spec1Part extends Part {
-    desBox(id, n) {
-	return desBox(
-	    id, 'AC Disconnect',
-	    `Make: ${this.make}`,
-	    `Model: ${this.model}`,
-	    this.spec1,
-	    `Quantity: ${n}`,
-	);
-    }
-}
+//-----------------------------------------------------------------------------------------------------------------------
+// TrimPart
+//-----------------------------------------------------------------------------------------------------------------------
 
 class TrimPart extends Part {
     cDimTrim(dimL) {
@@ -336,6 +480,10 @@ class TrimPart extends Part {
 	return this;
     }
 }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// WirePart
+//-----------------------------------------------------------------------------------------------------------------------
 
 class WirePart extends Part {
     cWire(awg, typ, color) {

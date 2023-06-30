@@ -44,6 +44,8 @@ A:hover { color: #60a; }
 .drawrStack { flex:0 0; position:relative; top:0; left:0; }
 .drawrStack :nth-child(n+2) { position:absolute; top:0; left:0; z-index:1; }
 
+.log { margin-top:1em; white-space:pre; font-family:monospace; }
+
 .menu {
     background-color:white;
     border:1px solid black;

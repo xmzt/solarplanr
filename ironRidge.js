@@ -24,30 +24,30 @@ const IronRidgeEndTypStopper = 0;
 const IronRidgeEndTypCamo = 1;
 
 class IronRidgeXRRack extends RackTworail {
-    constructor(partTabSub, roof, endTyp) {
-	super(partTabSub, roof);
+    constructor(env, partSub, panelPartSub, roof, railGroup, endTyp) {
+	super(env, partSub, panelPartSub, roof, railGroup);
 	this.endTyp = endTyp;
     }
     
     gapX() { return 2.54*0.5; }
     gapY() { return 2.54*0.5; }
 
-    mlpePart() { return IronRidgeMlpe; }
+    optMount(partSub) { partSub.partAdd(IronRidgeMlpe, 1); }
 
-    layoutFin(railGroup) {
-	super.layoutFin(railGroup);
-	this.partTabSub.partAdd(IronRidgeFoot, this.footV.length);
-	this.partTabSub.partAdd(IronRidgeBolt, this.footV.length);
-	this.partTabSub.partAdd(IronRidgeUfo, this.midV.length);
-	this.partTabSub.partAdd(IronRidgeGroundLug, this.groundLugN);
+    layoutFin() {
+	super.layoutFin();
+	this.partSub.partAdd(IronRidgeFoot, this.footV.length);
+	this.partSub.partAdd(IronRidgeBolt, this.footV.length);
+	this.partSub.partAdd(IronRidgeUfo, this.midV.length);
+	this.partSub.partAdd(IronRidgeGroundLug, this.groundLugN);
 	switch(this.endTyp) {
 	case IronRidgeEndTypStopper:
-	    this.partTabSub.partAdd(IronRidgeUfo, this.endV.length);
+	    this.partSub.partAdd(IronRidgeUfo, this.endV.length);
 	    // todo panel-height dependent
-	    this.partTabSub.partAdd(IronRidgeStopper38, this.endV.length);
+	    this.partSub.partAdd(IronRidgeStopper38, this.endV.length);
 	    break;
 	case IronRidgeEndTypCamo:
-	    this.partTabSub.partAdd(IronRidgeCamo, this.endV.length);
+	    this.partSub.partAdd(IronRidgeCamo, this.endV.length);
 	    break;
 	}
     }

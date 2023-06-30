@@ -166,8 +166,8 @@ class CanvasDrawr {
 	const ctx = this.ctx0;
 	drawRectStrokeStyle(ctx, r, '#000');
 	drawRectFillStyle(ctx, r, '#ccc8');
-	drawRectFillStyle(ctx, r.clamp0R, '#ace6');
-	drawRectFillStyle(ctx, r.clamp1R, '#ace6');
+	drawRectFillStyle(ctx, r.clampR0(), '#ace6');
+	drawRectFillStyle(ctx, r.clampR1(), '#ace6');
     }
 
     addPathV(pV) {

@@ -1,4 +1,259 @@
-	const x0L = wallA.x1 - (wallA.y1 - wallA.y0) * pitchX / pitchY;
+class StringOptGroup {
+    constructor(one, dst, x, y, id) {
+	groupLabel(dst, svgUseXYHrefAdd(x, y, '#stringOpt_114x66', dst).getBBox(), 10, id);
+	this.one = one;
+	this.linkR = [ x + 114, y + 66 ];
+    }
+}
+
+class LcGroup {
+    constructor(dst, x, y, lab, part, ocpdMainA, ocpdMainPart, ocpdInvA, ocpdInvPart) {
+	groupLabel(dst, svgUseXYHrefAdd(x, y, '#lc_36x134', dst).getBBox(), 10, lab);
+	this.lab = lab;
+	this.linkFeed = [ x + 18, y + 0 ];
+	this.linkOcpdLB = [ x + 0, y + 134 ];
+	this.linkCt = [ x + 18, y + 12 ];
+	this.part = part;
+	this.ocpdMainA = ocpdMainA;
+	this.ocpdMainPart = ocpdMainPart;
+	this.ocpdInvA = ocpdInvA;
+	this.ocpdInvPart = ocpdInvPart;
+    }
+
+    //todo make part instantiable along with panelpart etc.
+    desBox() {
+	return desBox(
+	    this.lab, 'Load center',
+	    `Make: ${this.part.make}`,
+	    `Model: ${this.part.model}`,
+	    this.part.spec1,
+	    `Breaker, main: ${this.ocpdMainA}A ${this.ocpdMainPart.model}`,
+	    `Breaker, inverter: ${this.ocpdInvA}A ${this.ocpdInvPart.model}`,
+	);
+    }
+}
+
+class SiteBOneLine extends OneLine {
+    constructor(div, svg) {
+	super(div, svg);
+    }
+
+    wireStringVInv(stringV, inv) {
+	let ymin = Number.POSITIVE_INFINITY;
+	let ymax = Number.NEGATIVE_INFINITY;
+	let d = '';
+	for(let i = 0, x = 20; i < stringV.length; ++i, x += 6) {
+	    const sl = stringV[i].linkR;
+	    const il = inv.linkDcV[i];
+	    d += `M${sl[0]},${sl[1]} h${x} V${il[1]} H${il[0]} `;
+	    if(il[1] < ymin) ymin = il[1];
+	    if(il[1] > ymax) ymax = il[1];
+	}
+	svgSetD(svgNuClasAdd('path', 'strok', this.svg), d);
+	this.conduitAdd(new Conduit(this.svg, inv.linkDcV[0][0] - 30, 0.5*(ymin + ymax), 0.5*(ymax - ymin) + 6,
+				    'C1', Emt_1, 19,
+				    Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10,
+				    Wire_thhn_10_grn));
+    }
+    
+    popu() {
+	const site = SiteB.NuByDes['Q475/Q400'](new OneEnv());
+
+	let y;
+	site.utility.oneAdd(this.svg, 640, 24);
+	site.meter.oneAdd(this.svg, 590, y = 36);
+	site.mep.oneAdd(this.svg, 486, y);
+	//const ct = new Ct(this.svg, mep.linkCt[0], mep.linkCt[1], 'CT');
+	site.disco.oneAdd(this.svg, 380, y = site.mep.linkOcpdLB[1]);
+	site.inv.oneAdd(this.svg, 220, y);
+	y = 30;
+	for(const string of site.inv.stringV) {
+	    string.oneAdd(this.svg, 20, y);
+	    y += 120;
+	}
+
+	site.inv.oneWire(this.svg);
+	svgSetD(svgNuClasAdd('path', 'strok', this.svg)
+		, `M${inv.linkAc[0]},${inv.linkAc[1]} L${disco.linkL[0]},${disco.linkL[1]}`
+		+ `M${disco.linkR[0]},${disco.linkR[1]} L${mep.linkOcpdLB[0]},${mep.linkOcpdLB[1]}`
+		+ `M${inv.linkCt[0]},${inv.linkCt[1]} h20 V${inv.linkAc[1] - 6} H${disco.linkL[0] - 20}`
+		+ ` v-40 H${disco.linkR[0] + 20} v40 H${mep.linkOcpdLB[0] - 20} V${mep.linkCt[1]} H${mep.linkCt[0]}`
+		+ `M${mep.linkFeed[0]},${mep.linkFeed[1]} L${meter.linkL[0]},${meter.linkL[1]}`
+		+ `M${meter.linkR[0]},${meter.linkR[1]} H${utility.link[0]} V${utility.link[1]}`
+		, 'strok');
+
+	this.conduitAdd(new Conduit(this.svg, inv.linkAc[0] + 40, inv.linkAc[1], 12,
+				    'C2', Emt_34, 2,
+				    Wire_thhn_6_blk,
+				    Wire_thhn_6_red,
+				    Wire_thhn_8_wht,
+				    Wire_thhn_8_grn,
+				    Wire_tffn_18_blk, Wire_tffn_18_wht,
+				    Wire_tffn_18_blk, Wire_tffn_18_wht,
+				   ));
+	this.conduitAdd(new Conduit(this.svg, disco.linkR[0] + 40, disco.linkR[1], 12,
+				    'C3', Emt_34, 2,
+				    Wire_thhn_6_blk,
+				    Wire_thhn_6_red,
+				    Wire_thhn_8_wht,
+				    Wire_thhn_8_grn,
+				    Wire_tffn_18_blk, Wire_tffn_18_wht,
+				    Wire_tffn_18_blk, Wire_tffn_18_wht,
+				   ));
+	
+	let row = this.div.appendChild(eleNuClas('div', 'desRowBot'));
+	let col = desRowBotColNu(row);
+
+	const modPartQtyD = {};
+	const optPartQtyD = {};
+	for(const string of sys.invsys.stringV)
+	    col.appendChild(string.desBox(modPartQtyD, optPartQtyD));
+
+	col = desRowBotColNu(row);
+	for(const [part,qty] of Object.values(modPartQtyD))
+	    col.appendChild(part.desBox(part.nick, qty));
+	for(const [part,qty] of Object.values(optPartQtyD))
+	    col.appendChild(part.desBox(part.nick, qty));
+
+	col = desRowBotColNu(row);
+	col.appendChild(sys.invsys.invPart.desBox(inv.lab, 1));
+	col.appendChild(DisconnectLnf222ra.desBox(disco.lab, 1));
+	col.appendChild(mep.desBox());
+	col.appendChild(SolarEdgeCt225.desBox(ct.lab, 1));
+
+	row = eleNuClasAdd('div', 'desRow', this.div);
+	row.style.position = 'absolute';
+	row.style.top = '220px';
+	row.style.left = '200px';
+	for(const conduit of this.conduitV) {
+	    row.appendChild(conduit.desBox());
+	}
+    }
+}
+
+class Port {
+    tx(funK, ...argV) {
+	for(let next = this.next; next !== this; next = next.next)
+	    next[funK].apply(next, argV);
+    }
+
+    static passthroughPair(targ) {
+	const a = new Port();
+	const b = new Port();
+	a.isourceIsink = (isource,isink) => {
+	    targ.imaxSet(Math.max(isource,isink));
+	    b.tx('isourceIsink', isource, isink);
+	}
+	b.isourceIsink = (isource,isink) => {
+	    targ.imaxSet(Math.max(isource,isink));
+	    a.tx('isourceIsink', isource, isink);
+	}
+	return [a,b];
+    }
+
+    static connect2(a, b) {
+	a.next = b;
+	b.next = a;
+    }
+}
+
+class OffPort extends Port {
+    constructor(up, xOff, yOff) {
+	this.up = up;
+	this.xOff = xOff;
+	this.yOff = yOff;
+    }
+
+}
+
+class Inv {
+    oneLayout0(dst) {
+	this.oneG = svgNuAdd('g', dst);
+	svgUseXYHrefAdd(0, 0, '#inverter_60x0', this.oneG);
+	svgSetD(svgNuClasAdd('path', 'strok', this.oneG), `M0,0 H${-6*(this.dcPortV.length-1)}`);
+	oneBoxOutlineLabel(this.oneG, this.oneG.getBBox(), OneGroupLabelPad, this.id);
+
+	let d = '';
+	for(let i = 0, x = 20; i < this.dcPortV.length; ++i, x += 6) {
+	    const sl = this.dcPortV[i].linkR;
+	    const il = this.linkDcV[i];
+	    d += `M${sl[0]},${sl[1]} h${x} V${il[1]} H${il[0]} `;
+	    if(il[1] < ymin) ymin = il[1];
+	    if(il[1] > ymax) ymax = il[1];
+	}
+	svgSetD(svgNuClasAdd('path', 'strok', dst), d);
+	//todo(.getBBox(), 10, this.id);
+    }
+    
+    oneAdd(dst, x, y) {
+	groupLabel(dst, svgUseXYHrefAdd(x, y, '#inverter_80x0', dst).getBBox(), 10, this.id);
+	this.linkDcV = [
+	    [ x + 0, y - 6 ],
+	    [ x + 0, y + 0 ],
+	    [ x + 0, y + 6 ],
+	];
+	this.linkAc = [ x + 80, y + 0 ];
+	this.linkCt = [ x + 80, y - 24 ];
+    }
+
+    oneWire(dst) {
+	let ymin = Number.POSITIVE_INFINITY;
+	let ymax = Number.NEGATIVE_INFINITY;
+	let d = '';
+	for(let i = 0, x = 20; i < this.dcPortV.length; ++i, x += 6) {
+	    const sl = this.dcPortV[i].linkR;
+	    const il = this.linkDcV[i];
+	    d += `M${sl[0]},${sl[1]} h${x} V${il[1]} H${il[0]} `;
+	    if(il[1] < ymin) ymin = il[1];
+	    if(il[1] > ymax) ymax = il[1];
+	}
+	svgSetD(svgNuClasAdd('path', 'strok', dst), d);
+	//todothis.conduitAdd(new Conduit(dst, this.linkDcV[0][0] - 30, 0.5*(ymin + ymax), 0.5*(ymax - ymin) + 6,
+	//'C1', Emt_1, 19,
+	//Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10, Wire_pv_10,
+	//Wire_thhn_10_grn));
+    }
+}
+
+class seinv {
+    oneBoxX0Get() { return this.up.oneBox.x0; }
+
+    oneBoxX0Nego(prio, val) {
+	if(this.up.oneBox.x0Nego(prio, val))
+	    this.mate.oneBoxXMateChange();
+    }
+
+    oneXMateChange() {
+	if(this.index == this.up.dcPortV.length - 1) {
+	    this.up.oneBox.x0Nego(NegoPrio.Mate, this.mate.oneBoxX1Get() + 10);
+	} else {
+	    this.up.dcPortV[this.index + 1].oneBoxX0Nego(NegoPrio.Mate, this.mate.oneBoxX1Get() + 10);
+	}
+    }
+}
+
+class ModstringPort extends Port2 {
+    oneBoxX0Get() { return this.up.oneBox.x0; }
+
+    oneBoxX0Nego(prio, val) {
+	if(this.up.oneBox.x0Nego(prio, val))
+	    this.mate.oneBoxXMateChange();
+    }
+
+    oneBoxXMateChange() {
+	this.up.oneBox.x1Nego(NegoPrio.Mate, this.mate.oneBoxX0Get() + 10);
+
+    }
+
+    // s1.port.oneBoxX0Nego(User, 10)
+    // s1.port.mate.xMateChange
+
+}
+
+
+
+
+const x0L = wallA.x1 - (wallA.y1 - wallA.y0) * pitchX / pitchY;
 	let bx = x0L + 400;
 	let by = y0 + 400 * pitchY / pitchX;
 	ax = bx - 517.5 * pitchX / pitchH;
@@ -40,12 +295,12 @@
 Roof()
 Roof.canDraw(ctx);
 
-Rack(partTabSub);
+Rack(partSub);
 Rack.panelFin(roof);
 Rack.canDraw(ctx);
 RackTwoRail.railGroupGo(railGroup);
 
-Invsys(partTabSub);
+Invsys(partSub);
 Invsys.panelFin();
 
 class Sys {
@@ -71,7 +326,7 @@ class Sys {
     }
     roofAdd(roof) {
 	this.roofV.push(roof);
-	roof.partTabSubI = this.partTab.subAdd(roof.id);
+	roof.partSubI = this.partTab.subAdd(roof.id);
     }
 
     solarEdgeStringGetOrNu(id) {
@@ -152,11 +407,11 @@ class Roof {
     }
 
     partAdd(part, n) {
-	this.sys.partTab.partAdd(part, n, this.partTabSubI);
+	this.sys.partTab.partAdd(part, n, this.partSubI);
     }
 
     partAddPanel(part, n) {
-	this.sys.partTab.partAddPanel(part, n, this.partTabSubI);
+	this.sys.partTab.partAddPanel(part, n, this.partSubI);
     }
 
     canDraw(ctx) {

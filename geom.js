@@ -54,6 +54,39 @@ class R2 {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
+// units
+
+function ufroIn(x) { return 2.54 * x; }
+
+function unitSqcm(x) { return `${x.toFixed(2)} sq.cm`; }
+function unitSqft(x) { return `${(x/(30.48*30.48)).toFixed(2)} sq.ft`; }
+function unitSqm(x) { return `${(x/10000).toFixed(2)} sq.m`; }
+
+function unitSqall(x) { return `${unitSqcm(x)}, ${unitSqm(x)}, ${unitSqft(x)}`; }
+
+function unitFtIn(x) {
+    const in0 = x / 2.54;
+    const in1 = in0 % 12;
+    const ft = (in0 - in1) / 12;
+    return `${ft}'-${in1.toFixed(1)}"`;
+}
+
+function unitIn(x) {
+    return `${(x/2.54).toFixed(2)}"`;
+}
+
+function unitCm(x) {
+    return x.toFixed(2);
+}
+
+function unitAll(x) {
+    const in0 = x / 2.54;
+    const in1 = in0 % 12;
+    const ft = (in0 - in1) / 12;
+    return `${x.toFixed(2)}cm ${in0.toFixed(2)}" ${ft}'-${in1.toFixed(1)}"`;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
 // math
 //
 // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
@@ -188,7 +221,7 @@ function bisectSegSeg(a, b, c, scale) {
     return new P2(b.x - biM*biy, b.y + biM*bix);
 }
 
-function matAbcdRotateAB(vx,vy) {
+function matrixa4RotateAB(vx,vy) {
     // return a transform of a coordinate system by AB with origin at C
     // this is a "passive" transformation 
     const rmag = 1/Math.sqrt(vx*vx + vy*vy);
@@ -196,6 +229,9 @@ function matAbcdRotateAB(vx,vy) {
     const uy = vy*rmag;
     return [ux, uy, -uy, ux];
 }
+
+function matrixa6X(m,x,y) { return m[0]*x + m[1]*y + m[4]; }
+function matrixa6Y(m,x,y) { return m[2]*x + m[3]*y + m[5]; }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // edge path stuff

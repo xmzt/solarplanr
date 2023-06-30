@@ -18,11 +18,9 @@ class FeatureVentR2 extends R2 {}
 // - subclassed for a specific roof geometry. 
 
 class Roof {
-    //static IdHtml
-    //static LayoutByIdHtml
-    
-    constructor(drawr) {
-	this.drawr = drawr;
+    constructor(env) {
+	this.env = env;
+	this.drawr = env.drawrNu();
 	//this.bor
 	//this.boundR
 	//this.edgeV
@@ -138,14 +136,4 @@ class Roof {
 	return (bRail.footV.length <= aRail.footV.length) ? bRail : aRail;
     }
 
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-// RoofNone
-
-class RoofNone extends Roof {
-    static IdHtml = '--Roof plan--';
-    static LayoutFunByIdHtml = {
-	'--Panel layout--': function(rack, roof) {},
-    };
 }

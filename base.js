@@ -1,4 +1,8 @@
-//todo roof cross section
+//todo breaker calculations can use breakerPlex 
+//todo allow for multiple options to meet a part requirement (breakers?)
+//todo part.js desBox make/model hardcoded should not be
+//todo LoadcenterPart auto-determines main breaker downsize
+//todo foot within EdgeFootDist requires next one within 24"
 //todo wire diameter/area and conduit fill
 //todo parts instantiable, loadcenter, panel
 //todo site config connects parts with wires, one-line lays them out with minimal help
@@ -20,10 +24,17 @@ const FootSpan = 2.54*48.0 + 4.0;
 const FootSpanEdge = 2.54*24.0 + 4.0;
 
 //-----------------------------------------------------------------------------------------------------------------------
-// helpers
+// javascript helpers
 //-----------------------------------------------------------------------------------------------------------------------
 
-function byIdHtml(...args) { var d = {}; for(const arg of args) d[arg.IdHtml] = arg; return d; }
+function pushItem(array, item) {
+    array.push(item);
+    return item;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// dom element helpers
+//-----------------------------------------------------------------------------------------------------------------------
 
 function eleClas(ele, clas) { ele.classList.add(clas); return ele; }
 
@@ -40,8 +51,16 @@ function eleNuClasAdd(tag, clas, dst) {
     return ele;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------
+// template helpers
+//-----------------------------------------------------------------------------------------------------------------------
+
 function temRoot(id) { return document.getElementById(id).content.firstElementChild; }
 function temClone(id) { return temRoot(id).cloneNode(/*deep=*/true); }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// toString helpers
+//-----------------------------------------------------------------------------------------------------------------------
 
 function toFixedMax(x, prec) {
     const a = x.toString();

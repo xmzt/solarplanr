@@ -8,10 +8,11 @@
   <script type="text/javascript" src="geom.js"></script>
   <script type="text/javascript" src="part.js"></script>
   <script type="text/javascript" src="partCat.js"></script>
+  <script type="text/javascript" src="elec.js"></script>
   <script type="text/javascript" src="rail.js"></script>
   <script type="text/javascript" src="rack.js"></script>
   <script type="text/javascript" src="roof.js"></script>
-  <script type="text/javascript" src="invsys.js"></script>
+
   <script type="text/javascript" src="partTab.js"></script>
   <script type="text/javascript" src="draw.js"></script>
   <script type="text/javascript" src="svg.js"></script>
@@ -61,10 +62,10 @@
 	  <path class="strok" d="M-2,-8 a1,1,0,0,1,0,8 a1,1,0,0,1,0,8" />
 	</symbol>
 
-	<symbol id="dot3_12x2" overflow="visible">
-	  <circle fill="black" cx="1" cy="0" r="1" />
-	  <circle fill="black" cx="6" cy="0" r="1" />
-	  <circle fill="black" cx="11" cy="0" r="1" />
+	<symbol id="dot3_rx6" overflow="visible">
+	  <circle fill="black" cx="-5" cy="0" r="1" />
+	  <circle fill="black" cx="0" cy="0" r="1" />
+	  <circle fill="black" cx="5" cy="0" r="1" />
 	</symbol>
 	
 	<symbol id="dcDc_24x24" overflow="visible">
@@ -82,6 +83,7 @@
 	<symbol id="meter_R8" overflow="visible">
 	  <circle class="strok" cx="0" cy="0" r="8" />
 	  <text class="symFont" x="-4" y="3.5">M</text>
+	  <path class="strok" d="M-8,0 h-6  M8,0 h6" />
 	</symbol>
 
 	<symbol id="moduleOpt_24x60" overflow="visible">
@@ -91,44 +93,36 @@
 	</symbol>
 
 	<symbol id="sw_24x0" overflow="visible">
-	  <!-- linkL=0,0 linkR=24,0 -->
 	  <path class="strok" d="M0,0 h6 l12,-6 M24,0 h-6" />
 	  <circle class="strok" fill="white" cx="6" cy="0" r="2" />
 	</symbol>
 
-	<symbol id="stringOpt_114x66" overflow="visible">
-	  <!-- linkR=114,66 -->
-	  <use href="#moduleOpt_24x60" x="0" y="0" />
-	  <use href="#moduleOpt_24x60" x="30" y="0" />
-	  <use href="#moduleOpt_24x60" x="90" y="0" />
-	  <use href="#dot3_12x2" x="66" y="30" /> 
-	  <use href="#dot3_12x2" x="66" y="66" /> 
-	  <path class="strok" d="M12,60 v6 H39 v-6  M45,60 v6 h17  M99,60 v6 h-17 M105,60 v6 H114" />
+	<symbol id="stringOpt" overflow="visible">
+	  <use href="#moduleOpt_24x60" x="-63" y="-66" />
+	  <use href="#moduleOpt_24x60" x="-15" y="-66" />
+	  <use href="#dot3_rx6" x="-27" y="-36" /> 
+	  <use href="#dot3_rx6" x="-27" y="0" /> 
+	  <path class="strok" d="M-51,-6 V0 H-39  M-15,0 H-6 V-6  M0,-6 V0" />
 	</symbol>
 
-	<symbol id="inverter_80x0" overflow="visible">
-	  <!-- linkDc0=0,-6 linkDc1=0,0 linkDc2=0,6 linkAc=110,0 linkCt=110,-24 -->
-	  <use href="#ammeter_R8" x="62" y="-24" />
-	  <use href="#sw_24x0" x="20" y="0" />
-	  <use href="#dcAc_24x24" x="50" y="-12" />
-	  <path class="strok" d="M20,0 H0  m0,-6 h10 v12 h-10  M44,0 H50  M74,0 H80  M80,-24 H70" />
+	<symbol id="inverter" overflow="visible">
+	  <use href="#ammeter_R8" x="42" y="-24" />
+	  <use href="#sw_24x0" x="0" y="0" />
+	  <use href="#dcAc_24x24" x="30" y="-12" />
+	  <path class="strok" d="M24,0 H30  M54,0 H60  M50,-24 H60" />
 	</symbol>
 
-	<symbol id="lc_36x134" overflow="visible">
-	  <!-- linkFeed=18,0 linkOcpdLB=0,134 linkCt=18,12 -->
-	  <path class="strok" d="M18,0 V24  M18,42 V88 M18,100 V134" />
-	  <use href="#ocpdR_18x0" transform="matrix(0 1 -1 0 18 24)" />
-	  <use href="#ocpdL_18x0" x="18" y="54" />
-	  <use href="#ocpdR_18x0" x="18" y="54" />
-	  <use href="#ocpdL_18x0" x="18" y="78" />
-	  <use href="#ocpdR_18x0" x="18" y="78" />
-
-	  <use href="#dot3_12x2" x="12" y="94" />
+	<symbol id="loadcenter" overflow="visible">
+	  <path class="strok" d="M0,0 V24  M0,42 V64 M0,76 V110" />
+	  <use href="#ocpdR_18x0" transform="matrix(0 1 -1 0 0 24)" />
+	  <use href="#ocpdL_18x0" x="0" y="54" />
+	  <use href="#ocpdR_18x0" x="0" y="54" />
+	  <use href="#dot3_rx6" x="0" y="70" />
 	  
-	  <use href="#ocpdL_18x0" x="18" y="110" />
-	  <use href="#ocpdR_18x0" x="18" y="110" />
-	  <use href="#ocpdL_18x0" x="18" y="134" />
-	  <use href="#ocpdR_18x0" x="18" y="134" />
+	  <use href="#ocpdL_18x0" x="0" y="86" />
+	  <use href="#ocpdR_18x0" x="0" y="86" />
+	  <use href="#ocpdL_18x0" x="0" y="110" />
+	  <use href="#ocpdR_18x0" x="0" y="110" />
 	</symbol>
       </g>
     </svg>

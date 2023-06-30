@@ -20,42 +20,12 @@ class RailRegR2 extends R2 {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// RailGroupDiag
+// RailGroupDiagNop
 
-class RailGroupDiag {
-    log(msg) {}
-    status(msg) {}
-}
-
-var RailGroupDiagNopSingleton = new RailGroupDiag(); // todo is this necessary or does bare class work
-
-//-----------------------------------------------------------------------------------------------------------------------
-// RailGroupMgr
-
-class RailGroupMgr {
-    constructor() {
-	this.reqI = 0;
-	this.reqHandByI = {};
-	this.wkr = new Worker('railWkr.js');
-	this.wkr.onmessage = (ev) => {
-	    const hand = this.reqHandByI[ev.data[0]];
-	    hand[ev.data[1]].apply(hand, ev.data.slice(2)); // todo remove slice?
-	};
-    }
-
-    diagNu() { return RailGroupDiagNopSingleton; }
-    
-    req(...argV) {
-	const i = this.reqI++;
-	this.reqHandByI[i] = argV[0];
-	argV[0] = i;
-	this.wkr.postMessage(argV);
-    }
-
-    terminate() {
-	this.wkr.terminate();
-    }
-}
+var RailGroupDiagNopSingleton = {
+    log: (msg) => {},
+    status: (msg) => {},
+};
 
 //-----------------------------------------------------------------------------------------------------------------------
 // RailGroup
@@ -65,28 +35,31 @@ class RailGroup {
     //static RailPartV
     //static SplicePart
 
-    constructor(railGroupMgr, partTabSub) {
-	this.railGroupMgr = railGroupMgr;
-	this.partTabSub = partTabSub;
-	this.diag = railGroupMgr.diagNu();
+    constructor(env, partSub) {
+	this.env = env;
+	this.partSub = partSub;
+	this.diag = env.railGroupDiagNu();
+	this.rackFinN = 0;
 	this.railV = [];
 	this.bestComV = null;
     }
-    
-    railAdd(rail) {
-	this.railV.push(rail);
+
+    rackAdd(rack) { ++this.rackFinN; }
+
+    rackFin(rack) {
+	if(0 ==  --this.rackFinN) {
+	    this.partSub.pendInc();
+	    // todo rails are currently horizontal-only
+	    this.env.wkrReq(
+		this,
+		this.railV.map((r,i) => { return { id:i, len:(r.x1 - r.x0) }; }),
+		this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.sourceV[0].cost1 }; }),
+		this.constructor.SplicePart.sourceV[0].cost1,
+	    );
+	}
     }
 
-    layoutFin() {
-	this.partTabSub.pendInc();
-	// todo rails are currently horizontal-only
-	this.railGroupMgr.req(
-	    this,
-	    this.railV.map((r,i) => { return { id:i, len:(r.x1 - r.x0) }; }),
-	    this.constructor.RailPartV.map((p,i) => { return { id:i, dimL:p.dimL, cost:p.sourceV[0].cost1 }; }),
-	    this.constructor.SplicePart.sourceV[0].cost1,
-	);
-    }
+    railAdd(rail) { this.railV.push(rail); }
 
     // railRsp* are rpc from worker thread (railWkr.js)
     
@@ -96,10 +69,10 @@ class RailGroup {
 	    for(const drawr of this.bestDrawrSet)
 		drawr.clear_1();
 	    for(const com of this.bestComV) {
-		this.partTabSub.partAdd(this.constructor.SplicePart, 1 - com.segN);
+		this.partSub.partAdd(this.constructor.SplicePart, 1 - com.segN);
 		for(const partId of com.partIdV) {
 		    const part = this.constructor.RailPartV[partId];
-		    this.partTabSub.partAdd(part, -1);
+		    this.partSub.partAdd(part, -1);
 		}
 	    }
 	}
@@ -110,11 +83,11 @@ class RailGroup {
 	for(const com of comV) {
 	    const rail = this.railV[com.railId];
 	    this.diag.log(`    rail=${com.railId}[${rail.x1 - rail.x0}] need=${com.need} partV=[${com.partIdV.map(x => this.constructor.RailPartV[x].dimL).join(' ')}]\n`);
-	    this.partTabSub.partAdd(this.constructor.SplicePart, com.segN - 1);
+	    this.partSub.partAdd(this.constructor.SplicePart, com.segN - 1);
 	    let x = 0;
 	    for(const partId of com.partIdV) {
 		const part = this.constructor.RailPartV[partId];
-		this.partTabSub.partAdd(part, 1);
+		this.partSub.partAdd(part, 1);
 		if(x) {
 		    rail.rack.roof.drawr.addSplice_1(new P2(rail.x0 + x, rail.y0));
 		    this.bestDrawrSet.add(rail.rack.roof.drawr);
@@ -139,6 +112,6 @@ class RailGroup {
 
     railrRspFin() {
 	this.diag.log(`fin\n`);
-	this.partTabSub.pendDec();
+	this.partSub.pendDec();
     }
 }

@@ -474,36 +474,36 @@ var SnapnrackRluMlpe = new Part()
 // Inverter SolarEdge
 //-----------------------------------------------------------------------------------------------------------------------
 
-var SolarEdgeSe11400h_us000bni4 = new InvPart()
+var SolarEdgeSe11400h_us000bni4 = new SolarEdgeInvPart()
     .cDesNickMakeModelMore('SE.11400H-US', 'SolarEdge', 'SE11400H-US000BNI4', 'RGM+Export/Import')
-    .cElecInvSe(/*acW*/11400, /*acV*/240, /*acIMax*/47.5, /*dcW*/17650, /*dcVMax*/480, /*dcVNom*/400, /*dcIMax*/30.5)
+    .cElecInvSe(/*acW*/11400, /*acV*/240, /*acImax*/47.5, /*dcW*/17650, /*dcVmax*/480, /*dcVNom*/400, /*dcImax*/30.5)
     .nI('https://knowledge-center.solaredge.com/sites/kc/files/se_hd_wave_inverter_with_SetApp_installation_guide_na.pdf')
     .s1U(2316.00, 'https://www.platt.com/p/1821855/solaredge/sed-se11400h-us000bni4/sedse11400hus000bi');
 
-var SolarEdgeSe11400h_ussnbbl14 = new InvPart()
+var SolarEdgeSe11400h_ussnbbl14 = new SolarEdgeInvPart()
     .cDesMakeModelMore('SolarEdge', 'SE11400H-USSNBBL14', 'Battery+EV+RGM+Export/Import')
-    .cElecInvSe(/*acW*/11400, /*acV*/240, /*acIMax*/47.5, /*dcW*/22800, /*dcVMax*/480, /*dcVNom*/380, /*dcIMax*/31)
+    .cElecInvSe(/*acW*/11400, /*acV*/240, /*acImax*/47.5, /*dcW*/22800, /*dcVmax*/480, /*dcVNom*/380, /*dcImax*/31)
     .nI('https://knowledge-center.solaredge.com/sites/kc/files/se-single-phase-energy-hub-high-power-installation-guide-na.pdf')
     .nUrl('Battery compatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/se-battery-compatibility-with-energy-hub-guide-nam.pdf')
     .s1U(3589.1900, 'https://www.platt.com/p/1973303/solaredge/11400w-single-hd-wave-phase-inverter/sedse11400hussnbbl');
 
 var SolarEdgeP400 = new OptimizerPart()
     .cDesMakeModelMore('SolarEdge', 'P400', 'Optimizer')
-    .cElecOptSe(/*inoutW*/400, /*inVMax*/80, /*inIMax*/10.1, /*outVMax*/60, /*outIMax*/15)
+    .cElecOptSe(/*inoutW*/400, /*inVmax*/80, /*inImax*/10.1, /*outVmax*/60, /*outImax*/15)
     .nDs('https://knowledge-center.solaredge.com/sites/kc/files/se-P5-series-add-on-power-optimizer-datasheet-na.pdf')
     .nUrl('Intercompatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/application_note_intercompatibility_se_power_optimizers.pdf')
     .s1A(42.00, 21, 'matt');
 
 var SolarEdgeS500 = new OptimizerPart()
     .cDesMakeModelMore('SolarEdge', 'S500', 'Optimizer')
-    .cElecOptSe(/*inoutW*/400, /*inVMax*/60, /*inIMax*/14.5, /*outVMax*/60, /*outIMax*/15)
+    .cElecOptSe(/*inoutW*/400, /*inVmax*/60, /*inImax*/14.5, /*outVmax*/60, /*outImax*/15)
     .nDs('https://knowledge-center.solaredge.com/sites/kc/files/se-power-optimizer-s-series-datasheet.pdf')
     .nUrl('Intercompatibility', 'https://knowledge-center.solaredge.com/sites/kc/files/application_note_intercompatibility_se_power_optimizers.pdf')
     .s1U(84.99, 'https://www.platt.com/p/2011140/solaredge/dc-power-optimizer-500w-60vdc/seds500');
 
-var SolarEdgeCt225 = new Spec1Part()
+var SolarEdgeCt225 = new CtPart()
     .cDesMakeModelMore('SolarEdge', 'SECT-SPL-225A-T-20', '17ft, 18-20 AWG TP, CT')
-    .cSpec1('225A, Split core, Clamp')
+    .cCt(225, 'Split core, Clamp')
     .nDs('https://knowledge-center.solaredge.com/sites/kc/files/se-slim-current-transformer-datasheet-na.pdf')
     .s1U(41.62, 'https://www.platt.com/p/1950422/solaredge/slim-current-transformer-split-core/sedsectspl225at20');
 
@@ -520,25 +520,36 @@ var SolarEdgeCt225 = new Spec1Part()
 // Electrical other
 //-----------------------------------------------------------------------------------------------------------------------
 
-var Breaker_HOM260CP = new Part()
-    .cDesMakeModelMore('Square D', 'HOM260CP', '2x60 Breaker')
+var Breaker_HOM260CP = new BreakerPart()
+    .cDesMakeModelMore('Square D', 'HOM260CP', 'HOM 2x60 Breaker')
+    .cBreaker(/*typ*/'HOM', /*pole*/2, /*itrip*/60)
     .s1U(17.83, 'https://www.homedepot.com/p/Square-D-Homeline-60-Amp-2-Pole-Circuit-Breaker-HOM260CP-HOM260CP/202353322');
 
-var Breaker_Q22020CTU = new Part()
-    .cDesMakeModelMore('Siemens', 'Q22020CTU', '1x20,2x20,1x20 Breaker')
+var Breaker_Q22020CTU = new BreakerPlexPart()
+    .cDesMakeModelMore('Siemens', 'Q22020CTU', 'QT 1x20,2x20,1x20 Breaker')
+    .cBreakerPlex(/*typ*/'QT', /*...poleItripV*/[1,20], [2,20], [1,20])
     .s1U(29.85, 'https://www.homedepot.com/p/Siemens-Triplex-Two-Outer-20-Amp-Single-Pole-and-One-Inner-20-Amp-Double-Pole-Circuit-Breaker-Q22020CTU/202276298');
 
-var Breaker_Q260 = new Part()
-    .cDesMakeModelMore('Siemens', 'Q260', '2x60 Breaker')
+var Breaker_Q260 = new BreakerPart()
+    .cDesMakeModelMore('Siemens', 'Q260', 'QP 2x60 Breaker')
+    .cBreaker(/*typ*/'QP', /*pole*/2, /*itrip*/60)
     .s1U(15.52, 'https://www.amazon.com/Q260-60-Amp-Double-Circuit-Breaker/dp/B00002N7KY/');
 
-var Breaker_QO260CP = new Part()
-    .cDesMakeModelMore('Square D', 'QO260CP', '2x60 Breaker')
+var Breaker_QO260CP = new BreakerPart()
+    .cDesMakeModelMore('Square D', 'QO260CP', 'QO 2x60 Breaker')
+    .cBreaker(/*typ*/'QO', /*pole*/2, /*itrip*/60)
     .s1U(41.70, 'https://www.homedepot.com/p/Square-D-QO-60-Amp-2-Pole-Circuit-Breaker-QO260CP-QO260CP/100065234');
 
-var Breaker_QOM2175VH = new Part()
-    .cDesMakeModelMore('Square D', 'QOM2175VH', '2x175 Main Breaker')
+var Breaker_QOM2175VH = new BreakerPart()
+    .cDesMakeModelMore('Square D', 'QOM2175VH', 'QOM 2x175 Main Breaker')
+    .cBreaker(/*typ*/'QOM', /*pole*/2, /*itrip*/175)
+    .s1U(219.77, 'https://www.ebay.com/itm/304861992085')
     .s1U(299.00, 'https://www.amazon.com/Square-Schneider-Electric-QOM2175VH-Homeline/dp/B00CONRDI8');
+
+var Breaker_QOM2200VH = new BreakerPart()
+    .cDesMakeModelMore('Square D', 'QOM2200VH', '2x200 Main Breaker')
+    .cBreaker(/*typ*/'QOM', /*pole*/2, /*itrip*/200)
+    .s1U(99.95, 'https://www.ebay.com/itm/155526280540');
 
 var ConduitBody_34_C = new Part()
     .cDesGeneric('Conduit Body C 3/4"')
@@ -643,15 +654,15 @@ var Ctap_Gray = new Part()
     .cDesGeneric('C-Tap Crimp Gray <b>[APPROXIMATE]</b>')
     .s1A(4.00, 1, 'matt');
 
-var DisconnectGnf222ra = new Spec1Part()
+var DiscoGnf222ra = new DiscoPart()
     .cDesMakeModelMore('Siemens', 'GNF222RA', 'Disconnect w/ hub provision')
-    .cSpec1('60A, 240V, Type 3R, Non-fusible')
+    .cDisco(/*phase*/'240V', /*pole*/2, /*imax*/60, /*enclosure*/'Type 3R, Non-fusible')
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:5c71c5ec-7826-4b33-bad2-c861d7d9534e/sie-ss-switch-60a-240a-nf3r.pdf')
     .s1U(88.31, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6BXLR/');
 
-var DisconnectLnf222ra = new Spec1Part()
+var DiscoLnf222ra = new DiscoPart()
     .cDesMakeModelMore('Siemens', 'LNF222RA', 'Disconnect w/o hub provision')
-    .cSpec1('60A, 240V, Type 3R, Non-fusible')
+    .cDisco(/*phase*/'240V', /*pole*/2, /*imax*/60, /*enclosure*/'Type 3R, Non-fusible')
     .nDs('https://assets.new.siemens.com/siemens/assets/api/uuid:7adb416d-e4f1-4e6c-9f9f-32d104e32e6b/sie-ss-switch-60a-240a-nf3r-ln.pdf')
     .s1U(67.49, 'https://www.amazon.com/SIEMENS-General-Safety-Outdoor-Non-Fusible/dp/B07PS6F5PV/');
 
@@ -764,10 +775,10 @@ var Mc4_F = new Part()
     .s1A(2.08, 50, 'matt')
     .s1U(2.08, 'https://www.platt.com/p/0798740/stubli-electrical-connectors/cable-connector-mc-type-4-female/muc320014p0001ur');
 
-var LcSquaredQO130M200 = new Spec1Part()
+var LoadcenterSquaredQO130M200 = new LoadcenterPart()
     .cDesMakeModelMore('Square D', 'QO130M200', 'Load center')
-    .cSpec1('120/240V, 200A, 30 spaces, NEMA1')
-    .cElecLc(/*ibus*/200)
+    .cElecLoadcenter(/*phase*/'120/240V', /*ibus*/200, /*spaceN*/30, /*enclosure*/'NEMA1',
+	/*typV*/['QO'], /*mainTypV*/['QOM'])
     .nDs('https://www.se.com/us/en/product/download-pdf/QO130M200');
 
 var PaintSprayMatteBlack = new Part()

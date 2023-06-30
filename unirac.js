@@ -16,13 +16,13 @@ class UniracSmRack extends RackTworail {
     gapX() { return 2.54*0.5; }
     gapY() { return 2.54*0.5; }
     
-    mlpePart() { return UniracSmMlpe; }
+    optMount(partSub) { partSub.partAdd(UniracSmMlpe, 1); }
     
     layoutFin() {
 	super.layoutFin();
-	this.partTabSub.partAdd(UniracSmFoot, this.footV.length);
-	this.partTabSub.partAdd(UniracSmEnd, this.endV.length);
-	this.partTabSub.partAdd(UniracSmMid, this.midV.length);
-	this.partTabSub.partAdd(UniracSmGroundLug, this.groundLugN);
+	this.partSub.partAdd(UniracSmFoot, this.footV.length);
+	this.partSub.partAdd(UniracSmEnd, this.endV.length);
+	this.partSub.partAdd(UniracSmMid, this.midV.length);
+	this.partSub.partAdd(UniracSmGroundLug, this.groundLugN);
     }
 }

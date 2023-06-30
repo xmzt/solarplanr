@@ -3,33 +3,25 @@
 
 function svgClas(ele, clas) { ele.classList.add(clas); return ele; }
 function svgNu(tag) { return document.createElementNS('http://www.w3.org/2000/svg', tag); }
+function svgNuAdd(tag, dst) { return dst.appendChild(svgNu(tag)); }
 function svgNuClas(tag, clas) { return svgClas(svgNu(tag), clas); }
-function svgNuSvg() { const ele = svgNu('svg'); ele.style.overflow = 'visible'; return ele; }
+function svgNuClasAdd(tag, clas, dst) { return dst.appendChild(svgNuClas(tag, clas)); }
 
-function svgAddNu(dst, tag) { return dst.appendChild(svgNu(tag)); }
-function svgAddNuClas(dst, tag, clas) { return dst.appendChild(svgNuClas(tag, clas)); }
-function svgAddNuClasText(dst, clas, text) {
-    const ele = svgAddNuClas(dst, 'text', clas);
-    ele.appendChild(document.createTextNode(text));
-    return ele;
-}
-function svgAddNuSvg(dst) { return dst.appendChild(svgNuSvg()); }
-
-function svgAddUseXYHref(dst, x, y, href) { return svgSetXYHref(svgAddNu(dst, 'use'), x, y, href); }
-
-function svgAddText(dst, clas, text) {
-    const ele = svgAddNu(dst, 'text');
+function svgNuPathDClas(d, clas) {
+    const ele = svgNu('path');
+    ele.setAttribute('d', d);
     ele.classList.add(clas);
-    ele.appendChild(document.createTextNode(text));
     return ele;
 }
 
-function svgSetTransformFitwFlipSFitXywhFlipy(ele, x, y, w, h) {
-    const r = ele.getBBox();
-    const c = Math.min(w/r.width, h/r.height);
-    ele.setAttribute('transform', `matrix(${c},0,0,${-c}, ${x-c*r.x}, ${y+h+c*r.y})`);
-    return ele;
-}	
+function svgNuPathDClasAdd(d, clas, dst) {
+    const ele = svgNu('path');
+    ele.setAttribute('d', d);
+    ele.classList.add(clas);
+    return dst.appendChild(ele);
+}
+
+function svgUseXYHrefAdd(x, y, href, dst) { return svgSetXYHref(svgNuAdd('use', dst), x, y, href); }
 
 function svgSetCxCyR(ele, cx, cy, r) {
     ele.setAttribute('cx', cx);
@@ -48,6 +40,26 @@ function svgSetCxCyRxRy(ele, cx, cy, rx, ry) {
 
 function svgSetD(ele, d) {
     ele.setAttribute('d', d);
+    return ele;
+}
+
+function svgSetTransform(ele, transform) {
+    ele.setAttribute('transform', transform);
+    return ele;
+}
+
+function svgSetMatrix6(ele, a,b,c,d,e,f) {
+    ele.setAttribute('transform', `matrix(${a},${b},${c},${d},${e},${f})`);
+    return ele;
+}
+
+function svgSetMatrixa6(ele, m) {
+    ele.setAttribute('transform', `matrix(${m[0]},${m[1]},${m[2]},${m[3]},${m[4]},${m[5]})`);
+    return ele;
+}
+
+function svgSetMatrixDom(ele, m) {
+    ele.setAttribute('transform', m.toString());
     return ele;
 }
 
@@ -73,11 +85,37 @@ function svgSetXYHref(ele, x, y, href) {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// geometry helpers
-//-----------------------------------------------------------------------------------------------------------------------
+// align
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Xyxy
+// svgText
+
+var SvgTextAlignXD = {
+    'xl': (box, margin, x) => x + margin - box.x,
+    'xc': (box, margin, x) => x - 0.5*box.width,
+    'xr': (box, margin, x) => x - margin - box.width,
+};
+var SvgTextAlignYD = {
+    'yt': (box, margin, y) => y + margin - box.y,
+    'yc': (box, margin, y) => y - 0.5*box.y,
+    'yb': (box, margin, y) => y - margin,
+};
+
+function svgTextNuClasAdd(clas, dst, text) {
+    const ele = svgNuClasAdd('text', clas, dst);
+    ele.appendChild(document.createTextNode(text));
+    return ele;
+}
+
+function svgTextAlign(ele, alignX, alignY, margin, x, y) {
+    const box = ele.getBBox();
+    ele.setAttribute('x', SvgTextAlignXD[alignX](box, margin, x));
+    ele.setAttribute('y', SvgTextAlignYD[alignY](box, margin, y));
+    return ele;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Pitch
 
 class Pitch {
     constructor(dx,dy) {
@@ -89,6 +127,9 @@ class Pitch {
     }
 }
     
+//-----------------------------------------------------------------------------------------------------------------------
+// Xyxy
+
 class Xyxy {
     constructor(x0, y0, x1, y1) {
 	this.x0 = x0;
@@ -110,16 +151,24 @@ class Xyxy {
 
     svgEleLo(clas) {
 	const dx = this.x1 - this.x0;
-	const dx2 = 0.5*dx;
-	const dx4 = 0.25*dx;
-	return svgSetD(svgNuClas('path', clas)
-		       , `M${this.x0},${this.y0} V${this.y1} H${this.x1} V${this.y0}`
-		       + ` m0,${dx4} q${-dx4},${dx2},${-dx2},0 t${-dx2},0`);
+	const a = dx/6;
+	return svgNuPathDClas(`M${this.x1},${this.y0} V${this.y1} H${this.x0} V${this.y0}`
+			      + ` h${a} l${a},${2*a} l${2*a},${-4*a} l${a},${2*a} h${a}`
+			      , clas);
     }
 
-    svgAdd(dst, clas) {	dst.appendChild(this.svgEle(clas)); return this; }
-    svgAddLo(dst, clas) { dst.appendChild(this.svgEleLo(clas)); return this; }
+    svgClasAdd(clas, dst) { dst.appendChild(this.svgEle(clas)); return this; }
+    svgClasAddLo(clas, dst) { dst.appendChild(this.svgEleLo(clas)); return this; }
 }
+
+function r2Whxy(w, h, x1, y1) { return new Xyxy(x1 - w, y1 - h, x1, y1); }
+function r2Wyxh(w, y0, x1, h) { return new Xyxy(x1 - w, y0, x1, y0 + h); }
+function r2Wyxy(w, y0, x1, y1) { return new Xyxy(x1 - w, y0, x1, y1); }
+function r2Xhwy(x0, h, w, y1) { return new Xyxy(x0, y1 - h, x0 + w, y1); }
+function r2Xhxy(x0, h, x1, y1) { return new Xyxy(x0, y1 - h, x1, y1); }
+function r2Xywh(x0, y0, w, h) { return new Xyxy(x0, y0, x0 + w, y0 + h); }
+function r2Xywy(x0, y0, w, y1) { return new Xyxy(x0, y0, x0 + w, y1); }
+function r2Xyxh(x0, y0, x1, h) { return new Xyxy(x0, y0, x1, y0 + h); }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Quad
@@ -149,10 +198,10 @@ class Quad {
     }
     
     svgEle(clas) {
-	return svgSetD(svgNuClas('path', clas)
-		       , `M${this.x0},${this.y0} L${this.x1},${this.y1}`
-		       + ` L${this.x2},${this.y2} L${this.x3},${this.y3} z`);
+	return svgNuPathDClas(`M${this.x0},${this.y0} L${this.x1},${this.y1}`
+			      + ` L${this.x2},${this.y2} L${this.x3},${this.y3} z`
+			      , clas);
     }
     
-    svgAdd(dst, clas) {	dst.appendChild(this.svgEle(clas)); return this; }
+    svgClasAdd(clas, dst) { dst.appendChild(this.svgEle(clas)); return this; }
 }
