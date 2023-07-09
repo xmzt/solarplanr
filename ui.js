@@ -41,9 +41,9 @@ class UiRailGroupDiag {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// UiSysEnv
+// UiEnv
 
-class UiSysEnv {
+class UiEnv {
     constructor(root) {
 	this.drawrVEle = eleNuClas('div', 'drawrV');
 	const partTabEle = temClone('partTab_tem');
@@ -80,20 +80,16 @@ class UiSysEnv {
     }
 }
 
-var UiSysEnvNopSingleton = {
-    terminate: () => {},
-};
-
 //-----------------------------------------------------------------------------------------------------------------------
 // Ui
 
 class Ui {
     static Config0 = '';
     
-    constructor(sysSelEle, sysEnvEle, stor, storItem, siteByDes) {
+    constructor(sysSelEle, envEle, stor, storItem, siteByDes) {
 	this.sysSelEle = sysSelEle;
-	this.sysEnvEle = sysEnvEle;
-	this.sysEnv = UiSysEnvNopSingleton;
+	this.envEle = envEle;
+	this.env = new EnvBase();
 	this.stor = stor;
 	this.storItem = storItem;
 	this.siteByDes = siteByDes;
@@ -129,13 +125,13 @@ class Ui {
     }
 
     sysSelGo(siteFun) {
-	// stop old uiSysEnv
-	this.sysEnv.terminate();
+	// stop old uiEnv
+	this.env.terminate();
 
-	// add new uiSysEnv
+	// add new uiEnv
 	this.configStore();
-	this.sysEnv = new UiSysEnv(this.sysEnvEle);
-	siteFun(this.sysEnv);
+	this.env = new UiEnv(this.envEle);
+	new siteFun(this.env);
     }
     
     goStore() {
@@ -149,11 +145,7 @@ class Ui {
 
 function uiBodyOnload() {
     const siteByDes = { '--Select site/layout--': siteNop };
-    for(const site of [SiteB]) {
-	for(const [des,fun] of Object.entries(site.NuByDes)) {
-	    siteByDes[`${site.Des} ${des}`] = fun;
-	}
-    }
+    SiteB.popuSiteByDes(siteByDes);
     new Ui(document.getElementById('sysSel'),
 	   document.getElementById('sys'),
 	   window.localStorage,

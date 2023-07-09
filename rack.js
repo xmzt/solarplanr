@@ -116,6 +116,39 @@ class RackTworail extends Rack {
 	this.groundLugN = null;
     }
 
+    layoutFin() {
+	this.railRegFromPanelV();
+	this.railFromReg();
+    }
+    
+    panelArea() { return this.panelV.reduce((acc,x) => acc + x.dimL * x.dimS, 0); }
+
+    railFromReg() {
+	// for each region, rail, ends, mids
+	for(const reg of this.railRegV) {
+	    const rail = reg.railCalc(this.roof);
+	    this.railV.push(rail);
+	    this.roof.drawr.addRail(rail);
+	    rail.rack = this;
+	    this.railGroup.railAdd(rail);
+	    
+	    for(const foot of rail.footV) {
+		this.footV.push(foot);
+		this.roof.drawr.addFoot(foot);
+	    }
+	    for(const end of [ new P2(rail.x0, rail.y0), new P2(rail.x1, rail.y1) ]) {
+		this.endV.push(end);
+		this.roof.drawr.addEnd(end);
+	    }
+	    for(const mid of reg.midXV.map(x => new P2(x, rail.y0))) {
+		this.midV.push(mid);
+		this.roof.drawr.addMid(mid);
+	    }
+	}
+
+	this.railGroup.rackFin(this);
+    }
+
     railRegAdd(clampR) {
 	for(const reg of this.railRegV) {
 	    if(clampR.y0 <= reg.y1 && reg.y0 < clampR.y1) {
@@ -143,8 +176,8 @@ class RackTworail extends Rack {
 	return reg;
     }
 
-    layoutFin() {
-	// compute panel area and rail regions
+    railRegFromPanelV() {
+	// compute rail regions
 	let bondI = 0;
 	for(const panel of this.panelV) {
 	    const reg0 = this.railRegAdd(panel.clampR0());
@@ -152,32 +185,14 @@ class RackTworail extends Rack {
 	    if(! reg0.bondI) reg0.bondI = ++bondI;
 	    if(! reg1.bondI) reg1.bondI = reg0.bondI;
 	}
-	
-	// for each region, rail, ends, mids
-	for(const reg of this.railRegV) {
-	    const rail = this.roof.railFromReg(reg);
-	    this.railV.push(rail);
-	    this.roof.drawr.addRail(rail);
-	    rail.rack = this;
-	    this.railGroup.railAdd(rail);
-	    
-	    for(const foot of rail.footV) {
-		this.footV.push(foot);
-		this.roof.drawr.addFoot(foot);
-	    }
-	    for(const end of [ new P2(rail.x0, rail.y0), new P2(rail.x1, rail.y1) ]) {
-		this.endV.push(end);
-		this.roof.drawr.addEnd(end);
-	    }
-	    for(const mid of reg.midXV.map(x => new P2(x, rail.y0))) {
-		this.midV.push(mid);
-		this.roof.drawr.addMid(mid);
-	    }
-	}
-
+	// todo: bondI not right if one region combined with another
 	this.groundLugN = bondI;
-	this.railGroup.rackFin(this);
-    }
 
-    panelArea() { return this.panelV.reduce((acc,x) => acc + x.dimL * x.dimS, 0); }
+	// sort region by y0,x0
+	this.railRegV.sort((a,b) => {
+	    const d = a.y0 - b.y0;
+	    if(! d) d = a.x0 - b.x0;
+	    return d;
+	});
+    }
 }

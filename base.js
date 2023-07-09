@@ -20,8 +20,8 @@ const EdgeFootDist = 2.54*36;
 const EdgeFootDist2 = EdgeFootDist*EdgeFootDist;
 const EdgeWidth = 2.54 * 36;
 const FireWalkWidth = 2.54 * 36;
-const FootSpan = 2.54*48.0 + 4.0;
-const FootSpanEdge = 2.54*24.0 + 4.0;
+const FootSpanMax = 2.54*48.0 + 4.0;
+const FootSpanMaxEdge = 2.54*24.0 + 4.0;
 
 //-----------------------------------------------------------------------------------------------------------------------
 // javascript helpers
@@ -76,3 +76,43 @@ function toFixedMinMax(x, precMin, precMax) {
 	: b.length > a.length ? b
 	: a;
 }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// EnvBase
+//-----------------------------------------------------------------------------------------------------------------------
+
+class EnvBase {
+    constructor() {
+	//this.partTab
+	this.mark = 0;
+    }
+
+    drawrNu() {	return DrawrNopSingleton; }
+
+    log(msg) {}
+
+    markAlloc() { return ++this.mark; }
+    
+    oneObjReg(obj) {}
+    
+    railGroupDiagNu() { return RailGroupDiagNopSingleton; }
+    
+    terminate() {}
+
+    wkrReq(...argV) {}
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// SiteBase
+//-----------------------------------------------------------------------------------------------------------------------
+
+class SiteBase {
+    constructor(env) {
+	this.env = env;
+    }
+
+    layoutFin() {
+	this.rack.layoutFin();
+    }
+}
+

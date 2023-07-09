@@ -1,44 +1,7 @@
 //include sys.js
 
-class SiteB {
+class SiteB extends SiteBase {
     static Des = 'SiteB';
-
-    constructor(env, layout) {
-	const partSub = {};
-	for(const sub of ['panel', 'rack', 'se', 'wiring', 'other', 'extra'])
-	    partSub[sub] = env.partTab.subNu(sub);
-
-	this.roof = new this.constructor.Roof(env);
-	const railGroup = new IronRidgeXR10RailGroup(env, partSub.rack);
-	this.rack = new IronRidgeXRRack(env, partSub.rack, partSub.panel, this.roof, railGroup, IronRidgeEndTypCamo);
-	this.inv = new SolarEdgeInv(env, 'INVERTER', partSub.se, SolarEdgeSe11400h_us000bni4);
-	this.disco = new Disco(env, 'DISCO', partSub.wiring, DiscoLnf222ra);
-	this.mep = new Loadcenter(env, 'MEP', partSub.wiring, LoadcenterSquaredQO130M200, Breaker_QOM2200VH);
-	this.meter = new Meter(env, 'METER');
-	this.utility = new Utility(env, 'UTILITY');
-	new Conduit(env, 'C2',
-		    new Portcon(env, this.inv.acPort, this.disco.loadPort),
-		    //todonew Portcon(env, this.inv.ctPort, this.mep.ctPort),
-		   );
-	new Conduit(env, 'C3',
-		    new Portcon(env, this.disco.linePort, this.mep.farPortNu()),
-		    //todo ctCon
-		   );
-	new Portcon(env, this.mep.mainPort, this.meter.loadPort);
-	new Portcon(env, this.meter.linePort, this.utility.linePort);
-
-	layout.call(this, this.roof, this.rack, this.inv);
-	this.rack.layoutFin();
-	this.inv.stringFin();
-	new Conduit(env, 'C1', ...this.inv.dcConV());
-
-	this.wiringParts(partSub.wiring, /*jbox*/0);
-	this.otherParts(partSub.other);
-	this.extraParts(partSub.extra);
-
-    	env.log(`roof area: ${unitSqall(this.roof.area)}`);
-	env.log(`panel area: ${unitSqall(this.rack.panelArea())}`);
-    }
 
     static Roof = class extends Roof {
 	constructor(env) {
@@ -86,119 +49,44 @@ class SiteB {
 	    this.featureAddPipe(this.bor.F.x - 465.0, this.bor.F.y + 69.0, 5/2.0);
 	}
     };
-    
-    static NuByDes = {
-	'Q475/Q400': (env) => new SiteB(env, function(roof, rack, inv) {
-	    //total $ = 14825.11
-	    const q475 = PanelQ475.portrait();
-	    const q400 = PanelQ400.portrait();
-	    const a = rack.panelBlockLtDn(q475, roof.fireR.x0, roof.bor.E.y - EdgeFootDist + q475.clampY1, 8, 1);
-	    const b = rack.panelBlockLtDn(q475, a.x1, a.gapD(), 8, 1);
-	    const c = rack.panelBlockLtUp(q400, b.gapL(), b.y0, 3, 1);
-	    const d = rack.panelBlockLtUp(q400, c.x1, c.gapU(), 3, 1);
-	    const e = rack.panelBlockRtDn(q400, d.x0 - (q475.dimS + rack.gapX())/2, c.gapD(), 6, 1);
-	    
-	    const string1 = inv.stringNu('STRING1');
-	    const string2 = inv.stringNu('STRING2');
-	    const string3 = inv.stringNu('STRING3');
-	    let i = 0;
-	    for( ; i < 8; i++) string1.panelAdd(rack.panelV[i], SolarEdgeS500);
-	    for( ; i < 17; i++) string2.panelAdd(rack.panelV[i], SolarEdgeS500);
-	    for( ; i < 19; i++) string3.panelAdd(rack.panelV[i], SolarEdgeP400);
-	    for( ; i < 20; i++) string1.panelAdd(rack.panelV[i], SolarEdgeS500);
-	    for( ; i < rack.panelV.length; i++) string3.panelAdd(rack.panelV[i], SolarEdgeP400);
-	    
-	    // measurements
-	    roof.drawr.addMeasure(roof.fireR.x0,roof.fireR.y0, roof.fireR.x1,roof.fireR.y0, -100, 10, 30, 'Fire access');
-	    roof.drawr.addMeasure(roof.fireTL.x1,roof.fireTL.y1, roof.fireTL.x1,roof.fireTL.y0, 200, 10, 30, 'Fire access');
-	    let clampR = rack.panelV[5].clampR1();
-	    roof.drawr.addMeasure(clampR.x0, clampR.y0, clampR.x0, roof.bor.D.y, -20, 10, 30, 'Foot to ridge');
-	    clampR = rack.panelV[9].clampR0();
-	    roof.drawr.addMeasure(clampR.x0, clampR.y1, clampR.x0, roof.bor.F.y, 20, 10, 30, 'Foot to eave');
-	    let panelR = rack.panelV[8];
-	    clampR = panelR.clampR1();
-	    roof.drawr.addMeasure(clampR.x1, clampR.y0, clampR.x1, panelR.y1, -160, 10, 30, 'Q.475 Clamping zone');
-	    panelR = rack.panelV[18];
-	    clampR = panelR.clampR1();
-	    roof.drawr.addMeasure(clampR.x0, clampR.y0, clampR.x0, panelR.y1, 160, 10, 30, 'Q.400 Clamping zone');
-	}),
-	'Q400': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelQ400.portrait();
-	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.E.y - 31, 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	    b = rack.panelBlockLtDn(port, b.gapL(), roof.bor.B.y - 32, 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 5, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	}),
-	'Sil360': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelSil360.portrait();
-	    let b = rack.panelBlockRtDn(port, 5, roof.bor.B.y - 31, 7, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 7, 1);
-	    b = rack.panelBlockRtDn(port, b.gapR(), roof.bor.E.y - 31, 5, 1);
-	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 5, 1);
-	}),
-	'Mse380': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelMse380.portrait();
-	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 31, 11, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
-	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 6, 1);
-	}),
-	'Mse380/Mse420': (env) => new SiteB(env, function(roof, rack, inv) {
-	    let port = PanelMse420.portrait();
-	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.E.y - 31, 5, 1);
-	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 5, 1);
-	    
-	    port = PanelMse380.portrait();
-	    b = rack.panelBlockLtDn(port, b0.gapL(), roof.bor.B.y - 31, 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	}),
-	'Boviet370 specified clamp': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelBoviet370.portrait();
-	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
-	    b = rack.panelBlockRtDn(port, 40, b.gapD(), 6, 1);
-	}),
-	'Boviet370 liberal clamp zone': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelBoviet370_libclamp.portrait();
-	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
-	    b = rack.panelBlockRtDn(port, 40, b.gapD(), 6, 1);
-	}),
-	'Rec370': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelRec370.portrait();
-	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 31, 12, 1);
-	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 11, 1);
-	    b = rack.panelBlockRtDn(port, b0.x0, b.gapD(), 6, 1);
-	}),
-	'Seg400/Ureco400': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelSeg400.portrait();
-	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
-	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 10, 1);
-	    b = rack.panelBlockRtDn(port, b0.x0, b.gapD(), 6, 1);
-	}),
-	'Seg400/Ureco400 landscape,stagger': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelSeg400.portrait();
-	    const land = PanelSeg400.landscape();
-	    
-	    let b = rack.panelBlockRtDn(land, roof.bor.B.x + 5, roof.bor.B.y - 32, 4, 2);
-	    b = rack.panelBlockLtDn(land, b.x1, b.gapD(), 3, 1);
-	    b = rack.panelBlockLtDn(land, b.x1, b.gapD(), 4, 2);
-	    
-	    b = rack.panelBlockRtDn(land, b.gapR(), roof.bor.D.y - 32, 1, 4);
-	    b = rack.panelBlockRtDn(land, b.gapR(), b.y1, 1, 3);
-	    b = rack.panelBlockRtDn(land, b.gapR(), b.y1, 1, 4);
-	}),
-	'Rec405AA Portrait': (env) => new SiteB(env, function(roof, rack, inv) {
-	    const port = PanelRec405AA.portrait();
-	    let b = rack.panelBlockRtDn(port, 0, roof.bor.B.y - 32, 7, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
-	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 7, 1);
-	    b = rack.panelBlockRtDn(port, b.gapR(), roof.bor.E.y - 32, 5, 1);
-	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 5, 1);
-	}),
-    };
+
+    constructor(env) {
+	super(env);
+	const partSub = {};
+	for(const sub of ['panel', 'rack', 'se', 'wiring', 'other', 'extra'])
+	    partSub[sub] = env.partTab.subNu(sub);
+
+	this.roof = new this.constructor.Roof(env);
+	const railGroup = new IronRidgeXR10RailGroup(env, partSub.rack);
+	this.rack = new IronRidgeXRRack(env, partSub.rack, partSub.panel, this.roof, railGroup, IronRidgeEndTypCamo);
+	this.inv = new SolarEdgeInv(env, 'INVERTER', partSub.se, SolarEdgeSe11400h_us000bni4);
+	this.disco = new Disco(env, 'DISCO', partSub.wiring, DiscoLnf222ra);
+	this.mep = new Loadcenter(env, 'MEP', partSub.wiring, LoadcenterSquaredQO130M200, Breaker_QOM2200VH);
+	this.meter = new Meter(env, 'METER');
+	this.utility = new Utility(env, 'UTILITY');
+	new Conduit(env, 'C2',
+		    new Portcon(env, this.inv.acPort, this.disco.loadPort),
+		    //todonew Portcon(env, this.inv.ctPort, this.mep.ctPort),
+		   );
+	new Conduit(env, 'C3',
+		    new Portcon(env, this.disco.linePort, this.mep.farPortNu()),
+		    //todo ctCon
+		   );
+	new Portcon(env, this.mep.mainPort, this.meter.loadPort);
+	new Portcon(env, this.meter.linePort, this.utility.linePort);
+
+	this.layout(this.roof, this.rack, this.inv);
+	this.layoutFin();
+	this.inv.stringFin();
+	new Conduit(env, 'C1', ...this.inv.dcConV());
+
+	this.wiringParts(partSub.wiring, /*jbox*/0);
+	this.otherParts(partSub.other);
+	this.extraParts(partSub.extra);
+
+    	env.log(`roof area: ${unitSqall(this.roof.area)}`);
+	env.log(`panel area: ${unitSqall(this.rack.panelArea())}`);
+    }
 
     wiringParts(partSub, jbox) {
 	const f = (a,b) => partSub.partAdd(a, b);
@@ -338,4 +226,153 @@ class SiteB {
 	f(IronRidgeXR10Splice, 1);
     }
 }
-    
+
+SiteB.popuSiteByDes = (siteByDes) => {
+    siteByDes['Q475/Q400'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    //total $ = 14825.11
+	    const q475 = PanelQ475.portrait();
+	    const q400 = PanelQ400.portrait();
+	    const a = rack.panelBlockLtDn(q475, roof.fireR.x0, roof.bor.E.y - EdgeFootDist + q475.clampY1, 8, 1);
+	    const b = rack.panelBlockLtDn(q475, a.x1, a.gapD(), 8, 1);
+	    const c = rack.panelBlockLtUp(q400, b.gapL(), b.y0, 3, 1);
+	    const d = rack.panelBlockLtUp(q400, c.x1, c.gapU(), 3, 1);
+	    const e = rack.panelBlockRtDn(q400, d.x0 - (q475.dimS + rack.gapX())/2, c.gapD(), 6, 1);
+	    
+	    const string1 = inv.stringNu('STRING1');
+	    const string2 = inv.stringNu('STRING2');
+	    const string3 = inv.stringNu('STRING3');
+	    let i = 0;
+	    for( ; i < 8; i++) string1.panelAdd(rack.panelV[i], SolarEdgeS500);
+	    for( ; i < 17; i++) string2.panelAdd(rack.panelV[i], SolarEdgeS500);
+	    for( ; i < 19; i++) string3.panelAdd(rack.panelV[i], SolarEdgeP400);
+	    for( ; i < 20; i++) string1.panelAdd(rack.panelV[i], SolarEdgeS500);
+	    for( ; i < rack.panelV.length; i++) string3.panelAdd(rack.panelV[i], SolarEdgeP400);
+	    
+	    // measurements
+	    roof.drawr.addMeasure(roof.fireR.x0,roof.fireR.y0, roof.fireR.x1,roof.fireR.y0, -100, 10, 30, 'Fire access');
+	    roof.drawr.addMeasure(roof.fireTL.x1,roof.fireTL.y1, roof.fireTL.x1,roof.fireTL.y0, 200, 10, 30, 'Fire access');
+	    let clampR = rack.panelV[5].clampR1();
+	    roof.drawr.addMeasure(clampR.x0, clampR.y0, clampR.x0, roof.bor.D.y, -20, 10, 30, 'Foot to ridge');
+	    clampR = rack.panelV[9].clampR0();
+	    roof.drawr.addMeasure(clampR.x0, clampR.y1, clampR.x0, roof.bor.F.y, 20, 10, 30, 'Foot to eave');
+	    let panelR = rack.panelV[8];
+	    clampR = panelR.clampR1();
+	    roof.drawr.addMeasure(clampR.x1, clampR.y0, clampR.x1, panelR.y1, -160, 10, 30, 'Q.475 Clamping zone');
+	    panelR = rack.panelV[18];
+	    clampR = panelR.clampR1();
+	    roof.drawr.addMeasure(clampR.x0, clampR.y0, clampR.x0, panelR.y1, 160, 10, 30, 'Q.400 Clamping zone');
+	}
+    };
+    siteByDes['Q475/Q400 Rail0.1'] = class extends siteByDes['Q475/Q400'] {
+	layoutFin() {
+	    this.rack.railRegFromPanelV();
+	    this.rack.railRegV[0].railLayTry = (best, rail, roof) => RailLayNick1.bestFromRailRoof(best, rail, roof);
+	    this.rack.railFromReg();
+	}
+    };
+    siteByDes['Q475/Q400 Rail0.2'] = class extends siteByDes['Q475/Q400'] {
+	layoutFin() {
+	    this.rack.railRegFromPanelV();
+	    this.rack.railRegV[0].railLayTry = (best, rail, roof) => RailLaySpan.bestFromRailRoof(best, rail, roof);
+	    this.rack.railFromReg();
+	}
+    };
+    siteByDes['Q400'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelQ400.portrait();
+	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.E.y - 31, 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	    b = rack.panelBlockLtDn(port, b.gapL(), roof.bor.B.y - 32, 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 5, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Sil360'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelSil360.portrait();
+	    let b = rack.panelBlockRtDn(port, 5, roof.bor.B.y - 31, 7, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 7, 1);
+	    b = rack.panelBlockRtDn(port, b.gapR(), roof.bor.E.y - 31, 5, 1);
+	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 5, 1);
+	}
+    };
+    siteByDes['Mse380'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelMse380.portrait();
+	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 31, 11, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
+	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Mse380/Mse420'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    let port = PanelMse420.portrait();
+	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.E.y - 31, 5, 1);
+	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 5, 1);
+	    
+	    port = PanelMse380.portrait();
+	    b = rack.panelBlockLtDn(port, b0.gapL(), roof.bor.B.y - 31, 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Boviet370 specified clamp'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelBoviet370.portrait();
+	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
+	    b = rack.panelBlockRtDn(port, 40, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Boviet370 liberal clamp zone'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelBoviet370_libclamp.portrait();
+	    let b = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 11, 1);
+	    b = rack.panelBlockRtDn(port, 40, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Rec370'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelRec370.portrait();
+	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 31, 12, 1);
+	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 11, 1);
+	    b = rack.panelBlockRtDn(port, b0.x0, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Seg400/Ureco400'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelSeg400.portrait();
+	    let b0 = rack.panelBlockLtDn(port, roof.fireR.x0, roof.bor.B.y - 37, 11, 1);
+	    let b = rack.panelBlockLtDn(port, b0.x1, b0.gapD(), 10, 1);
+	    b = rack.panelBlockRtDn(port, b0.x0, b.gapD(), 6, 1);
+	}
+    };
+    siteByDes['Seg400/Ureco400 landscape,stagger'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelSeg400.portrait();
+	    const land = PanelSeg400.landscape();
+	    
+	    let b = rack.panelBlockRtDn(land, roof.bor.B.x + 5, roof.bor.B.y - 32, 4, 2);
+	    b = rack.panelBlockLtDn(land, b.x1, b.gapD(), 3, 1);
+	    b = rack.panelBlockLtDn(land, b.x1, b.gapD(), 4, 2);
+	    
+	    b = rack.panelBlockRtDn(land, b.gapR(), roof.bor.D.y - 32, 1, 4);
+	    b = rack.panelBlockRtDn(land, b.gapR(), b.y1, 1, 3);
+	    b = rack.panelBlockRtDn(land, b.gapR(), b.y1, 1, 4);
+	}
+    };
+    siteByDes['Rec405AA Portrait'] = class extends SiteB {
+	layout(roof, rack, inv) {
+	    const port = PanelRec405AA.portrait();
+	    let b = rack.panelBlockRtDn(port, 0, roof.bor.B.y - 32, 7, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 6, 1);
+	    b = rack.panelBlockLtDn(port, b.x1, b.gapD(), 7, 1);
+	    b = rack.panelBlockRtDn(port, b.gapR(), roof.bor.E.y - 32, 5, 1);
+	    b = rack.panelBlockRtDn(port, b.x0, b.gapD(), 5, 1);
+	}
+    };
+
+}

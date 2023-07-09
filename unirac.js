@@ -18,8 +18,8 @@ class UniracSmRack extends RackTworail {
     
     optMount(partSub) { partSub.partAdd(UniracSmMlpe, 1); }
     
-    layoutFin() {
-	super.layoutFin();
+    railFromReg() {
+	super.railFromReg();
 	this.partSub.partAdd(UniracSmFoot, this.footV.length);
 	this.partSub.partAdd(UniracSmEnd, this.endV.length);
 	this.partSub.partAdd(UniracSmMid, this.midV.length);

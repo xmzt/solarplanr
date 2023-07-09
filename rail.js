@@ -9,6 +9,81 @@
 var RailGroupClasId = 0;
 
 //-----------------------------------------------------------------------------------------------------------------------
+// RailLay
+
+var railLayWorst = { cmp:(other) => 1 };
+
+class RailLay {
+    static bestFromRailRoof(best, rail, roof) { return this.bestFromRail(best, rail, roof.footVFromRail(rail)); }
+    
+    static bestFromRail(best, rail, footV0) {
+	//console.log(`zyx ${rail.x0},${rail.y0}:`);
+	let a = 0;
+	let aCanti, bCanti;
+	for(let a = 0; (aCanti = footV0[a].x - rail.x0) <= CantiMax; ++a) {
+	    for(let b = footV0.length - 1; b > a && (bCanti = rail.x1 - footV0[b].x) <= CantiMax; --b) {
+		best = this.bestFromLay(best, new this(rail, footV0.slice(a, b + 1), Math.max(aCanti, bCanti)));
+	    }
+	}
+	return best;
+    }
+
+    static bestFromLay(best, lay) {
+	//console.log(`    canti ${lay.footV.length},${lay.cantiMax}`);
+	lay.thin();
+	//console.log(`    thin ${lay.footV.length}`);
+	return 0 < best.cmp(lay) ? lay : best;
+    }
+
+    constructor(rail, footV, cantiMax) {
+	this.rail = rail;
+	this.footV = footV;
+	this.cantiMax = cantiMax;
+    }
+
+    cmp(other) {
+	let a = this.footV.length - other.footV.length;
+	if(! a) a = this.cantiMax - other.cantiMax;
+	return a;
+    }
+    
+    thin() {}
+}
+
+class RailLaySpan extends RailLay {
+    thin() {
+	// remove redundant foots depending on edgeP
+	for(let i = 2; i < this.footV.length; i++) {
+	    if(FootSpanMax >= this.footV[i].x - this.footV[i-2].x) {
+		this.footV.splice(i-1, 1);
+		--i;
+	    }
+	}
+    }
+}
+
+class RailLaySpanEdge extends RailLay {
+    thin() {
+	// remove redundant foots depending on edgeP
+	for(let i = 2; i < this.footV.length; i++) {
+	    const span = this.footV[i].x - this.footV[i-2].x;
+	    const spanAllow = this.footV[i-1].edgeP ? FootSpanMaxEdge : FootSpanMax;
+	    if(spanAllow >= span) {
+		this.footV.splice(i-1, 1);
+		--i;
+	    }
+	}
+    }
+}
+
+class RailLayNick1 extends RailLay {
+    thin() {
+	for(let i = 1; i < this.footV.length - 1; ++i)
+	    this.footV.splice(i, 1);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
 // RailRegR2
 
 class RailRegR2 extends R2 {
@@ -17,6 +92,18 @@ class RailRegR2 extends R2 {
 	this.midXV = [];
 	this.bondI = 0;
     }
+    
+    railCalc(roof) {
+	let layBest = railLayWorst;
+	const y = 0.5*(this.y0 + this.y1);
+	layBest = this.railLayTry(layBest, new L2(this.x0, y, this.x1, y), roof);
+	layBest = this.railLayTry(layBest, new L2(this.x0, this.y0, this.x1, this.y0), roof);
+	layBest = this.railLayTry(layBest, new L2(this.x0, this.y1, this.x1, this.y1), roof);
+	layBest.rail.footV = layBest.footV;
+	return layBest.rail;
+    }
+
+    railLayTry(best, rail, roof) { return RailLaySpanEdge.bestFromRailRoof(best, rail, roof); }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------

@@ -44,28 +44,14 @@ class OneLine {
 //-----------------------------------------------------------------------------------------------------------------------
 // OneEnv
 
-class OneEnv {
+class OneEnv extends EnvBase {
     constructor() {
+	super();
 	this.partTab = new PartTab();
 	this.oneObjV = [];
-	this.mark = 0;
     }
 
-    drawrNu() {	return DrawrNopSingleton; }
-
-    log(msg) {}
-
-    markAlloc() { return ++this.mark; }
-    
     oneObjReg(obj) { return pushItem(this.oneObjV, obj); }
-
-    railGroupDiagNu() { return RailGroupDiagNopSingleton; }
-    
-    terminate() {
-	this.railGroupMgr.terminate();
-    }
-
-    wkrReq(...argV) {}
 }
 
 //-----------------------------------------------------------------------------------------------------------------------

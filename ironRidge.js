@@ -34,8 +34,8 @@ class IronRidgeXRRack extends RackTworail {
 
     optMount(partSub) { partSub.partAdd(IronRidgeMlpe, 1); }
 
-    layoutFin() {
-	super.layoutFin();
+    railFromReg() {
+	super.railFromReg();
 	this.partSub.partAdd(IronRidgeFoot, this.footV.length);
 	this.partSub.partAdd(IronRidgeBolt, this.footV.length);
 	this.partSub.partAdd(IronRidgeUfo, this.midV.length);

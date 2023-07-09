@@ -83,12 +83,12 @@ class Roof {
 	this.drawr.addVent(x);
 	return x;
     }
-
-    footVFromHoriz(horiz) {
-	// footV = set of all intersections with rafters
+   
+    footVFromRail(rail) {
+	// set of all intersections with rafters
 	const footV = [];
 	for(const rafter of this.rafterV) {
-	    const foot = interSegSeg(rafter, horiz);
+	    const foot = interSegSeg(rafter, rail);
 	    if(null !== foot) {
 		footV.push(foot);
 		// mark foot if close to edge
@@ -101,39 +101,9 @@ class Roof {
 		}
 	    }
 	}
-
+	
 	// sort footV
 	footV.sort((a,b) => { return a.x - b.x; });
-
-	// remove redundant foots due to cantilever
-	while(2 < footV.length && CantiMax >= (footV[1].x - horiz.x0))
-	    footV.shift();
-	while(2 < footV.length && CantiMax >= (horiz.x1 - footV[footV.length - 2].x))
-	    footV.pop();
-
-	// remove redundant foots depending on edgeP
-	for(let i = 2; i < footV.length; i++) {
-	    const span = footV[i].x - footV[i-2].x;
-	    const spanAllow = footV[i-1].edgeP ? FootSpanEdge : FootSpan;
-	    if(spanAllow >= span) {
-		footV.splice(i-1, 1);
-		--i;
-	    }
-	}
 	return footV;
     }
-
-    railFromReg(reg) {
-	let aRail = new L2(reg.x0, reg.y0, reg.x1, reg.y0);
-	aRail.footV = this.footVFromHoriz(aRail);
-	let bRail = new L2(reg.x0, reg.y1, reg.x1, reg.y1);
-	bRail.footV = this.footVFromHoriz(bRail);
-	if(bRail.footV.length <= aRail.footV.length)
-	    aRail = bRail;
-	let y = (reg.y0 + reg.y1) / 2;
-	bRail = new L2(reg.x0, y, reg.x1, y);
-	bRail.footV = this.footVFromHoriz(bRail);
-	return (bRail.footV.length <= aRail.footV.length) ? bRail : aRail;
-    }
-
 }
